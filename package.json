@@ -10,7 +10,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:extension.helloWorld"
+		"onCommand:extension.helloWorld",
+		"onCommand:workbench.action.tasks.runTask"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -18,6 +19,98 @@
 			{
 				"command": "extension.helloWorld",
 				"title": "Hello World"
+			}
+		],
+		"taskDefinitions": [
+			{
+				"type": "dapr",
+				"properties": {
+					"appId": {
+						"type": "string",
+						"description": ""
+					},
+					"appPort": {
+						"type": "integer",
+						"description": "",
+						"default": -1
+					},
+					"command": {
+						"type": "array",
+						"description": "",
+						"additionalItems": {
+							"type": "string"
+						}
+					},
+					"cwd": {
+						"type": "string",
+						"description": ""
+					},
+					"config": {
+						"type": "string",
+						"description": ""
+					},
+					"enableProfiling": {
+						"type": "boolean",
+						"description": "",
+						"default": false
+					},
+					"grpcPort": {
+						"type": "integer",
+						"description": "",
+						"default": -1
+					},
+					"httpPort": {
+						"type": "integer",
+						"description": "",
+						"default": -1
+					},
+					"image": {
+						"type": "string",
+						"description": ""
+					},
+					"logLevel": {
+						"type": "string",
+						"description": "",
+						"enum": [
+							"debug",
+							"info",
+							"warning",
+							"error",
+							"fatal",
+							"panic"
+						],
+						"default": "info"
+					},
+					"maxConcurrency": {
+						"type": "integer",
+						"description": ""
+					},
+					"placmentHost": {
+						"type": "string",
+						"description": "",
+						"default": "localhost"
+					},
+					"profilePort": {
+						"type": "integer",
+						"description": "",
+						"default": -1
+					},
+					"protocol": {
+						"type": "string",
+						"description": "",
+						"enum": [
+							"http",
+							"grpc"
+						],
+						"default": "http"
+					},
+					"redisHost": {
+						"type": "string",
+						"description": "",
+						"default": "localhost"
+					}
+				},
+				"required": ["command"]
 			}
 		]
 	},
