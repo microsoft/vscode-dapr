@@ -16,7 +16,7 @@
 	"contributes": {
 		"problemMatchers": [
 			{
-				"owner": "dapr",
+				"name": "dapr",
 				"fileLocation": ["relative", "${workspaceFolder}"],
 				"pattern": [
 					{
@@ -27,8 +27,8 @@
 					}
 				],
 				"background": {
-					"beginsPattern": "^.starting Dapr Runtime",
-					"endsPattern": "^.waiting on port"
+					"beginsPattern": "^.*starting Dapr Runtime",
+					"endsPattern": "^.*waiting on port"
 				}
 			}
 		],

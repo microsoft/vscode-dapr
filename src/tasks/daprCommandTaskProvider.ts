@@ -42,6 +42,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
 
                 return callback(command, { cwd: definition.cwd });
             },
-            /* isBackgroundTask */ true);
+            /* isBackgroundTask */ true,
+            /* problemMatchers: */ ['$dapr']);
     }
 }

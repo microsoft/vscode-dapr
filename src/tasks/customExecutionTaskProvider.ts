@@ -3,7 +3,10 @@ import TaskPseudoterminal from './taskPseudoterminal';
 import { PseudoterminalWriter } from './taskPseudoterminalWriter';
 
 export default class CustomExecutionTaskProvider implements vscode.TaskProvider {
-    constructor(private readonly callback: (definition: vscode.TaskDefinition, writer: PseudoterminalWriter, token?: vscode.CancellationToken) => Promise<number | void>, private readonly isBackgroundTask?: boolean) {
+    constructor(
+        private readonly callback: (definition: vscode.TaskDefinition, writer: PseudoterminalWriter, token?: vscode.CancellationToken) => Promise<number | void>,
+        private readonly isBackgroundTask?: boolean,
+        private readonly problemMatchers?: string[]) {
     }
 
     provideTasks(token?: vscode.CancellationToken | undefined): vscode.ProviderResult<vscode.Task[]> {
@@ -14,7 +17,9 @@ export default class CustomExecutionTaskProvider implements vscode.TaskProvider 
         const problemMatchers =
             task.problemMatchers && task.problemMatchers.length > 0
                 ? task.problemMatchers
-                : ["$dapr"];
+                : this.problemMatchers !== undefined
+                    ? this.problemMatchers
+                    : [];
 
         const resolvedTask = new vscode.Task(
             task.definition,
