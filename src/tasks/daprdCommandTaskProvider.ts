@@ -51,7 +51,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                         .withNamedArg('--log_dir', daprDefinition.logDir)
                         .withNamedArg('--max-concurrency', daprDefinition.maxConcurrency)
                         .withNamedArg('--mode', daprDefinition.mode)
-                        .withNamedArg('--placement-address', daprDefinition.placementAddress)
+                        .withNamedArg('--placement-address', daprDefinition.placementAddress || "localhost:50005" /* NOTE: The placement address is actually required for daprd. */)
                         .withNamedArg('--profile-port', daprDefinition.profilePort)
                         .withNamedArg('--protocol', daprDefinition.protocol)
                         .withNamedArg('--stderrthreshold', daprDefinition.stdErrThreshold)
