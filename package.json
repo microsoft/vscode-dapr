@@ -104,6 +104,136 @@
 					}
 				},
 				"required": ["command"]
+			},
+			{
+				"type": "daprd",
+				"properties": {
+					"allowedOrigins": {
+						"type": "string",
+						"description": "",
+						"default": "*"
+					},
+					"alsoLogToStdError": {
+						"type": "boolean",
+						"description": ""
+					},
+					"appId": {
+						"type": "string",
+						"description": ""
+					},
+					"appPort": {
+						"type": "integer",
+						"description": ""
+					},
+					"componentsPath": {
+						"type": "string",
+						"description": "",
+						"default": "./components"
+					},
+					"config": {
+						"type": "string",
+						"description": ""
+					},
+					"controlPlaneAddress": {
+						"type": "string",
+						"description": ""
+					},
+					"enableProfiling": {
+						"type": "boolean",
+						"description": "",
+						"default": false
+					},
+					"grpcPort": {
+						"type": "integer",
+						"description": "",
+						"default": 50001
+					},
+					"httpPort": {
+						"type": "integer",
+						"description": "",
+						"default": 3500
+					},
+					"logLevel": {
+						"type": "string",
+						"description": "",
+						"enum": [
+							"debug",
+							"info",
+							"warning",
+							"error",
+							"fatal",
+							"panic"
+						],
+						"default": "info"
+					},
+					"logBacktraceAt": {
+						"type": "integer",
+						"description": ""
+					},
+					"logDir": {
+						"type": "string",
+						"description": ""
+					},
+					"maxConcurrency": {
+						"type": "integer",
+						"description": ""
+					},
+					"mode": {
+						"type": "string",
+						"description": "",
+						"enum": [
+							"standalone",
+							"kubernetes"
+						],
+						"default": "standalone"
+					},
+					"placementAddress": {
+						"type": "string",
+						"description": ""
+					},
+					"profilePort": {
+						"type": "integer",
+						"description": "",
+						"default": 7777
+					},
+					"protocol": {
+						"type": "string",
+						"description": "",
+						"enum": [
+							"grpc",
+							"http"
+						],
+						"default": "http"
+					},
+					"stdErrThreshold": {
+						"type": "string",
+						"description": "",
+						"enum": [
+							"debug",
+							"info",
+							"warning",
+							"error",
+							"fatal",
+							"panic"
+						]
+					},
+					"vLogLevel": {
+						"type": "string",
+						"description": "",
+						"enum": [
+							"debug",
+							"info",
+							"warning",
+							"error",
+							"fatal",
+							"panic"
+						]
+					},
+					"vLogFilters": {
+						"type": "string",
+						"description": ""
+					}
+				}
 			}
 		]
 	},
