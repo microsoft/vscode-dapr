@@ -3,7 +3,7 @@ import TaskPseudoterminal from './taskPseudoterminal';
 import { PseudoterminalWriter } from './taskPseudoterminalWriter';
 
 export default class CustomExecutionTaskProvider implements vscode.TaskProvider {
-    constructor(private readonly callback: (definition: vscode.TaskDefinition, writer: PseudoterminalWriter, token?: vscode.CancellationToken) => Promise<number | void>) {
+    constructor(private readonly callback: (definition: vscode.TaskDefinition, writer: PseudoterminalWriter, token?: vscode.CancellationToken) => Promise<number | void>, private readonly isBackgroundTask?: boolean) {
     }
 
     provideTasks(token?: vscode.CancellationToken | undefined): vscode.ProviderResult<vscode.Task[]> {
@@ -11,7 +11,7 @@ export default class CustomExecutionTaskProvider implements vscode.TaskProvider 
     }
     
     resolveTask(task: vscode.Task, token?: vscode.CancellationToken | undefined): vscode.ProviderResult<vscode.Task> {
-        return new vscode.Task(
+        const resolvedTask = new vscode.Task(
             task.definition,
             task.scope || vscode.TaskScope.Workspace,
             task.name,
@@ -20,5 +20,9 @@ export default class CustomExecutionTaskProvider implements vscode.TaskProvider 
                 () => Promise.resolve(
                     new TaskPseudoterminal((writer, token) => this.callback(task.definition, writer, token)))),
             task.problemMatchers);
+
+        resolvedTask.isBackground = this.isBackgroundTask !== undefined ? this.isBackgroundTask : task.isBackground;
+
+        return resolvedTask;
     }
 }

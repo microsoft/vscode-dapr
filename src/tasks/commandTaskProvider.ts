@@ -7,7 +7,7 @@ export type CommandTaskSpawnCallback = (command: string, options?: cp.SpawnOptio
 export type CommandTaskProviderCallback = (definition: vscode.TaskDefinition, callback: CommandTaskSpawnCallback, token?: vscode.CancellationToken) => Promise<void>;
 
 export default class CommandTaskProvider extends CustomExecutionTaskProvider {
-    constructor(callback: CommandTaskProviderCallback) {
+    constructor(callback: CommandTaskProviderCallback, isBackgroundTask?: boolean) {
         super(
             (definition, writer, token) => {
                 return callback(
@@ -42,6 +42,7 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
                         }
                     },
                     token);
-            });
+            },
+            isBackgroundTask);
     }
 }

@@ -60,6 +60,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                         .build();
 
                 return callback(command, { cwd: definition.cwd });
-            });
+            },
+            /* isBackgroundTask */ true);
     }
 }
