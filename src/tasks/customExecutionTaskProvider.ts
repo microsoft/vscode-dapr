@@ -11,6 +11,11 @@ export default class CustomExecutionTaskProvider implements vscode.TaskProvider 
     }
     
     resolveTask(task: vscode.Task, token?: vscode.CancellationToken | undefined): vscode.ProviderResult<vscode.Task> {
+        const problemMatchers =
+            task.problemMatchers && task.problemMatchers.length > 0
+                ? task.problemMatchers
+                : ["$dapr"];
+
         const resolvedTask = new vscode.Task(
             task.definition,
             task.scope || vscode.TaskScope.Workspace,
@@ -19,7 +24,7 @@ export default class CustomExecutionTaskProvider implements vscode.TaskProvider 
             new vscode.CustomExecution(
                 () => Promise.resolve(
                     new TaskPseudoterminal((writer, token) => this.callback(task.definition, writer, token)))),
-            task.problemMatchers);
+            problemMatchers);
 
         resolvedTask.isBackground = this.isBackgroundTask !== undefined ? this.isBackgroundTask : task.isBackground;
 

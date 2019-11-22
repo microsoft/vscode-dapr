@@ -14,6 +14,24 @@
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"problemMatchers": [
+			{
+				"owner": "dapr",
+				"fileLocation": ["relative", "${workspaceFolder}"],
+				"pattern": [
+					{
+						"regexp": ".",
+						"file": 1,
+						"location": 2,
+						"message": 3
+					}
+				],
+				"background": {
+					"beginsPattern": "^.starting Dapr Runtime",
+					"endsPattern": "^.waiting on port"
+				}
+			}
+		],
 		"taskDefinitions": [
 			{
 				"type": "dapr",
