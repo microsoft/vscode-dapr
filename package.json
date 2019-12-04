@@ -252,6 +252,9 @@
 						"description": ""
 					}
 				}
+			},
+			{
+				"type": "daprd-down"
 			}
 		]
 	},
