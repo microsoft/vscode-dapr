@@ -11,10 +11,18 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:vscode-dapr.scaffoldDaprTasks",
 		"onCommand:workbench.action.tasks.runTask"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"commands":[
+			{
+				"command": "vscode-dapr.scaffoldDaprTasks",
+				"title": "Scaffold Dapr Tasks",
+				"category": "Dapr"
+			}
+		],
 		"problemMatchers": [
 			{
 				"name": "dapr",
