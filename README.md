@@ -1,6 +1,6 @@
 # vscode-dapr README
 
-This is the README for your extension "vscode-dapr". After writing up a brief description, we recommend including the following sections.
+An extension related to Dapr.
 
 ## Features
 

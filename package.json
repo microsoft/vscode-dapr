@@ -3,6 +3,7 @@
 	"displayName": "vscode-dapr",
 	"description": "A VS Code extension for users of Dapr.",
 	"version": "0.0.1",
+	"publisher": "microsoft",
 	"engines": {
 		"vscode": "^1.41.0"
 	},
