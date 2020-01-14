@@ -5,15 +5,26 @@ import DaprCommandTaskProvider from './tasks/daprCommandTaskProvider';
 import DaprdCommandTaskProvider from './tasks/daprdCommandTaskProvider';
 import DaprdDownTaskProvider from './tasks/daprdDownTaskProvider';
 import scaffoldDaprTasks from './commands/scaffoldDaprTasks';
+import { AzureUserInput, callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createTelemetryReporter, IActionContext, registerUIExtensionVariables, UserCancelledError } from 'vscode-azureextensionui';
+import ext from './ext';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
+	ext.context = context;
+	ext.ignoreBundle = true;
+	ext.outputChannel = createAzExtOutputChannel('Dapr', 'dapr');
+	context.subscriptions.push(ext.outputChannel);
+	ext.reporter = createTelemetryReporter(context);
+	ext.ui = new AzureUserInput(context.globalState);
 
-	context.subscriptions.push(vscode.tasks.registerTaskProvider("dapr", new DaprCommandTaskProvider()));
-	context.subscriptions.push(vscode.tasks.registerTaskProvider("daprd", new DaprdCommandTaskProvider()));
-	context.subscriptions.push(vscode.tasks.registerTaskProvider("daprd-down", new DaprdDownTaskProvider()));
+    registerUIExtensionVariables(ext);
+
+    context.subscriptions.push(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
+
+    context.subscriptions.push(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
+    context.subscriptions.push(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider()));
+    context.subscriptions.push(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider()));
 }
 
 // this method is called when your extension is deactivated
