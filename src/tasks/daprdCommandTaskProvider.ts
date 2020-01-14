@@ -1,9 +1,10 @@
 import CommandLineBuilder from '../util/commandLineBuilder';
 import CommandTaskProvider from './commandTaskProvider';
+import { TaskDefinition } from './taskDefinition';
 
 type DaprdLogLevel = 'debug' | 'info' | 'warning' | 'error' | 'fatal' | 'panic';
 
-type DaprdTaskDefinition = {
+export interface DaprdTaskDefinition extends TaskDefinition {
     allowedOrigins?: string;
     alsoLogToStdErr?: boolean;
     appId?: string;
@@ -25,7 +26,7 @@ type DaprdTaskDefinition = {
     stdErrThreshold?: DaprdLogLevel;
     vLogLevel?: DaprdLogLevel;
     vLogFilters?: string; // TODO: Allow more structured filters.
-};
+}
 
 export default class DaprdCommandTaskProvider extends CommandTaskProvider {
     constructor() {

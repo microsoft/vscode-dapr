@@ -1,7 +1,8 @@
 import CommandLineBuilder from '../util/commandLineBuilder';
 import CommandTaskProvider from './commandTaskProvider';
+import { TaskDefinition } from './taskDefinition';
 
-type DaprTaskDefinition = {
+export interface DaprTaskDefinition extends TaskDefinition {
     appId?: string;
     appPort?: number;
     command?: string[];
@@ -15,7 +16,8 @@ type DaprTaskDefinition = {
     maxConcurrency?: number;
     placementHost?: string;
     profilePort?: number;
-};
+    type: 'daprd';
+}
 
 export default class DaprCommandTaskProvider extends CommandTaskProvider {
     constructor() {
