@@ -9,12 +9,17 @@ async function onConflictingTask(task: TaskDefinition): Promise<boolean> {
 }
 
 export default async function scaffoldDaprTasks() {
+    // TODO: Infer name from application manifest/project file, or repo folder name.
     const appId = await ext.ui.showInputBox({ prompt: 'Enter a Dapr ID for the application', value: 'app' });
+    // TODO: Infer port from application manifest/project file, or application stack.
+    const appPortString = await ext.ui.showInputBox({ prompt: 'Enter the port on which the application listens.', value: '5000' });
+    const appPort = parseInt(appPortString, 10);
 
     const daprdUpTask: DaprTaskDefinition = {
         type: 'daprd',
         label: 'daprd-debug',
-        appId
+        appId,
+        appPort
     };
 
     const daprdDownTask: DaprdDownTaskDefinition = {
