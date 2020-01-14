@@ -11,6 +11,12 @@ function isConflictingTask(taskA: TaskDefinition, taskB: TaskDefinition): boolea
     }
 }
 
+export function getWorkspaceTasks(): TaskDefinition[] {
+    const workspaceConfigurations = vscode.workspace.getConfiguration('tasks');
+    
+    return workspaceConfigurations.tasks ?? [];
+}
+
 export default async function scaffoldTask(task: TaskDefinition, onConflict: (task: TaskDefinition) => Promise<boolean>): Promise<boolean> {
     const workspaceConfigurations = vscode.workspace.getConfiguration('tasks');
     const workspaceTasks: TaskDefinition[] = workspaceConfigurations.tasks ?? [];

@@ -1,6 +1,7 @@
+import * as vscode from 'vscode';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
-import scaffoldTask from "../scaffolding/taskScaffolder";
+import scaffoldTask, { getWorkspaceTasks } from "../scaffolding/taskScaffolder";
 import { TaskDefinition } from "vscode";
 import ext from "../ext";
 
@@ -15,11 +16,16 @@ export default async function scaffoldDaprTasks() {
     const appPortString = await ext.ui.showInputBox({ prompt: 'Enter the port on which the application listens.', value: '5000' });
     const appPort = parseInt(appPortString, 10);
 
+    const workspaceTasks = getWorkspaceTasks();
+
+    const buildTask = await ext.ui.showQuickPick(workspaceTasks.map(task => ({ label: task.label ?? task.type })), { placeHolder: 'Select the build task for the application' });
+
     const daprdUpTask: DaprTaskDefinition = {
         type: 'daprd',
         label: 'daprd-debug',
         appId,
-        appPort
+        appPort,
+        dependsOn: buildTask.label
     };
 
     const daprdDownTask: DaprdDownTaskDefinition = {

@@ -6,5 +6,5 @@ export interface DependsOn {
 
 export interface TaskDefinition extends vscode.TaskDefinition {
     label?: string;
-    dependsOn?: string[] | DependsOn;
+    dependsOn?: string | string[] | DependsOn;
 }
