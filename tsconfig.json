@@ -8,6 +8,7 @@
 		],
 		"sourceMap": true,
 		"rootDir": "src",
+		"baseUrl": "./",
 		"paths": {
             "*": [
                 "node_modules/vscode/*",
