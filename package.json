@@ -297,6 +297,7 @@
 		"vscode:prepublish": "npm run compile",
 		"build": "npm run compile",
 		"compile": "tsc -p ./",
+		"lint": "tslint --project tsconfig.json -t verbose",
 		"watch": "tsc -watch -p ./",
 		"package": "vsce package",
 		"pretest": "npm run compile",
