@@ -19,5 +19,4 @@ jobs:
     vmImage: macOS 10.13
   steps:
   - template: common/build.yml
-  - template: common/webpack-prod.yml
   - template: common/lint.yml
