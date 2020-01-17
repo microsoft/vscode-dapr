@@ -1,14 +1,14 @@
 jobs:
 - job: Windows
   pool:
-    vmImage: VS2017-Win2016
+    vmImage: windows-latest
   steps:
   - template: common/build.yml
   - template: common/lint.yml
 
 - job: Linux
   pool:
-    vmImage: ubuntu-16.04
+    vmImage: ubuntu-latest
   steps:
   - template: common/build.yml
   - template: common/publish-vsix.yml # Only publish vsix from linux build since we use this to release and want to stay consistent
@@ -16,7 +16,7 @@ jobs:
 
 - job: macOS
   pool:
-    vmImage: macOS 10.13
+    vmImage: macOS-latest
   steps:
   - template: common/build.yml
   - template: common/lint.yml
