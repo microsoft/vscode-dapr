@@ -7,6 +7,7 @@ import DaprdDownTaskProvider from './tasks/daprdDownTaskProvider';
 import scaffoldDaprTasks from './commands/scaffoldDaprTasks';
 import { AzureUserInput, callWithTelemetryAndErrorHandling, createAzExtOutputChannel, createTelemetryReporter, IActionContext, registerUIExtensionVariables, UserCancelledError } from 'vscode-azureextensionui';
 import ext from './ext';
+import { initializeTemplateScaffolder } from './scaffolding/templateScaffolder';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -19,6 +20,8 @@ export function activate(context: vscode.ExtensionContext) {
 	ext.ui = new AzureUserInput(context.globalState);
 
     registerUIExtensionVariables(ext);
+
+	initializeTemplateScaffolder(context.extensionPath);
 
     context.subscriptions.push(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
 

@@ -1,11 +1,36 @@
+import * as fse from 'fs-extra';
+import * as path from 'path';
+import * as vscode from 'vscode';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
 import ext from "../ext";
 import scaffoldTask, { getWorkspaceTasks } from "../scaffolding/taskScaffolder";
 import scaffoldConfiguration, { getWorkspaceConfigurations } from '../scaffolding/configurationScaffolder';
+import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
 
 async function onConflictingTask(): Promise<boolean> {
     return Promise.resolve(true);
+}
+
+async function scaffoldDaprComponents() {
+    // TODO: Verify open workspace/folder.
+    const rootWorkspaceFolderPath = (vscode.workspace.workspaceFolders ?? [])[0]?.uri?.fsPath;
+
+    if (!rootWorkspaceFolderPath) {
+        throw new Error('Open a folder or workspace.');
+    }
+
+    const componentsPath = path.join(rootWorkspaceFolderPath, 'components');
+
+    await fse.ensureDir(componentsPath);
+
+    const stateStoreComponentPath = path.join(componentsPath, 'redis.yaml');
+    const pubSubComponentPath = path.join(componentsPath, 'redis_messagebus.yaml');
+
+    const redisHost = "localhost";
+
+    await scaffoldStateStoreComponent(stateStoreComponentPath, redisHost);
+    await scaffoldPubSubComponent(pubSubComponentPath, redisHost);
 }
 
 export default async function scaffoldDaprTasks() {
@@ -54,4 +79,6 @@ export default async function scaffoldDaprTasks() {
     await scaffoldTask(daprdUpTask, onConflictingTask);
     await scaffoldTask(daprdDownTask, onConflictingTask);
     await scaffoldConfiguration(daprDebugConfiguration, onConflictingTask);
+
+    await scaffoldDaprComponents();
 }
