@@ -24,13 +24,13 @@ async function scaffoldDaprComponents() {
 
     await fse.ensureDir(componentsPath);
 
-    const stateStoreComponentPath = path.join(componentsPath, 'redis.yaml');
-    const pubSubComponentPath = path.join(componentsPath, 'redis_messagebus.yaml');
+    const components = await fse.readdir(componentsPath);
 
-    const redisHost = "localhost";
-
-    await scaffoldStateStoreComponent(stateStoreComponentPath, redisHost);
-    await scaffoldPubSubComponent(pubSubComponentPath, redisHost);
+    // Only scaffold the components if none exist...
+    if (components.length === 0) {
+        await scaffoldStateStoreComponent(componentsPath);
+        await scaffoldPubSubComponent(componentsPath);
+    }
 }
 
 export default async function scaffoldDaprTasks() {

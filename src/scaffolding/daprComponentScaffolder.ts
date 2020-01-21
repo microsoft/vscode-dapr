@@ -1,14 +1,18 @@
 import * as fse from 'fs-extra';
+import * as path from 'path';
 import scaffoldTemplate from './templateScaffolder';
 
-export async function scaffoldPubSubComponent(path: string, redisHost: string): Promise<void> {
-    const content = await scaffoldTemplate('components/pub-sub.yaml', { redisHost });
+export async function scaffoldRedisComponent(name: string, folderPath: string, fileName: string, redisHost?: string): Promise<void> {
+    // TODO: Use "redis" host name when a non-default network is used (e.g. DAPR_NETWORK is set).
+    const content = await scaffoldTemplate(name, { redisHost: redisHost ?? 'localhost' });
 
-    await fse.writeFile(path, content, 'utf8');
+    await fse.writeFile(path.join(folderPath, fileName), content, 'utf8');
 }
 
-export async function scaffoldStateStoreComponent(path: string, redisHost: string): Promise<void> {
-    const content = await scaffoldTemplate('components/state-store.yaml', { redisHost });
+export function scaffoldPubSubComponent(folderPath: string, options?: { fileName?: string, redisHost?: string }): Promise<void> {
+    return scaffoldRedisComponent('components/pub-sub.yaml', folderPath, options?.fileName ?? 'redis_messagebus.yaml', options?.redisHost);
+}
 
-    await fse.writeFile(path, content, 'utf8');
+export function scaffoldStateStoreComponent(folderPath: string, options?: { fileName?: string, redisHost?: string }): Promise<void> {
+    return scaffoldRedisComponent('components/state-store.yaml', folderPath, options?.fileName ?? 'redis.yaml', options?.redisHost);
 }
