@@ -22,7 +22,7 @@ export default class TaskPseudoterminal extends vscode.Disposable implements vsc
     readonly onDidClose: vscode.Event<number | void> = this.closeEmitter.event;
     public readonly onDidWrite: vscode.Event<string> = this.writeEmitter.event;
 
-    open(initialDimensions: vscode.TerminalDimensions | undefined): void {
+    open(): void {
         this.callback(
             new TaskPseudoterminalWriter(
                 (output: string) => {
@@ -37,7 +37,7 @@ export default class TaskPseudoterminal extends vscode.Disposable implements vsc
         this.closeWithValue();
     }
 
-    private closeWithValue(value: number | void) {
+    private closeWithValue(value: number | void): void {
         this.cts.cancel();
         this.closeEmitter.fire(value);
     }

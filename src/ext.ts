@@ -1,5 +1,5 @@
 import { UIExtensionVariables } from "vscode-azureextensionui";
 
-const ext = <UIExtensionVariables>{};
+const ext = {} as UIExtensionVariables;
 
 export default ext;

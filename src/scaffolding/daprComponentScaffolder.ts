@@ -11,10 +11,10 @@ export async function scaffoldRedisComponent(name: string, folderPath: string, f
     await fse.writeFile(path.join(folderPath, fileName), content, 'utf8');
 }
 
-export function scaffoldPubSubComponent(folderPath: string, options?: { fileName?: string, redisHost?: string }): Promise<void> {
+export function scaffoldPubSubComponent(folderPath: string, options?: { fileName?: string; redisHost?: string }): Promise<void> {
     return scaffoldRedisComponent('components/pub-sub.yaml', folderPath, options?.fileName ?? 'redis_messagebus.yaml', options?.redisHost);
 }
 
-export function scaffoldStateStoreComponent(folderPath: string, options?: { fileName?: string, redisHost?: string }): Promise<void> {
+export function scaffoldStateStoreComponent(folderPath: string, options?: { fileName?: string; redisHost?: string }): Promise<void> {
     return scaffoldRedisComponent('components/state-store.yaml', folderPath, options?.fileName ?? 'redis.yaml', options?.redisHost);
 }

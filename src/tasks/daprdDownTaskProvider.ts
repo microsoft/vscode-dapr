@@ -10,8 +10,8 @@ export interface DaprdDownTaskDefinition extends TaskDefinition {
 export default class DaprdDownTaskProvider extends CustomExecutionTaskProvider {
     constructor() {
         super(
-            async (definition, writer, token) => {
-                const daprdDownDefinition = <DaprdDownTaskDefinition>definition;
+            async (definition, writer) => {
+                const daprdDownDefinition = definition as DaprdDownTaskDefinition;
 
                 if (daprdDownDefinition.appId === undefined) {
                     throw new Error('The \'appId\' property must be set.');
@@ -22,7 +22,7 @@ export default class DaprdDownTaskProvider extends CustomExecutionTaskProvider {
 
                 const argumentPattern = `--dapr-id ${daprdDownDefinition.appId}`;
 
-                const appProcesses = daprdProcesses.filter(p => p.cmd && p.cmd.indexOf(argumentPattern) >= 0);
+                const appProcesses = daprdProcesses.filter(p => p.cmd?.includes(argumentPattern));
 
                 appProcesses.forEach(p => process.kill(p.pid, 'SIGKILL'));
 

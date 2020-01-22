@@ -119,8 +119,8 @@ export default class CommandLineBuilder {
         return this;
     }
 
-    public withArrayArgs<T extends Object>(name: string, values: T[] | undefined, formatter?: (value: T) => string | vscode.ShellQuotedString): CommandLineBuilder {
-        formatter = formatter || ((value: T) => value.toString());
+    public withArrayArgs<T extends {}>(name: string, values: T[] | undefined, formatter?: (value: T) => string | vscode.ShellQuotedString): CommandLineBuilder {
+        formatter = formatter || ((value: T): string => value.toString());
 
         if (values !== undefined) {
             for (const value of values) {
