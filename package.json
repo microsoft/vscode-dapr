@@ -2,7 +2,7 @@
 	"name": "vscode-dapr",
 	"displayName": "Dapr",
 	"description": "A VS Code extension for users of Dapr.",
-	"version": "0.0.1-alpha",
+	"version": "0.0.2-alpha",
 	"preview": true,
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.md",
