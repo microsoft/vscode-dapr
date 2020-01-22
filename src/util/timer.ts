@@ -1,7 +1,7 @@
 export default class Timer {
     static Timeout(delay: number): Promise<void> {
         return new Promise(
-            (resolve, reject) => {
+            (resolve) => {
                 setTimeout(resolve, delay);
             });
     }

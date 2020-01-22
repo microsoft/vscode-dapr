@@ -4,7 +4,7 @@ import * as path from 'path';
 
 let templatesPath: string;
 
-export function initializeTemplateScaffolder(extensionPath: string) {
+export function initializeTemplateScaffolder(extensionPath: string): void {
     templatesPath = path.join(extensionPath, 'assets', 'templates');
 }
 

@@ -29,11 +29,11 @@ export class Process extends vscode.Disposable {
     onStdErr = this.onStdErrEmitter.event;
     onStdOut = this.onStdOutEmitter.event;
 
-    static async exec(command: string, options?: cp.ExecOptions, token?: vscode.CancellationToken): Promise<{ code: number, stderr: string, stdout: string }> {
+    static async exec(command: string, options?: cp.ExecOptions, token?: vscode.CancellationToken): Promise<{ code: number; stderr: string; stdout: string }> {
         const process = new Process();
 
-        let stdoutBytesWritten: number = 0;
-        let stderrBytesWritten: number = 0;
+        let stdoutBytesWritten = 0;
+        let stderrBytesWritten = 0;
 
         const stdoutBuffer = Buffer.alloc(options && options.maxBuffer || DEFAULT_BUFFER_SIZE);
         const stderrBuffer = Buffer.alloc(options && options.maxBuffer || DEFAULT_BUFFER_SIZE);

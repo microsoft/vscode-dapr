@@ -31,8 +31,8 @@ export interface DaprdTaskDefinition extends TaskDefinition {
 export default class DaprdCommandTaskProvider extends CommandTaskProvider {
     constructor() {
         super(
-            (definition, callback, token) => {
-                const daprDefinition =<DaprdTaskDefinition>definition;
+            (definition, callback) => {
+                const daprDefinition = definition as DaprdTaskDefinition;
 
                 const command =
                     CommandLineBuilder

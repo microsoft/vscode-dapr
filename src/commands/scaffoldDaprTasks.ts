@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
 import ext from "../ext";
-import scaffoldTask, { getWorkspaceTasks } from "../scaffolding/taskScaffolder";
+import scaffoldTask from "../scaffolding/taskScaffolder";
 import scaffoldConfiguration, { getWorkspaceConfigurations } from '../scaffolding/configurationScaffolder';
 import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
 
@@ -12,7 +12,7 @@ async function onConflictingTask(): Promise<boolean> {
     return Promise.resolve(true);
 }
 
-async function scaffoldDaprComponents() {
+async function scaffoldDaprComponents(): Promise<void> {
     // TODO: Verify open workspace/folder.
     const rootWorkspaceFolderPath = (vscode.workspace.workspaceFolders ?? [])[0]?.uri?.fsPath;
 
@@ -33,7 +33,7 @@ async function scaffoldDaprComponents() {
     await scaffoldPubSubComponent(pubSubComponentPath, redisHost);
 }
 
-export default async function scaffoldDaprTasks() {
+export default async function scaffoldDaprTasks(): Promise<void> {
     // TODO: Infer name from application manifest/project file, or repo folder name.
     const appId = await ext.ui.showInputBox({ prompt: 'Enter a Dapr ID for the application', value: 'app' });
     // TODO: Infer port from application manifest/project file, or application stack.

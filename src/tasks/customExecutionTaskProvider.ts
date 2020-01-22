@@ -9,11 +9,11 @@ export default class CustomExecutionTaskProvider implements vscode.TaskProvider 
         private readonly problemMatchers?: string[]) {
     }
 
-    provideTasks(token?: vscode.CancellationToken | undefined): vscode.ProviderResult<vscode.Task[]> {
+    provideTasks(): vscode.ProviderResult<vscode.Task[]> {
         return [];
     }
     
-    resolveTask(task: vscode.Task, token?: vscode.CancellationToken | undefined): vscode.ProviderResult<vscode.Task> {
+    resolveTask(task: vscode.Task): vscode.ProviderResult<vscode.Task> {
         const problemMatchers =
             task.problemMatchers && task.problemMatchers.length > 0
                 ? task.problemMatchers
