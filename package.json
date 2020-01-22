@@ -2,9 +2,9 @@
 	"name": "vscode-dapr",
 	"displayName": "Dapr",
 	"description": "A VS Code extension for users of Dapr.",
-	"version": "0.0.1-alpha",
+	"version": "0.0.2-alpha",
 	"preview": true,
-    "publisher": "ms-azuretools",
+	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.md",
 	"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
 	"extensionKind": [
@@ -22,10 +22,10 @@
 		"onCommand:workbench.action.tasks.runTask"
 	],
 	"repository": {
-        "type": "git",
-        "url": "https://github.com/microsoft/vscode-dapr"
-    },
-    "homepage": "https://github.com/Microsoft/vscode-dapr/blob/master/README.md",
+		"type": "git",
+		"url": "https://github.com/microsoft/vscode-dapr"
+	},
+	"homepage": "https://github.com/Microsoft/vscode-dapr/blob/master/README.md",
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
@@ -304,7 +304,9 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
+		"@types/fs-extra": "^8.0.1",
 		"@types/glob": "^7.1.1",
+		"@types/handlebars": "^4.1.0",
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.12.24",
 		"@types/ps-list": "^6.2.1",
@@ -317,6 +319,8 @@
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
+		"fs-extra": "^8.1.0",
+		"handlebars": "^4.7.2",
 		"ps-list": "^6.3.0",
 		"vscode-azureextensionui": "^0.29.3"
 	}
