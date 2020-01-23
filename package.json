@@ -19,7 +19,8 @@
 	],
 	"activationEvents": [
 		"onCommand:vscode-dapr.scaffoldDaprTasks",
-		"onCommand:workbench.action.tasks.runTask"
+		"onCommand:workbench.action.tasks.runTask",
+		"onView:vscode-dapr.views.applications"
 	],
 	"repository": {
 		"type": "git",
@@ -291,7 +292,24 @@
 					"appId"
 				]
 			}
-		]
+		],
+		"views": {
+			"dapr-explorer": [
+				{
+					"id": "vscode-dapr.views.applications",
+					"name": "Applications"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "dapr-explorer",
+					"title": "Dapr",
+					"icon": "assets/images/dapr.svg"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
