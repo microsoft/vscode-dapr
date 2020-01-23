@@ -9,11 +9,14 @@ export default class Timer {
     }
 
     static Interval(delay: number, callback: () => void): vscode.Disposable {
-        const timer = setInterval(callback, delay);
+        let timer: NodeJS.Timeout | undefined = setInterval(callback, delay);
 
         return new vscode.Disposable(
             () => {
-                clearInterval(timer);
+                if (timer) {
+                    clearInterval(timer);
+                    timer = undefined;
+                }
             });
     }
 }

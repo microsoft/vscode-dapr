@@ -1,11 +1,17 @@
 import * as vscode from 'vscode';
 import { DaprApplication, DaprApplicationProvider } from '../../services/daprApplicationProvider';
 
-export default class DaprApplicationTreeDataProvider implements vscode.TreeDataProvider<DaprApplication> {
+export default class DaprApplicationTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<DaprApplication> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<DaprApplication | null | undefined>();
+    private readonly applicationProviderListener: vscode.Disposable;
 
     constructor(private readonly applicationProvider: DaprApplicationProvider) {
-        this.applicationProvider.onDidChange(
+        super(() => {
+            this.applicationProviderListener.dispose();
+            this.onDidChangeTreeDataEmitter.dispose();
+        });
+
+        this.applicationProviderListener = this.applicationProvider.onDidChange(
             () => {
                 this.onDidChangeTreeDataEmitter.fire(undefined);
             });

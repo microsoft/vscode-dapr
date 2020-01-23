@@ -12,11 +12,16 @@ export interface DaprApplicationProvider {
     getApplications(): Promise<DaprApplication[]>;
 }
 
-export default class ProcessBasedDaprApplicationProvider implements DaprApplicationProvider {
+export default class ProcessBasedDaprApplicationProvider extends vscode.Disposable implements DaprApplicationProvider {
     private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
     private readonly timer: vscode.Disposable;
 
     constructor() {
+        super(() => {
+            this.timer.dispose();
+            this.onDidChangeEmitter.dispose();
+        });
+
         // TODO: Do a sane comparison of the old vs. new applications.
         this.timer = Timer.Interval(2000, () => this.onDidChangeEmitter.fire());
     }

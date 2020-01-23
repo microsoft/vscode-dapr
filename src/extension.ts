@@ -12,6 +12,12 @@ import DaprApplicationTreeDataProvider from './views/applications/daprApplicatio
 import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
+	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
+		context.subscriptions.push(disposable);
+	
+		return disposable;
+	}
+
 	ext.context = context;
 	ext.ignoreBundle = true;
 	ext.outputChannel = createAzExtOutputChannel('Dapr', 'dapr');
@@ -23,11 +29,17 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	initializeTemplateScaffolder(context.extensionPath);
 
-    context.subscriptions.push(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
+    registerDisposable(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
 
-    context.subscriptions.push(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
-    context.subscriptions.push(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider()));
-	context.subscriptions.push(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider()));
+    registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
+    registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider()));
+	registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider()));
 	
-	context.subscriptions.push(vscode.window.registerTreeDataProvider('vscode-dapr.views.applications', new DaprApplicationTreeDataProvider(new ProcessBasedDaprApplicationProvider())));
+	registerDisposable(
+		vscode.window.registerTreeDataProvider(
+			'vscode-dapr.views.applications',
+			registerDisposable(
+				new DaprApplicationTreeDataProvider(
+					registerDisposable(
+						new ProcessBasedDaprApplicationProvider())))));
 }
