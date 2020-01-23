@@ -12,6 +12,24 @@ export interface DaprApplicationProvider {
     getApplications(): Promise<DaprApplication[]>;
 }
 
+function toApplication(cmd: string | undefined): DaprApplication | undefined {
+    if (cmd) {
+        const appIdRegEx = /--dapr-id (?<appId>[a-zA-Z0-9_-]+)/g;
+        
+        const appIdMatch = appIdRegEx.exec(cmd);
+        
+        const appId = appIdMatch?.groups?.['appId'];
+
+        if (appId) {
+            return {
+                appId
+            };
+        }
+    }
+
+    return undefined;
+}
+
 export default class ProcessBasedDaprApplicationProvider extends vscode.Disposable implements DaprApplicationProvider {
     private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
     private readonly timer: vscode.Disposable;
@@ -34,6 +52,8 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
         const processes = await psList();
         const daprdProcesses = processes.filter(p => p.name === 'daprd');
 
-        return daprdProcesses.map((process, index) => ({ appId: `app${index}`}));
+        return daprdProcesses
+            .map(process => toApplication(process.cmd))
+            .filter((application): application is DaprApplication => application !== undefined);
     }
 }
