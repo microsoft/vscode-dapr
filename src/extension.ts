@@ -8,6 +8,8 @@ import scaffoldDaprTasks from './commands/scaffoldDaprTasks';
 import { AzureUserInput, createAzExtOutputChannel, createTelemetryReporter, registerUIExtensionVariables } from 'vscode-azureextensionui';
 import ext from './ext';
 import { initializeTemplateScaffolder } from './scaffolding/templateScaffolder';
+import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
+import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
 	ext.context = context;
@@ -25,5 +27,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
     context.subscriptions.push(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
     context.subscriptions.push(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider()));
-    context.subscriptions.push(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider()));
+	context.subscriptions.push(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider()));
+	
+	context.subscriptions.push(vscode.window.registerTreeDataProvider('vscode-dapr.views.applications', new DaprApplicationTreeDataProvider(new ProcessBasedDaprApplicationProvider())));
 }
