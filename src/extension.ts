@@ -10,6 +10,7 @@ import ext from './ext';
 import { initializeTemplateScaffolder } from './scaffolding/templateScaffolder';
 import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
 import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
+import invokeGet from './commands/invokeGet';
 
 export function activate(context: vscode.ExtensionContext): void {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -29,6 +30,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	initializeTemplateScaffolder(context.extensionPath);
 
+	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-get', invokeGet));
     registerDisposable(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
 
     registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));

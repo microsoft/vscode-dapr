@@ -18,6 +18,7 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:vscode-dapr.invoke-get",
 		"onCommand:vscode-dapr.scaffoldDaprTasks",
 		"onCommand:workbench.action.tasks.runTask",
 		"onView:vscode-dapr.views.applications"
@@ -31,11 +32,24 @@
 	"contributes": {
 		"commands": [
 			{
+				"command": "vscode-dapr.invoke-get",
+				"title": "Invoke (GET) application method",
+				"category": "Dapr"
+			},
+			{
 				"command": "vscode-dapr.scaffoldDaprTasks",
 				"title": "Scaffold Dapr Tasks",
 				"category": "Dapr"
 			}
 		],
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "vscode-dapr.invoke-get",
+					"when": "view == vscode-dapr.views.applications && viewItem == application"
+				}
+			]
+		},
 		"problemMatchers": [
 			{
 				"name": "dapr",

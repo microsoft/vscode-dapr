@@ -4,6 +4,7 @@ import Timer from '../util/timer';
 
 export interface DaprApplication {
     appId: string;
+    httpPort: number;
 }
 
 export interface DaprApplicationProvider {
@@ -12,17 +13,36 @@ export interface DaprApplicationProvider {
     getApplications(): Promise<DaprApplication[]>;
 }
 
+function getAppId(cmd: string): string | undefined {
+    const appIdRegEx = /--dapr-id (?<appId>[a-zA-Z0-9_-]+)/g;
+        
+    const appIdMatch = appIdRegEx.exec(cmd);
+    
+    return appIdMatch?.groups?.['appId'];
+}
+
+function getHttpPort(cmd: string): number {
+    const portRegEx = /--dapr-http-port (?<port>\d+)/g;
+        
+    const portMatch = portRegEx.exec(cmd);
+    
+    const portString = portMatch?.groups?.['appId'];
+    
+    if (portString !== undefined) {
+        return parseInt(portString, 10);
+    } else {
+        return 3500;
+    }
+}
+
 function toApplication(cmd: string | undefined): DaprApplication | undefined {
     if (cmd) {
-        const appIdRegEx = /--dapr-id (?<appId>[a-zA-Z0-9_-]+)/g;
-        
-        const appIdMatch = appIdRegEx.exec(cmd);
-        
-        const appId = appIdMatch?.groups?.['appId'];
+        const appId = getAppId(cmd);
 
         if (appId) {
             return {
-                appId
+                appId,
+                httpPort: getHttpPort(cmd)
             };
         }
     }
