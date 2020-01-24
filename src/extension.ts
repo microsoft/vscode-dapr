@@ -10,7 +10,7 @@ import ext from './ext';
 import { initializeTemplateScaffolder } from './scaffolding/templateScaffolder';
 import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
 import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
-import invokeGet from './commands/invokeGet';
+import createInvokeGetCommand from './commands/invokeGet';
 
 export function activate(context: vscode.ExtensionContext): void {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -21,8 +21,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	ext.context = context;
 	ext.ignoreBundle = true;
-	ext.outputChannel = createAzExtOutputChannel('Dapr', 'dapr');
-	context.subscriptions.push(ext.outputChannel);
+	ext.outputChannel = registerDisposable(createAzExtOutputChannel('Dapr', 'dapr'));
 	ext.reporter = createTelemetryReporter(context);
 	ext.ui = new AzureUserInput(context.globalState);
 
@@ -30,7 +29,9 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	initializeTemplateScaffolder(context.extensionPath);
 
-	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-get', invokeGet));
+	const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider());
+
+	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-get', createInvokeGetCommand(daprApplicationProvider, ext.ui)));
     registerDisposable(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
 
     registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
@@ -40,8 +41,5 @@ export function activate(context: vscode.ExtensionContext): void {
 	registerDisposable(
 		vscode.window.registerTreeDataProvider(
 			'vscode-dapr.views.applications',
-			registerDisposable(
-				new DaprApplicationTreeDataProvider(
-					registerDisposable(
-						new ProcessBasedDaprApplicationProvider())))));
+			registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider))));
 }
