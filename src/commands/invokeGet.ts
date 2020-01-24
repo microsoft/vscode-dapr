@@ -1,3 +1,4 @@
+import axios from 'axios';
 import DaprApplicationNode from "../views/applications/daprApplicationNode";
 import { DaprApplicationProvider, DaprApplication } from "../services/daprApplicationProvider";
 import { IAzureUserInput } from "vscode-azureextensionui";
@@ -15,7 +16,17 @@ export async function invokeGet(daprApplicationProvider: DaprApplicationProvider
         application = node.application;
     }
 
-    console.log(application.appId);
+    const method = await ui.showInputBox({ prompt: 'Enter the application method to invoke' });
+
+    const url = `http://localhost:${application.httpPort}/v1.0/invoke/${application.appId}/method/${method}`;
+
+    try {
+        const response = await axios.get(url);
+
+        console.log(response.data);
+    } catch (err) {
+        console.error(err.toString());
+    }
 }
 
 const createInvokeGetCommand = (daprApplicationProvider: DaprApplicationProvider, ui: IAzureUserInput) => (node: DaprApplicationNode | undefined): Promise<void> => invokeGet(daprApplicationProvider, ui, node);
