@@ -1,9 +1,9 @@
-import axios from 'axios';
 import DaprApplicationNode from "../views/applications/daprApplicationNode";
 import { DaprApplicationProvider, DaprApplication } from "../services/daprApplicationProvider";
 import { IAzureUserInput } from "vscode-azureextensionui";
+import { HttpClient } from '../services/httpClient';
 
-export async function invokeGet(daprApplicationProvider: DaprApplicationProvider, ui: IAzureUserInput, node: DaprApplicationNode | undefined): Promise<void> {
+export async function invokeGet(daprApplicationProvider: DaprApplicationProvider, httpClient: HttpClient, ui: IAzureUserInput, node: DaprApplicationNode | undefined): Promise<void> {
     let application: DaprApplication;
     
     if (!node) {
@@ -20,8 +20,10 @@ export async function invokeGet(daprApplicationProvider: DaprApplicationProvider
 
     const url = `http://localhost:${application.httpPort}/v1.0/invoke/${application.appId}/method/${method}`;
 
+
+
     try {
-        const response = await axios.get(url);
+        const response = await httpClient.get(url);
 
         console.log(response.data);
     } catch (err) {
@@ -29,6 +31,6 @@ export async function invokeGet(daprApplicationProvider: DaprApplicationProvider
     }
 }
 
-const createInvokeGetCommand = (daprApplicationProvider: DaprApplicationProvider, ui: IAzureUserInput) => (node: DaprApplicationNode | undefined): Promise<void> => invokeGet(daprApplicationProvider, ui, node);
+const createInvokeGetCommand = (daprApplicationProvider: DaprApplicationProvider, httpClient: HttpClient, ui: IAzureUserInput) => (node: DaprApplicationNode | undefined): Promise<void> => invokeGet(daprApplicationProvider, httpClient, ui, node);
 
 export default createInvokeGetCommand;
