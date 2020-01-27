@@ -13,6 +13,7 @@ import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvi
 import createInvokeGetCommand from './commands/invokeGet';
 import AxiosHttpClient from './services/httpClient';
 import { AggregateUserInput } from './services/userInput';
+import HttpDaprClient from './services/daprClient';
 
 export function activate(context: vscode.ExtensionContext): void {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -32,10 +33,10 @@ export function activate(context: vscode.ExtensionContext): void {
 	initializeTemplateScaffolder(context.extensionPath);
 
 	const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider());
-	const httpClient = new AxiosHttpClient();
+	const daprClient = new HttpDaprClient(new AxiosHttpClient());
 	const ui = new AggregateUserInput(ext.ui);
 
-	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-get', createInvokeGetCommand(daprApplicationProvider, httpClient, ui)));
+	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui)));
     registerDisposable(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
 
     registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
