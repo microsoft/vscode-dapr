@@ -11,6 +11,7 @@ import { initializeTemplateScaffolder } from './scaffolding/templateScaffolder';
 import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
 import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
 import createInvokeGetCommand from './commands/invokeGet';
+import createInvokePostCommand from './commands/invokePost';
 import AxiosHttpClient from './services/httpClient';
 import { AggregateUserInput } from './services/userInput';
 import HttpDaprClient from './services/daprClient';
@@ -37,6 +38,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	const ui = new AggregateUserInput(ext.ui);
 
 	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui)));
+	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui)));
     registerDisposable(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
 
     registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));

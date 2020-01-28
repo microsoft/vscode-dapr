@@ -37,6 +37,11 @@
 				"category": "Dapr"
 			},
 			{
+				"command": "vscode-dapr.invoke-post",
+				"title": "Invoke (POST) application method",
+				"category": "Dapr"
+			},
+			{
 				"command": "vscode-dapr.scaffoldDaprTasks",
 				"title": "Scaffold Dapr Tasks",
 				"category": "Dapr"
@@ -46,6 +51,10 @@
 			"view/item/context": [
 				{
 					"command": "vscode-dapr.invoke-get",
+					"when": "view == vscode-dapr.views.applications && viewItem == application"
+				},
+				{
+					"command": "vscode-dapr.invoke-post",
 					"when": "view == vscode-dapr.views.applications && viewItem == application"
 				}
 			]
