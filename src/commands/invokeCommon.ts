@@ -3,6 +3,9 @@ import { DaprApplication, DaprApplicationProvider } from "../services/daprApplic
 import { UserInput } from '../services/userInput';
 import { DaprClient } from '../services/daprClient';
 
+const invokeMethodStateKey = 'vscode-docker.state.invoke.method';
+const invokePayloadStateKey = 'vscode-docker.state.invoke.payload';
+
 export async function getApplication(daprApplicationProvider: DaprApplicationProvider, ui: UserInput, selectedApplication?: DaprApplication): Promise<DaprApplication> {
     if (!selectedApplication) {
         const applications = await daprApplicationProvider.getApplications();
@@ -15,21 +18,32 @@ export async function getApplication(daprApplicationProvider: DaprApplicationPro
     return selectedApplication;
 }
 
-export function getMethod(ui: UserInput): Promise<string> {
-    return ui.showInputBox({ prompt: 'Enter the application method to invoke' });
+export async function getMethod(ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
+    const previousMethod = workspaceState.get<string>(invokeMethodStateKey);
+
+    const method = await ui.showInputBox({ prompt: 'Enter the application method to invoke', value: previousMethod });
+
+    await workspaceState.update(invokeMethodStateKey, method);
+
+    return method;
 }
 
-export async function invoke(daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, selectedApplication: DaprApplication | undefined, isPost?: boolean): Promise<void> {
+export async function getPayload(ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
+    const previousPayloadString = workspaceState.get<string>(invokePayloadStateKey);
+
+    const payloadString = await ui.showInputBox({ prompt: 'Enter a JSON payload for the method (or leave empty, if no payload is needed)', value: previousPayloadString });
+
+    const payload = JSON.parse(payloadString);
+
+    await workspaceState.update(invokePayloadStateKey, payloadString);
+
+    return payload;
+}
+
+export async function invoke(daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, selectedApplication: DaprApplication | undefined, isPost?: boolean): Promise<void> {
     const application = await getApplication(daprApplicationProvider, ui, selectedApplication);
-    const method = await getMethod(ui);
-
-    let payload: unknown;
-
-    if (isPost) {
-        const payloadString = await ui.showInputBox({ prompt: 'Enter a JSON payload for the method (or leave empty, if no payload is needed)'});
-
-        payload = JSON.parse(payloadString);
-    }
+    const method = await getMethod(ui, workspaceState);
+    const payload = isPost ? await getPayload(ui, workspaceState) : undefined;
 
     await ui.withProgress(
         'Invoking Dapr application',
