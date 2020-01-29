@@ -51,6 +51,8 @@ function toApplication(cmd: string | undefined): DaprApplication | undefined {
 }
 
 export default class ProcessBasedDaprApplicationProvider extends vscode.Disposable implements DaprApplicationProvider {
+    private applications: DaprApplication[] | undefined;
+    private currentRefresh: Promise<void> | undefined;
     private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
     private readonly timer: vscode.Disposable;
 
@@ -61,19 +63,43 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
         });
 
         // TODO: Do a sane comparison of the old vs. new applications.
-        this.timer = Timer.Interval(2000, () => this.onDidChangeEmitter.fire());
+        this.timer = Timer.Interval(
+            2000,
+            () => {
+                this.refreshApplications();
+            });
     }
 
     get onDidChange(): vscode.Event<void> {
         return this.onDidChangeEmitter.event;
     }
 
-    async getApplications(): Promise<DaprApplication[]> {
+    async getApplications(refresh?: boolean): Promise<DaprApplication[]> {
+        if (!this.applications || refresh) {
+            await this.refreshApplications();
+        }
+
+        return this.applications ?? [];
+    }
+
+    private async refreshApplications(): Promise<void> {
+        if (!this.currentRefresh) {
+            this.currentRefresh = this.onRefresh();
+        }
+
+        await this.currentRefresh;
+
+        this.currentRefresh = undefined;
+    }
+
+    private async onRefresh(): Promise<void> {
         const processes = await psList();
         const daprdProcesses = processes.filter(p => p.name === 'daprd');
-
-        return daprdProcesses
+        
+        this.applications = daprdProcesses
             .map(process => toApplication(process.cmd))
             .filter((application): application is DaprApplication => application !== undefined);
+        
+        this.onDidChangeEmitter.fire();
     }
 }
