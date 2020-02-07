@@ -29,7 +29,7 @@ export async function getMethod(ui: UserInput, workspaceState: vscode.Memento, m
     return method;
 }
 
-export async function getPayload(ui: UserInput, workspaceState: vscode.Memento, payLoadStateKey: string): Promise<string> {
+export async function getPayload(ui: UserInput, workspaceState: vscode.Memento, payLoadStateKey: string): Promise<unknown> {
     const previousPayloadString = workspaceState.get<string>(payLoadStateKey);
 
     const payloadString = await ui.showInputBox({ prompt: 'Enter a JSON payload for the method (or leave empty, if no payload is needed)', value: previousPayloadString });
@@ -55,7 +55,7 @@ export async function invoke(daprApplicationProvider: DaprApplicationProvider, d
         async (_, token) => {
             try {
                 if (isPost) {
-                    outputChannel.appendLine(`Invoking Dapr application '${application.appId}' method '${method}' with payload '${payload}'...`)
+                    outputChannel.appendLine(`Invoking Dapr application '${application.appId}' method '${method}' with payload '${JSON.stringify(payload)}'...`)
                 } else {
                     outputChannel.appendLine(`Invoking Dapr application '${application.appId}' method '${method}'...`)
                 }

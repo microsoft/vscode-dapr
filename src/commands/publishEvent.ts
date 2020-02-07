@@ -27,7 +27,7 @@ export async function publishEvent(daprApplicationProvider: DaprApplicationProvi
         'Publishing Dapr event',
         async (_, token) => {
             try {
-                outputChannel.appendLine(`Publishing Dapr event '${topic}' to application '${application.appId}' with payload '${payload}'...`);
+                outputChannel.appendLine(`Publishing Dapr event '${topic}' to application '${application.appId}' with payload '${JSON.stringify(payload)}'...`);
 
                 await daprClient.publishEvent(application, topic, payload, token);
         
