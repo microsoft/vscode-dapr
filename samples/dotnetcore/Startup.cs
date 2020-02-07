@@ -28,9 +28,13 @@ namespace App
         {
             app.UseRouting();
 
+            app.UseCloudEvents();
+
             app.UseEndpoints(
                 endpoints =>
                 {
+                    endpoints.MapSubscribeHandler();
+
                     endpoints.MapControllers();
                 });
         }

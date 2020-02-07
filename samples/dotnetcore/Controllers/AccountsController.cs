@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 using Dapr;
 using Microsoft.AspNetCore.Mvc;
 
-namespace aspnetapp
+namespace App
 {
     [ApiController]
-    [Route("[controller]")]
     public class AccountsController : ControllerBase
     {
         [HttpGet("{account}")]
@@ -44,6 +43,21 @@ namespace aspnetapp
             await account.SaveAsync();
 
             return account.Value;
+        }
+
+        [Topic("transaction")]
+        [HttpPost("transaction")]
+        public async Task<ActionResult<int>> Withdraw(Transaction transaction, [FromServices] StateClient stateClient)
+        {
+            var account = await stateClient.GetStateEntryAsync<int?>(transaction.AccountId);
+
+            switch (transaction.Type)
+            {
+                case "deposit": return await this.Deposit(account, transaction.Amount);
+                case "withdraw": return await this.Withdraw(account, transaction.Amount);
+                default:
+                    return this.NotFound();
+            }
         }
     }
 }
