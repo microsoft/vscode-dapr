@@ -42,7 +42,7 @@ export async function getPayload(ui: UserInput, workspaceState: vscode.Memento):
     return payload;
 }
 
-function isError(err: unknown): err is Error {
+export function isError(err: unknown): err is Error {
     return err instanceof Error;
 }
 

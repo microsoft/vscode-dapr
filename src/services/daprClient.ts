@@ -5,6 +5,7 @@ import { HttpClient } from './httpClient';
 export interface DaprClient {
     invokeGet(application: DaprApplication, method: string, token?: vscode.CancellationToken): Promise<unknown>;
     invokePost(application: DaprApplication, method: string, payload?: unknown, token?: vscode.CancellationToken): Promise<unknown>;
+    publishEvent(application: DaprApplication, topic: string, payload?: unknown, token?: vscode.CancellationToken): Promise<void>;
 }
 
 export default class HttpDaprClient implements DaprClient {
@@ -25,5 +26,11 @@ export default class HttpDaprClient implements DaprClient {
         const response = await this.httpClient.post(url, payload, { json: true }, token);
 
         return response.data;
+    }
+
+    async publishEvent(application: DaprApplication, topic: string, payload?: unknown, token?: vscode.CancellationToken): Promise<void> {
+        const url = `http://localhost:${application.httpPort}/v1.0/publish/${topic}`;
+
+        await this.httpClient.post(url, payload, { json: true }, token);
     }
 }
