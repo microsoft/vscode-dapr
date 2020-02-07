@@ -47,7 +47,7 @@ namespace App
 
         [Topic("transaction")]
         [HttpPost("transaction")]
-        public async Task<ActionResult<int>> Withdraw(Transaction transaction, [FromServices] StateClient stateClient)
+        public async Task<ActionResult<int>> Transaction(Transaction transaction, [FromServices] StateClient stateClient)
         {
             var account = await stateClient.GetStateEntryAsync<int?>(transaction.AccountId);
 

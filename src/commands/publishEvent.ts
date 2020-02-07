@@ -6,6 +6,7 @@ import { DaprClient } from '../services/daprClient';
 import { getApplication, getPayload, isError } from './invokeCommon';
 
 const publishEventTopicStateKey = 'vscode-docker.state.publishEvent.topic';
+const publishEventPayloadStateKey = 'vscode-docker.state.publishEvent.payload';
 
 export async function getTopic(ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
     const previousMethod = workspaceState.get<string>(publishEventTopicStateKey);
@@ -20,7 +21,7 @@ export async function getTopic(ui: UserInput, workspaceState: vscode.Memento): P
 export async function publishEvent(daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, node: DaprApplicationNode | undefined): Promise<void> {
     const application = await getApplication(daprApplicationProvider, ui, node?.application);
     const topic = await getTopic(ui, workspaceState);
-    const payload = await getPayload(ui, workspaceState);
+    const payload = await getPayload(ui, workspaceState, publishEventPayloadStateKey);
 
     await ui.withProgress(
         'Publishing Dapr event',
