@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 export interface PseudoterminalWriter {
     write(output: string): void;
     writeLine(output: string): void;

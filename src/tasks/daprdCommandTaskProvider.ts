@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import CommandLineBuilder from '../util/commandLineBuilder';
 import CommandTaskProvider from './commandTaskProvider';
 import { TaskDefinition } from './taskDefinition';

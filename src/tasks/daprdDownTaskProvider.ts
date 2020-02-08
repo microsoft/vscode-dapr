@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as psList from 'ps-list';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { TaskDefinition } from './taskDefinition';
