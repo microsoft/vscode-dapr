@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as psList from 'ps-list';
 import * as vscode from 'vscode';
 import Timer from '../util/timer';
@@ -26,7 +29,7 @@ function getHttpPort(cmd: string): number {
         
     const portMatch = portRegEx.exec(cmd);
     
-    const portString = portMatch?.groups?.['appId'];
+    const portString = portMatch?.groups?.['port'];
     
     if (portString !== undefined) {
         return parseInt(portString, 10);

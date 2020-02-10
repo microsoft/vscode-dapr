@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
@@ -38,9 +41,9 @@ export function activate(context: vscode.ExtensionContext): void {
 	const daprClient = new HttpDaprClient(new AxiosHttpClient());
 	const ui = new AggregateUserInput(ext.ui);
 
-	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
-	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
-	registerDisposable(vscode.commands.registerCommand('vscode-dapr.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
+	registerDisposable(vscode.commands.registerCommand('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
+	registerDisposable(vscode.commands.registerCommand('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
+    registerDisposable(vscode.commands.registerCommand('vscode-dapr.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
     registerDisposable(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
 
     registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));

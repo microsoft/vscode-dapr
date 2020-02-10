@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as fse from 'fs-extra';
 import * as handlebars from 'handlebars';
 import * as path from 'path';

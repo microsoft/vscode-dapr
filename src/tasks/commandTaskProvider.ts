@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
