@@ -18,8 +18,11 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:vscode-dapr.scaffoldDaprTasks",
-		"onCommand:workbench.action.tasks.runTask"
+		"onCommand:vscode-dapr.applications.invoke-get",
+		"onCommand:vscode-dapr.applications.invoke-post",
+		"onCommand:vscode-dapr.tasks.scaffoldDaprTasks",
+		"onCommand:workbench.action.tasks.runTask",
+		"onView:vscode-dapr.views.applications"
 	],
 	"repository": {
 		"type": "git",
@@ -30,11 +33,33 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-dapr.scaffoldDaprTasks",
+				"command": "vscode-dapr.applications.invoke-get",
+				"title": "Invoke (GET) application method",
+				"category": "Dapr"
+			},
+			{
+				"command": "vscode-dapr.applications.invoke-post",
+				"title": "Invoke (POST) application method",
+				"category": "Dapr"
+			},
+			{
+				"command": "vscode-dapr.tasks.scaffoldDaprTasks",
 				"title": "Scaffold Dapr Tasks",
 				"category": "Dapr"
 			}
 		],
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "vscode-dapr.applications.invoke-get",
+					"when": "view == vscode-dapr.views.applications && viewItem == application"
+				},
+				{
+					"command": "vscode-dapr.applications.invoke-post",
+					"when": "view == vscode-dapr.views.applications && viewItem == application"
+				}
+			]
+		},
 		"problemMatchers": [
 			{
 				"name": "dapr",
@@ -291,7 +316,24 @@
 					"appId"
 				]
 			}
-		]
+		],
+		"views": {
+			"dapr-explorer": [
+				{
+					"id": "vscode-dapr.views.applications",
+					"name": "Applications"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "dapr-explorer",
+					"title": "Dapr",
+					"icon": "assets/images/dapr.svg"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -322,6 +364,7 @@
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
+		"axios": "^0.19.2",
 		"fs-extra": "^8.1.0",
 		"handlebars": "^4.7.2",
 		"ps-list": "^6.3.0",
