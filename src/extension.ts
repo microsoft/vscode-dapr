@@ -43,7 +43,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	registerDisposable(vscode.commands.registerCommand('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
 	registerDisposable(vscode.commands.registerCommand('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
-    registerDisposable(vscode.commands.registerCommand('vscode-dapr.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
+    registerDisposable(vscode.commands.registerCommand('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
     registerDisposable(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
 
     registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
