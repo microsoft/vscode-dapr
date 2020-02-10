@@ -29,7 +29,7 @@ function getHttpPort(cmd: string): number {
         
     const portMatch = portRegEx.exec(cmd);
     
-    const portString = portMatch?.groups?.['appId'];
+    const portString = portMatch?.groups?.['port'];
     
     if (portString !== undefined) {
         return parseInt(portString, 10);
