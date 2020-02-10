@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as vscode from 'vscode';
 import DaprApplicationNode from "../views/applications/daprApplicationNode";
 import { DaprApplicationProvider } from "../services/daprApplicationProvider";
