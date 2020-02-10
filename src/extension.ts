@@ -40,9 +40,9 @@ export function activate(context: vscode.ExtensionContext): void {
 	const daprClient = new HttpDaprClient(new AxiosHttpClient());
 	const ui = new AggregateUserInput(ext.ui);
 
-	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
-	registerDisposable(vscode.commands.registerCommand('vscode-dapr.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
-    registerDisposable(vscode.commands.registerCommand('vscode-dapr.scaffoldDaprTasks', scaffoldDaprTasks));
+	registerDisposable(vscode.commands.registerCommand('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
+	registerDisposable(vscode.commands.registerCommand('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState)));
+    registerDisposable(vscode.commands.registerCommand('vscode-dapr.tasks.scaffoldDaprTasks', scaffoldDaprTasks));
 
     registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
     registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider()));

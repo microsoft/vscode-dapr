@@ -18,8 +18,9 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:vscode-dapr.invoke-get",
-		"onCommand:vscode-dapr.scaffoldDaprTasks",
+		"onCommand:vscode-dapr.applications.invoke-get",
+		"onCommand:vscode-dapr.applications.invoke-post",
+		"onCommand:vscode-dapr.tasks.scaffoldDaprTasks",
 		"onCommand:workbench.action.tasks.runTask",
 		"onView:vscode-dapr.views.applications"
 	],
@@ -32,17 +33,17 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "vscode-dapr.invoke-get",
+				"command": "vscode-dapr.applications.invoke-get",
 				"title": "Invoke (GET) application method",
 				"category": "Dapr"
 			},
 			{
-				"command": "vscode-dapr.invoke-post",
+				"command": "vscode-dapr.applications.invoke-post",
 				"title": "Invoke (POST) application method",
 				"category": "Dapr"
 			},
 			{
-				"command": "vscode-dapr.scaffoldDaprTasks",
+				"command": "vscode-dapr.tasks.scaffoldDaprTasks",
 				"title": "Scaffold Dapr Tasks",
 				"category": "Dapr"
 			}
@@ -50,11 +51,11 @@
 		"menus": {
 			"view/item/context": [
 				{
-					"command": "vscode-dapr.invoke-get",
+					"command": "vscode-dapr.applications.invoke-get",
 					"when": "view == vscode-dapr.views.applications && viewItem == application"
 				},
 				{
-					"command": "vscode-dapr.invoke-post",
+					"command": "vscode-dapr.applications.invoke-post",
 					"when": "view == vscode-dapr.views.applications && viewItem == application"
 				}
 			]
