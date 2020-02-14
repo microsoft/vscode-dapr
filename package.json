@@ -337,7 +337,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"build": "npm run compile",
+		"build": "gulp build",
 		"compile": "tsc -p ./",
 		"lint": "eslint \"src/**/*.ts\"",
 		"watch": "tsc -watch -p ./",
