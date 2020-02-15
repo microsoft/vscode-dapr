@@ -20,6 +20,7 @@
 	"activationEvents": [
 		"onCommand:vscode-dapr.applications.invoke-get",
 		"onCommand:vscode-dapr.applications.invoke-post",
+		"onCommand:vscode-dapr.applications.publish-message",
 		"onCommand:vscode-dapr.tasks.scaffoldDaprTasks",
 		"onCommand:workbench.action.tasks.runTask",
 		"onView:vscode-dapr.views.applications"
@@ -43,6 +44,11 @@
 				"category": "Dapr"
 			},
 			{
+				"command": "vscode-dapr.applications.publish-message",
+				"title": "Publish message to application",
+				"category": "Dapr"
+			},
+			{
 				"command": "vscode-dapr.tasks.scaffoldDaprTasks",
 				"title": "Scaffold Dapr Tasks",
 				"category": "Dapr"
@@ -56,6 +62,10 @@
 				},
 				{
 					"command": "vscode-dapr.applications.invoke-post",
+					"when": "view == vscode-dapr.views.applications && viewItem == application"
+				},
+				{
+					"command": "vscode-dapr.applications.publish-message",
 					"when": "view == vscode-dapr.views.applications && viewItem == application"
 				}
 			]
