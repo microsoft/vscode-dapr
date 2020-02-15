@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { DaprApplication, DaprApplicationProvider } from "../services/daprApplicationProvider";
 import { UserInput } from '../services/userInput';
 import { DaprClient } from '../services/daprClient';
+import { localize } from '../util/localize';
 
 const invokeGetMethodStateKey = 'vscode-docker.state.invokeGet.method';
 const invokePostMethodStateKey = 'vscode-docker.state.invokePost.method';
@@ -14,7 +15,7 @@ export async function getApplication(daprApplicationProvider: DaprApplicationPro
     if (!selectedApplication) {
         const applications = await daprApplicationProvider.getApplications();
 
-        const pickedApplication = await ui.showQuickPick(applications.map(application => ({ application, label: application.appId })), { placeHolder: 'Select a Dapr application' });
+        const pickedApplication = await ui.showQuickPick(applications.map(application => ({ application, label: application.appId })), { placeHolder: localize('commands.invokeCommon.applicationPlaceholder', 'Select a Dapr application') });
 
         selectedApplication = pickedApplication.application;
     }
@@ -26,7 +27,7 @@ export async function getMethod(ui: UserInput, workspaceState: vscode.Memento, i
     const methodStateKey = isPost ? invokePostMethodStateKey : invokeGetMethodStateKey;
     const previousMethod = workspaceState.get<string>(methodStateKey);
 
-    const method = await ui.showInputBox({ prompt: 'Enter the application method to invoke', value: previousMethod });
+    const method = await ui.showInputBox({ prompt: localize('commands.invokeCommon.methodPrompt', 'Enter the application method to invoke'), value: previousMethod });
 
     await workspaceState.update(methodStateKey, method);
 
@@ -36,7 +37,7 @@ export async function getMethod(ui: UserInput, workspaceState: vscode.Memento, i
 export async function getPayload(ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
     const previousPayloadString = workspaceState.get<string>(invokePostPayloadStateKey);
 
-    const payloadString = await ui.showInputBox({ prompt: 'Enter a JSON payload for the method (or leave empty, if no payload is needed)', value: previousPayloadString });
+    const payloadString = await ui.showInputBox({ prompt: localize('commands.invokeCommon.payloadPrompt', 'Enter a JSON payload for the method (or leave empty, if no payload is needed)'), value: previousPayloadString });
 
     const payload = JSON.parse(payloadString);
 
@@ -55,22 +56,22 @@ export async function invoke(daprApplicationProvider: DaprApplicationProvider, d
     const payload = isPost ? await getPayload(ui, workspaceState) : undefined;
 
     await ui.withProgress(
-        'Invoking Dapr application',
+        localize('commands.invokeCommon.invokeMessage', 'Invoking Dapr application'),
         async (_, token) => {
             try {
                 if (isPost) {
-                    outputChannel.appendLine(`Invoking Dapr application '${application.appId}' method '${method}' with payload '${payload}'...`)
+                    outputChannel.appendLine(localize('commands.invokeCommon.invokePostMessage', 'Invoking Dapr application \'{0}\' method \'{1}\' with payload \'{2}\'...', application.appId, method, payload))
                 } else {
-                    outputChannel.appendLine(`Invoking Dapr application '${application.appId}' method '${method}'...`)
+                    outputChannel.appendLine(localize('commands.invokeCommon.invokeGetMessage', 'Invoking Dapr application \'{0}\' method \'{1}\'...', application.appId, method))
                 }
 
                 const data = isPost
                     ? await daprClient.invokePost(application, method, payload, token)
                     : await daprClient.invokeGet(application, method, token);
         
-                outputChannel.appendLine(`Method succeeded: ${data}`);
+                outputChannel.appendLine(localize('commands.invokeCommon.invokeSucceededMessage', 'Method succeeded: {0}', String(data)));
             } catch (err) {
-                outputChannel.appendLine(`Method failed: ${isError(err) ? err.message : err.toString()}`);
+                outputChannel.appendLine(localize('commands.invokeCommon.invokeFailedMessage', 'Method failed: {0}', isError(err) ? err.message : err.toString()));
             }
 
             outputChannel.show();

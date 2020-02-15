@@ -3,6 +3,7 @@
 
 import * as cp from 'child_process';
 import * as vscode from 'vscode';
+import { localize } from './localize';
 
 const DEFAULT_BUFFER_SIZE = 10 * 1024; // The default Node.js `exec` buffer size is 1 MB, our actual usage is far less
 
@@ -81,7 +82,7 @@ export class Process extends vscode.Disposable {
                         if (code !== undefined) {
                             return resolve(code);
                         } else {
-                            return reject(new Error(`Process exited due to signal '${signal}'.`));
+                            return reject(new Error(localize('util.process.exitErrorMessage', 'Process exited due to signal \'{0}\'.', signal)));
                         }
                     });
 

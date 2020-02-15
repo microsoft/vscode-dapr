@@ -34,17 +34,17 @@
 		"commands": [
 			{
 				"command": "vscode-dapr.applications.invoke-get",
-				"title": "%vscode-dapr.applications.invoke-get%",
+				"title": "%vscode-dapr.applications.invoke-get.title%",
 				"category": "Dapr"
 			},
 			{
 				"command": "vscode-dapr.applications.invoke-post",
-				"title": "Invoke (POST) application method",
+				"title": "%vscode-dapr.applications.invoke-post.title%",
 				"category": "Dapr"
 			},
 			{
 				"command": "vscode-dapr.tasks.scaffoldDaprTasks",
-				"title": "Scaffold Dapr Tasks",
+				"title": "%vscode-dapr.tasks.scaffoldDaprTasks.title%",
 				"category": "Dapr"
 			}
 		],
@@ -321,7 +321,7 @@
 			"dapr-explorer": [
 				{
 					"id": "vscode-dapr.views.applications",
-					"name": "Applications"
+					"name": "%vscode-dapr.views.applications.name%"
 				}
 			]
 		},
