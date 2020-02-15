@@ -18,8 +18,12 @@ import createInvokePostCommand from './commands/invokePost';
 import AxiosHttpClient from './services/httpClient';
 import { AggregateUserInput } from './services/userInput';
 import HttpDaprClient from './services/daprClient';
+import { localize } from './util/localize';
 
 export function activate(context: vscode.ExtensionContext): void {
+	const message = localize('sayHello.text', 'Hello');
+		vscode.window.showInformationMessage(message);
+
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
 		context.subscriptions.push(disposable);
 	
