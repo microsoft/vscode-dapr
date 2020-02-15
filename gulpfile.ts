@@ -6,6 +6,7 @@ import * as gulp from 'gulp';
 import * as nls from 'vscode-nls-dev';
 import * as sourcemaps from 'gulp-sourcemaps';
 import * as ts from 'gulp-typescript';
+import * as vsce from 'vsce';
 
 const languages: nls.Language[] = [
     { folderName: 'jpn', id: 'ja' }
@@ -26,7 +27,7 @@ function wrapThroughStream(stream: nls.ThroughStream): NodeJS.ReadWriteStream {
 }
 
 function cleanTask(): Promise<string[]> {
-    return del([getOutDir(), 'package.nls.*.json']);
+    return del([getOutDir(), 'package.nls.*.json', 'vscode-dapr-*.vsix']);
 }
 
 function compileTask(): NodeJS.ReadWriteStream {
@@ -47,8 +48,16 @@ function addI18nTask() {
         .pipe(gulp.dest('.'));
 }
 
+function vscePackageTask() {
+    return vsce.createVSIX();
+}
+
 const buildTask = gulp.series(cleanTask, compileTask, addI18nTask);
+
+gulp.task('clean', cleanTask);
 
 gulp.task('build', buildTask);
 
 gulp.task('default', buildTask);
+
+gulp.task('package', gulp.series(buildTask, vscePackageTask));

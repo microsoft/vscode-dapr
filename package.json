@@ -346,13 +346,12 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
+		"clean": "gulp clean",
 		"build": "gulp build",
-		"compile": "tsc -p ./",
 		"lint": "eslint \"src/**/*.ts\"",
 		"watch": "tsc -watch -p ./",
-		"package": "vsce package",
-		"pretest": "npm run compile",
+		"package": "gulp package",
+		"pretest": "npm run build",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
