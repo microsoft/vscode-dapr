@@ -45,7 +45,7 @@
 			},
 			{
 				"command": "vscode-dapr.applications.publish-message",
-				"title": "Publish message to application",
+				"title": "%vscode-dapr.applications.publish-message.title%",
 				"category": "Dapr"
 			},
 			{
