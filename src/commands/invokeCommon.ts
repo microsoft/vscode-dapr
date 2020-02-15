@@ -23,8 +23,7 @@ export async function getApplication(daprApplicationProvider: DaprApplicationPro
     return selectedApplication;
 }
 
-export async function getMethod(ui: UserInput, workspaceState: vscode.Memento, isPost?: boolean): Promise<string> {
-    const methodStateKey = isPost ? invokePostMethodStateKey : invokeGetMethodStateKey;
+export async function getMethod(ui: UserInput, workspaceState: vscode.Memento, methodStateKey: string): Promise<string> {
     const previousMethod = workspaceState.get<string>(methodStateKey);
 
     const method = await ui.showInputBox({ prompt: localize('commands.invokeCommon.methodPrompt', 'Enter the application method to invoke'), value: previousMethod });
@@ -34,33 +33,33 @@ export async function getMethod(ui: UserInput, workspaceState: vscode.Memento, i
     return method;
 }
 
-export async function getPayload(ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
-    const previousPayloadString = workspaceState.get<string>(invokePostPayloadStateKey);
+export async function getPayload(ui: UserInput, workspaceState: vscode.Memento, payLoadStateKey: string): Promise<unknown> {
+    const previousPayloadString = workspaceState.get<string>(payLoadStateKey);
 
     const payloadString = await ui.showInputBox({ prompt: localize('commands.invokeCommon.payloadPrompt', 'Enter a JSON payload for the method (or leave empty, if no payload is needed)'), value: previousPayloadString });
 
     const payload = JSON.parse(payloadString);
 
-    await workspaceState.update(invokePostPayloadStateKey, payloadString);
+    await workspaceState.update(payLoadStateKey, payloadString);
 
     return payload;
 }
 
-function isError(err: unknown): err is Error {
+export function isError(err: unknown): err is Error {
     return err instanceof Error;
 }
 
 export async function invoke(daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, selectedApplication: DaprApplication | undefined, isPost?: boolean): Promise<void> {
     const application = await getApplication(daprApplicationProvider, ui, selectedApplication);
-    const method = await getMethod(ui, workspaceState, isPost);
-    const payload = isPost ? await getPayload(ui, workspaceState) : undefined;
+    const method = await getMethod(ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey);
+    const payload = isPost ? await getPayload(ui, workspaceState, invokePostPayloadStateKey) : undefined;
 
     await ui.withProgress(
         localize('commands.invokeCommon.invokeMessage', 'Invoking Dapr application'),
         async (_, token) => {
             try {
                 if (isPost) {
-                    outputChannel.appendLine(localize('commands.invokeCommon.invokePostMessage', 'Invoking Dapr application \'{0}\' method \'{1}\' with payload \'{2}\'...', application.appId, method, payload))
+                    outputChannel.appendLine(localize('commands.invokeCommon.invokePostMessage', 'Invoking Dapr application \'{0}\' method \'{1}\' with payload \'{2}\'...', application.appId, method, JSON.stringify(payload)))
                 } else {
                     outputChannel.appendLine(localize('commands.invokeCommon.invokeGetMessage', 'Invoking Dapr application \'{0}\' method \'{1}\'...', application.appId, method))
                 }
