@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import * as del from 'del';
+import * as eslint from 'gulp-eslint';
 import * as gulp from 'gulp';
 import * as nls from 'vscode-nls-dev';
 import * as sourcemaps from 'gulp-sourcemaps';
@@ -30,6 +31,27 @@ function cleanTask(): Promise<string[]> {
     return del([getOutDir(), 'package.nls.*.json', 'vscode-dapr-*.vsix']);
 }
 
+function lintTaskFactory(warningsAsErrors?: boolean) {
+    return function lintTask() {
+        let pipeline = gulp.src(['src/**/*.ts'])
+            .pipe(eslint())
+            .pipe(eslint.format())
+            .pipe(eslint.failAfterError());
+
+        if (warningsAsErrors) {
+            pipeline = pipeline
+                .pipe(eslint.results(
+                    results => {
+                        if (results.warningCount) {
+                            throw new Error('ESLint generated warnings.');
+                        }
+                    }));
+        }
+
+        return pipeline;
+    }
+}
+
 function compileTask(): NodeJS.ReadWriteStream {
     const outDir = getOutDir();
 
@@ -56,8 +78,12 @@ const buildTask = gulp.series(cleanTask, compileTask, addI18nTask);
 
 gulp.task('clean', cleanTask);
 
+gulp.task('lint', lintTaskFactory());
+
 gulp.task('build', buildTask);
 
-gulp.task('default', buildTask);
+gulp.task('ci', gulp.series(buildTask, lintTaskFactory(/* warningsAsErrors: */ true)));
 
 gulp.task('package', gulp.series(buildTask, vscePackageTask));
+
+gulp.task('default', buildTask);
