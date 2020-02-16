@@ -82,8 +82,10 @@ gulp.task('lint', lintTaskFactory());
 
 gulp.task('build', buildTask);
 
-gulp.task('ci', gulp.series(buildTask, lintTaskFactory(/* warningsAsErrors: */ true)));
-
 gulp.task('package', gulp.series(buildTask, vscePackageTask));
+
+gulp.task('ci-build', gulp.series(buildTask, lintTaskFactory(/* warningsAsErrors: */ true)));
+
+gulp.task('ci-package', gulp.series(buildTask, lintTaskFactory(/* warningsAsErrors: */ true), vscePackageTask));
 
 gulp.task('default', buildTask);
