@@ -35,22 +35,22 @@
 		"commands": [
 			{
 				"command": "vscode-dapr.applications.invoke-get",
-				"title": "Invoke (GET) application method",
+				"title": "%vscode-dapr.applications.invoke-get.title%",
 				"category": "Dapr"
 			},
 			{
 				"command": "vscode-dapr.applications.invoke-post",
-				"title": "Invoke (POST) application method",
+				"title": "%vscode-dapr.applications.invoke-post.title%",
 				"category": "Dapr"
 			},
 			{
 				"command": "vscode-dapr.applications.publish-message",
-				"title": "Publish message to application",
+				"title": "%vscode-dapr.applications.publish-message.title%",
 				"category": "Dapr"
 			},
 			{
 				"command": "vscode-dapr.tasks.scaffoldDaprTasks",
-				"title": "Scaffold Dapr Tasks",
+				"title": "%vscode-dapr.tasks.scaffoldDaprTasks.title%",
 				"category": "Dapr"
 			}
 		],
@@ -331,7 +331,7 @@
 			"dapr-explorer": [
 				{
 					"id": "vscode-dapr.views.applications",
-					"name": "Applications"
+					"name": "%vscode-dapr.views.applications.name%"
 				}
 			]
 		},
@@ -346,18 +346,21 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"build": "npm run compile",
-		"compile": "tsc -p ./",
-		"lint": "eslint \"src/**/*.ts\"",
+		"clean": "gulp clean",
+		"build": "gulp build",
+		"lint": "gulp lint",
 		"watch": "tsc -watch -p ./",
-		"package": "vsce package",
-		"pretest": "npm run compile",
+		"package": "gulp package",
+		"ci-build": "gulp ci-build",
+		"ci-package": "gulp ci-package",
+		"pretest": "npm run build",
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^8.0.1",
 		"@types/glob": "^7.1.1",
+		"@types/gulp": "^4.0.6",
+		"@types/gulp-sourcemaps": "0.0.32",
 		"@types/handlebars": "^4.1.0",
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.12.24",
@@ -365,12 +368,19 @@
 		"@types/vscode": "^1.41.0",
 		"@typescript-eslint/eslint-plugin": "^2.17.0",
 		"@typescript-eslint/parser": "^2.17.0",
+		"del": "^5.1.0",
 		"eslint": "^6.8.0",
 		"glob": "^7.1.5",
+		"gulp": "^4.0.2",
+		"gulp-eslint": "^6.0.0",
+		"gulp-sourcemaps": "^2.6.5",
+		"gulp-typescript": "^6.0.0-alpha.1",
 		"mocha": "^6.2.2",
+		"ts-node": "^8.6.2",
 		"tslint": "^5.20.0",
 		"typescript": "^3.7.4",
 		"vsce": "^1.71.0",
+		"vscode-nls-dev": "^3.3.1",
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
@@ -378,6 +388,7 @@
 		"fs-extra": "^8.1.0",
 		"handlebars": "^4.7.2",
 		"ps-list": "^6.3.0",
-		"vscode-azureextensionui": "^0.29.3"
+		"vscode-azureextensionui": "^0.29.3",
+		"vscode-nls": "^4.1.1"
 	}
 }

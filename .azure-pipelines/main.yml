@@ -3,20 +3,20 @@ jobs:
   pool:
     vmImage: windows-latest
   steps:
+  - template: common/setup.yml
   - template: common/build.yml
-  - template: common/lint.yml
 
 - job: Linux
   pool:
     vmImage: ubuntu-latest
   steps:
-  - template: common/build.yml
+  - template: common/setup.yml
   - template: common/publish-vsix.yml # Only publish vsix from linux build since we use this to release and want to stay consistent
-  - template: common/lint.yml
+  - template: common/governance.yml
 
 - job: macOS
   pool:
     vmImage: macOS-latest
   steps:
+  - template: common/setup.yml
   - template: common/build.yml
-  - template: common/lint.yml

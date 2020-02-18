@@ -5,6 +5,7 @@ import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { Process } from '../util/process';
+import { localize } from '../util/localize';
 
 export type CommandTaskSpawnCallback = (command: string, options?: cp.SpawnOptions) => Promise<void>;
 export type CommandTaskProviderCallback = (definition: vscode.TaskDefinition, callback: CommandTaskSpawnCallback, token?: vscode.CancellationToken) => Promise<void>;
@@ -36,7 +37,7 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
 
                             if (spawnOptions.cwd === undefined) {
                                 if (vscode.workspace.workspaceFolders === undefined || vscode.workspace.workspaceFolders.length === 0) {
-                                    throw new Error('If no current working directory is set, you must open a workspace before running a Dapr task.');
+                                    throw new Error(localize('tasks.commandTaskProvider.noWorkspaceError', 'If no current working directory is set, you must open a workspace before running a Dapr task.'));
                                 }
 
                                 spawnOptions.cwd = vscode.workspace.workspaceFolders[0].uri.fsPath;

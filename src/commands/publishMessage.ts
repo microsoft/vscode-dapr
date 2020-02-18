@@ -7,6 +7,7 @@ import { DaprApplicationProvider } from "../services/daprApplicationProvider";
 import { UserInput } from '../services/userInput';
 import { DaprClient } from '../services/daprClient';
 import { getApplication, getPayload, isError } from './invokeCommon';
+import { localize } from '../util/localize';
 
 const publishMessageTopicStateKey = 'vscode-docker.state.publishMessage.topic';
 const publishMessagePayloadStateKey = 'vscode-docker.state.publishMessage.payload';
@@ -14,7 +15,7 @@ const publishMessagePayloadStateKey = 'vscode-docker.state.publishMessage.payloa
 export async function getTopic(ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
     const previousMethod = workspaceState.get<string>(publishMessageTopicStateKey);
 
-    const topic = await ui.showInputBox({ prompt: 'Enter the topic to publish', value: previousMethod });
+    const topic = await ui.showInputBox({ prompt: localize('commands.publishMessage.topicPrompt', 'Enter the topic to publish'), value: previousMethod });
 
     await workspaceState.update(publishMessageTopicStateKey, topic);
 
@@ -27,16 +28,16 @@ export async function publishMessage(daprApplicationProvider: DaprApplicationPro
     const payload = await getPayload(ui, workspaceState, publishMessagePayloadStateKey);
 
     await ui.withProgress(
-        'Publishing Dapr message',
+        localize('commands.publishMessage.publishProgressTitle', 'Publishing Dapr message'),
         async (_, token) => {
             try {
-                outputChannel.appendLine(`Publishing Dapr message '${topic}' to application '${application.appId}' with payload '${JSON.stringify(payload)}'...`);
+                outputChannel.appendLine(localize('commands.publishMessage.publishMessage', 'Publishing Dapr message \'{0}\' to application \'{1}\' with payload \'{2}\'...', topic, application.appId, JSON.stringify(payload)));
 
                 await daprClient.publishMessage(application, topic, payload, token);
         
-                outputChannel.appendLine('Message published');
+                outputChannel.appendLine(localize('commands.publishMessage.publishSucceededMessage', 'Message published'));
             } catch (err) {
-                outputChannel.appendLine(`Message publication failed: ${isError(err) ? err.message : err.toString()}`);
+                outputChannel.appendLine(localize('commands.publishMessage.publishFailedMessage', 'Message publication failed: {0}', isError(err) ? err.message : err.toString()));
             }
 
             outputChannel.show();

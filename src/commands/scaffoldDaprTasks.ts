@@ -10,6 +10,7 @@ import ext from "../ext";
 import scaffoldTask from "../scaffolding/taskScaffolder";
 import scaffoldConfiguration, { getWorkspaceConfigurations } from '../scaffolding/configurationScaffolder';
 import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
+import { localize } from '../util/localize';
 
 async function onConflictingTask(): Promise<boolean> {
     return Promise.resolve(true);
@@ -20,7 +21,7 @@ async function scaffoldDaprComponents(): Promise<void> {
     const rootWorkspaceFolderPath = (vscode.workspace.workspaceFolders ?? [])[0]?.uri?.fsPath;
 
     if (!rootWorkspaceFolderPath) {
-        throw new Error('Open a folder or workspace.');
+        throw new Error(localize('commands.scaffoldDaprTasks.noWorkspaceError', 'Open a folder or workspace.'));
     }
 
     const componentsPath = path.join(rootWorkspaceFolderPath, 'components');
@@ -38,15 +39,15 @@ async function scaffoldDaprComponents(): Promise<void> {
 
 export default async function scaffoldDaprTasks(): Promise<void> {
     // TODO: Infer name from application manifest/project file, or repo folder name.
-    const appId = await ext.ui.showInputBox({ prompt: 'Enter a Dapr ID for the application', value: 'app' });
+    const appId = await ext.ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.appIdPrompt', 'Enter a Dapr ID for the application'), value: 'app' });
     // TODO: Infer port from application manifest/project file, or application stack.
-    const appPortString = await ext.ui.showInputBox({ prompt: 'Enter the port on which the application listens.', value: '5000' });
+    const appPortString = await ext.ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.portPrompt', 'Enter the port on which the application listens.'), value: '5000' });
     const appPort = parseInt(appPortString, 10);
 
     const workspaceConfigurations = getWorkspaceConfigurations();
     const configurationItems = workspaceConfigurations.map(configuration => ({ label: configuration.name, configuration }));
 
-    const debugConfigurationItem = await ext.ui.showQuickPick(configurationItems, { placeHolder: 'Select the configuration used to debug the application' });
+    const debugConfigurationItem = await ext.ui.showQuickPick(configurationItems, { placeHolder: localize('commands.scaffoldDaprTasks.configurationPlaceholder', 'Select the configuration used to debug the application') });
 
     const buildTask = debugConfigurationItem.configuration.preLaunchTask;
     const tearDownTask = debugConfigurationItem.configuration.postDebugTask;
@@ -74,7 +75,7 @@ export default async function scaffoldDaprTasks(): Promise<void> {
 
     const daprDebugConfiguration = {
         ...debugConfigurationItem.configuration,
-        name: `${debugConfigurationItem.configuration.name} with Dapr`,
+        name: localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', debugConfigurationItem.configuration.name),
         preLaunchTask: daprdUpTask.label,
         postDebugTask: daprdDownTask.label
     };

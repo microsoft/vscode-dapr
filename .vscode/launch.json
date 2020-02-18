@@ -19,6 +19,24 @@
 			"preLaunchTask": "${defaultBuildTask}"
 		},
 		{
+			"name": "Run Extension (Pseudo)",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}"
+			],
+			"env": {
+				"VSCODE_DAPR_LOCALE": "pseudo"
+			},
+			"sourceMaps": true,
+			"stopOnEntry": false,
+			"outFiles": [
+				"${workspaceFolder}/out/**/*.js"
+			],
+			"preLaunchTask": "${defaultBuildTask}"
+		},
+		{
 			"name": "Extension Tests",
 			"type": "extensionHost",
 			"request": "launch",

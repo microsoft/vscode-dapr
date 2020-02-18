@@ -4,6 +4,7 @@
 import * as psList from 'ps-list';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { TaskDefinition } from './taskDefinition';
+import { localize } from '../util/localize';
 
 export interface DaprdDownTaskDefinition extends TaskDefinition {
     appId?: string;
@@ -17,7 +18,7 @@ export default class DaprdDownTaskProvider extends CustomExecutionTaskProvider {
                 const daprdDownDefinition = definition as DaprdDownTaskDefinition;
 
                 if (daprdDownDefinition.appId === undefined) {
-                    throw new Error('The \'appId\' property must be set.');
+                    throw new Error(localize('tasks.daprdDownTaskProvider.appIdError', 'The \'appId\' property must be set.'));
                 }
 
                 const processes = await psList();
@@ -29,7 +30,7 @@ export default class DaprdDownTaskProvider extends CustomExecutionTaskProvider {
 
                 appProcesses.forEach(p => process.kill(p.pid, 'SIGKILL'));
 
-                writer.writeLine('Shutting down daprd...');
+                writer.writeLine(localize('tasks.daprdDownTaskProvider.shutdownMessage', 'Shutting down daprd...'));
             },
             /* isBackgroundTask: */ false,
             /* problemMatchers: */ []);
