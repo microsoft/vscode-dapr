@@ -1,0 +1,7 @@
+{
+    "vscode-dapr.applications.invoke-get.title": "(Japanese) Invoke (GET) application method",
+    "vscode-dapr.applications.invoke-post.title": "(Japanese) Invoke (POST) application method",
+    "vscode-dapr.applications.publish-message.title": "(Japanese) Publish message to application",
+    "vscode-dapr.tasks.scaffoldDaprTasks.title": "(Japanese) Scaffold Dapr Tasks",
+    "vscode-dapr.views.applications.name": "(Japanese) Applications"
+}
