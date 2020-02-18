@@ -6,8 +6,9 @@ import DaprApplicationNode from "../views/applications/daprApplicationNode";
 import { DaprApplicationProvider } from "../services/daprApplicationProvider";
 import { UserInput } from '../services/userInput';
 import { DaprClient } from '../services/daprClient';
-import { getApplication, getPayload, isError } from './invokeCommon';
+import { getApplication, getPayload } from './invokeCommon';
 import { localize } from '../util/localize';
+import { IActionContext } from 'vscode-azureextensionui';
 
 const publishMessageTopicStateKey = 'vscode-docker.state.publishMessage.topic';
 const publishMessagePayloadStateKey = 'vscode-docker.state.publishMessage.payload';
@@ -22,7 +23,9 @@ export async function getTopic(ui: UserInput, workspaceState: vscode.Memento): P
     return topic;
 }
 
-export async function publishMessage(daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, node: DaprApplicationNode | undefined): Promise<void> {
+export async function publishMessage(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, node: DaprApplicationNode | undefined): Promise<void> {
+    context.errorHandling.suppressReportIssue = true;
+
     const application = await getApplication(daprApplicationProvider, ui, node?.application);
     const topic = await getTopic(ui, workspaceState);
     const payload = await getPayload(ui, workspaceState, publishMessagePayloadStateKey);
@@ -30,20 +33,16 @@ export async function publishMessage(daprApplicationProvider: DaprApplicationPro
     await ui.withProgress(
         localize('commands.publishMessage.publishProgressTitle', 'Publishing Dapr message'),
         async (_, token) => {
-            try {
-                outputChannel.appendLine(localize('commands.publishMessage.publishMessage', 'Publishing Dapr message \'{0}\' to application \'{1}\' with payload \'{2}\'...', topic, application.appId, JSON.stringify(payload)));
+            outputChannel.appendLine(localize('commands.publishMessage.publishMessage', 'Publishing Dapr message \'{0}\' to application \'{1}\' with payload \'{2}\'...', topic, application.appId, JSON.stringify(payload)));
 
-                await daprClient.publishMessage(application, topic, payload, token);
-        
-                outputChannel.appendLine(localize('commands.publishMessage.publishSucceededMessage', 'Message published'));
-            } catch (err) {
-                outputChannel.appendLine(localize('commands.publishMessage.publishFailedMessage', 'Message publication failed: {0}', isError(err) ? err.message : err.toString()));
-            }
+            await daprClient.publishMessage(application, topic, payload, token);
+    
+            outputChannel.appendLine(localize('commands.publishMessage.publishSucceededMessage', 'Message published'));
 
             outputChannel.show();
         });
 }
 
-const createPublishMessageCommand = (daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento) => (node: DaprApplicationNode | undefined): Promise<void> => publishMessage(daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, node);
+const createPublishMessageCommand = (daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento) => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => publishMessage(context, daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, node);
 
 export default createPublishMessageCommand;

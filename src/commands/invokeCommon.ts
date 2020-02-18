@@ -6,6 +6,7 @@ import { DaprApplication, DaprApplicationProvider } from "../services/daprApplic
 import { UserInput } from '../services/userInput';
 import { DaprClient } from '../services/daprClient';
 import { localize } from '../util/localize';
+import { IActionContext } from 'vscode-azureextensionui';
 
 const invokeGetMethodStateKey = 'vscode-docker.state.invokeGet.method';
 const invokePostMethodStateKey = 'vscode-docker.state.invokePost.method';
@@ -45,11 +46,9 @@ export async function getPayload(ui: UserInput, workspaceState: vscode.Memento, 
     return payload;
 }
 
-export function isError(err: unknown): err is Error {
-    return err instanceof Error;
-}
+export async function invoke(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, selectedApplication: DaprApplication | undefined, isPost?: boolean): Promise<void> {
+    context.errorHandling.suppressReportIssue = true;
 
-export async function invoke(daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, selectedApplication: DaprApplication | undefined, isPost?: boolean): Promise<void> {
     const application = await getApplication(daprApplicationProvider, ui, selectedApplication);
     const method = await getMethod(ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey);
     const payload = isPost ? await getPayload(ui, workspaceState, invokePostPayloadStateKey) : undefined;
@@ -57,21 +56,17 @@ export async function invoke(daprApplicationProvider: DaprApplicationProvider, d
     await ui.withProgress(
         localize('commands.invokeCommon.invokeMessage', 'Invoking Dapr application'),
         async (_, token) => {
-            try {
-                if (isPost) {
-                    outputChannel.appendLine(localize('commands.invokeCommon.invokePostMessage', 'Invoking Dapr application \'{0}\' method \'{1}\' with payload \'{2}\'...', application.appId, method, JSON.stringify(payload)))
-                } else {
-                    outputChannel.appendLine(localize('commands.invokeCommon.invokeGetMessage', 'Invoking Dapr application \'{0}\' method \'{1}\'...', application.appId, method))
-                }
-
-                const data = isPost
-                    ? await daprClient.invokePost(application, method, payload, token)
-                    : await daprClient.invokeGet(application, method, token);
-        
-                outputChannel.appendLine(localize('commands.invokeCommon.invokeSucceededMessage', 'Method succeeded: {0}', String(data)));
-            } catch (err) {
-                outputChannel.appendLine(localize('commands.invokeCommon.invokeFailedMessage', 'Method failed: {0}', isError(err) ? err.message : err.toString()));
+            if (isPost) {
+                outputChannel.appendLine(localize('commands.invokeCommon.invokePostMessage', 'Invoking Dapr application \'{0}\' method \'{1}\' with payload \'{2}\'...', application.appId, method, JSON.stringify(payload)))
+            } else {
+                outputChannel.appendLine(localize('commands.invokeCommon.invokeGetMessage', 'Invoking Dapr application \'{0}\' method \'{1}\'...', application.appId, method))
             }
+
+            const data = isPost
+                ? await daprClient.invokePost(application, method, payload, token)
+                : await daprClient.invokeGet(application, method, token);
+    
+            outputChannel.appendLine(localize('commands.invokeCommon.invokeSucceededMessage', 'Method succeeded: {0}', String(data)));
 
             outputChannel.show();
         });
