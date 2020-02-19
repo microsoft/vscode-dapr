@@ -85,6 +85,8 @@ function vscePackageTask() {
 
 const buildTask = gulp.series(cleanTask, compileTask, addI18nTask);
 
+const ciBuildTask = gulp.series(buildTask, lintTaskFactory(/* warningsAsErrors: */ true), testTask);
+
 gulp.task('clean', cleanTask);
 
 gulp.task('lint', lintTaskFactory());
@@ -97,8 +99,8 @@ gulp.task('test', gulp.series(buildTask, testTask));
 
 gulp.task('package', gulp.series(buildTask, vscePackageTask));
 
-gulp.task('ci-build', gulp.series(buildTask, lintTaskFactory(/* warningsAsErrors: */ true)));
+gulp.task('ci-build', ciBuildTask);
 
-gulp.task('ci-package', gulp.series(buildTask, lintTaskFactory(/* warningsAsErrors: */ true), vscePackageTask));
+gulp.task('ci-package', gulp.series(ciBuildTask, vscePackageTask));
 
 gulp.task('default', buildTask);
