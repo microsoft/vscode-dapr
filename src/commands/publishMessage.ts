@@ -8,13 +8,15 @@ import { UserInput } from '../services/userInput';
 import { DaprClient } from '../services/daprClient';
 import { getApplication, getPayload } from './invokeCommon';
 import { localize } from '../util/localize';
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext, ITelemetryContext } from 'vscode-azureextensionui';
 
 const publishMessageTopicStateKey = 'vscode-docker.state.publishMessage.topic';
 const publishMessagePayloadStateKey = 'vscode-docker.state.publishMessage.payload';
 
-export async function getTopic(ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
+export async function getTopic(context: ITelemetryContext, ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
     const previousMethod = workspaceState.get<string>(publishMessageTopicStateKey);
+
+    context.properties.cancelStep = 'topic';
 
     const topic = await ui.showInputBox({ prompt: localize('commands.publishMessage.topicPrompt', 'Enter the topic to publish'), value: previousMethod });
 
@@ -26,9 +28,9 @@ export async function getTopic(ui: UserInput, workspaceState: vscode.Memento): P
 export async function publishMessage(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, node: DaprApplicationNode | undefined): Promise<void> {
     context.errorHandling.suppressReportIssue = true;
 
-    const application = await getApplication(daprApplicationProvider, ui, node?.application);
-    const topic = await getTopic(ui, workspaceState);
-    const payload = await getPayload(ui, workspaceState, publishMessagePayloadStateKey);
+    const application = await getApplication(context.telemetry, daprApplicationProvider, ui, node?.application);
+    const topic = await getTopic(context.telemetry, ui, workspaceState);
+    const payload = await getPayload(context.telemetry, ui, workspaceState, publishMessagePayloadStateKey);
 
     await ui.withProgress(
         localize('commands.publishMessage.publishProgressTitle', 'Publishing Dapr message'),
