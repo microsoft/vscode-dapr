@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import DaprCommandTaskProvider from './tasks/daprCommandTaskProvider';
 import DaprdCommandTaskProvider from './tasks/daprdCommandTaskProvider';
 import DaprdDownTaskProvider from './tasks/daprdDownTaskProvider';
-import { AzureUserInput, createAzExtOutputChannel, createTelemetryReporter, registerUIExtensionVariables, registerCommand } from 'vscode-azureextensionui';
+import { AzureUserInput, createAzExtOutputChannel, createTelemetryReporter, registerUIExtensionVariables, registerCommand, callWithTelemetryAndErrorHandling, IActionContext } from 'vscode-azureextensionui';
 import ext from './ext';
 import { initializeTemplateScaffolder } from './scaffolding/templateScaffolder';
 import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
@@ -20,10 +20,10 @@ import { AggregateUserInput } from './services/userInput';
 import HttpDaprClient from './services/daprClient';
 import createScaffoldDaprTasksCommand from './commands/scaffoldDaprTasks';
 
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
 		context.subscriptions.push(disposable);
-	
+		
 		return disposable;
 	}
 
@@ -33,25 +33,31 @@ export function activate(context: vscode.ExtensionContext): void {
 	ext.reporter = createTelemetryReporter(context);
 	ext.ui = new AzureUserInput(context.globalState);
 
-    registerUIExtensionVariables(ext);
+	registerUIExtensionVariables(ext);
 
-	initializeTemplateScaffolder(context.extensionPath);
+	return callWithTelemetryAndErrorHandling(
+		'vscode-dapr.extension.activate',
+		(actionContext: IActionContext) => {
+			actionContext.telemetry.properties.isActivationEvent = 'true';
 
-	const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider());
-	const daprClient = new HttpDaprClient(new AxiosHttpClient());
-	const ui = new AggregateUserInput(ext.ui);
-
-	registerCommand('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
-	registerCommand('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
-    registerCommand('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
-    registerCommand('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(ui));
-
-    registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
-    registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider()));
-	registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider()));
-	
-	registerDisposable(
-		vscode.window.registerTreeDataProvider(
-			'vscode-dapr.views.applications',
-			registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider))));
+			initializeTemplateScaffolder(context.extensionPath);
+			
+			const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider());
+			const daprClient = new HttpDaprClient(new AxiosHttpClient());
+			const ui = new AggregateUserInput(ext.ui);
+			
+			registerCommand('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
+			registerCommand('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
+			registerCommand('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
+			registerCommand('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(ui));
+			
+			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider()));
+			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider()));
+			registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider()));
+			
+			registerDisposable(
+				vscode.window.registerTreeDataProvider(
+					'vscode-dapr.views.applications',
+					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider))));
+	});
 }
