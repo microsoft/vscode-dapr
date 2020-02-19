@@ -14,24 +14,6 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "daprd-up",
-            "type": "daprd",
-            "appId": "accounts",
-            "appPort": 5000,
-        },
-        {
-            "label": "daprd-debug",
-            "type": "daprd",
-            "appId": "accounts",
-            "appPort": 5000,
-            "dependsOn": "build"
-        },
-        {
-            "label": "daprd-down",
-            "type": "daprd-down",
-            "appId": "accounts"
-        },
-        {
             "label": "publish",
             "command": "dotnet",
             "type": "process",
