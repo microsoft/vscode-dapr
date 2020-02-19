@@ -353,8 +353,7 @@
 		"package": "gulp package",
 		"ci-build": "gulp ci-build",
 		"ci-package": "gulp ci-package",
-		"pretest": "npm run build",
-		"test": "node ./out/test/runTest.js"
+		"test": "gulp test"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^8.0.1",
