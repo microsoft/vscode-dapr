@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as cp from 'child_process';
 import * as del from 'del';
 import * as eslint from 'gulp-eslint';
 import * as gulp from 'gulp';
@@ -70,6 +71,10 @@ function addI18nTask() {
         .pipe(gulp.dest('.'));
 }
 
+function testTask() {
+    return cp.spawn('node', ['./out/test/runTest.js'], { stdio: 'inherit' });
+}
+
 function vscePackageTask() {
     return vsce.createVSIX();
 }
@@ -81,6 +86,8 @@ gulp.task('clean', cleanTask);
 gulp.task('lint', lintTaskFactory());
 
 gulp.task('build', buildTask);
+
+gulp.task('test', gulp.series(buildTask, testTask));
 
 gulp.task('package', gulp.series(buildTask, vscePackageTask));
 
