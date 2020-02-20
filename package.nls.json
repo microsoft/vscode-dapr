@@ -42,5 +42,7 @@
     "vscode-dapr.tasks.daprd.properties.sentryAddress.description": "Address for the Sentry CA service",
     "vscode-dapr.tasks.daprd.properties.stdErrThreshold.description": "Logs at or above this threshold go to stderr.",
     "vscode-dapr.tasks.daprd.properties.vLogLevel.description": "Log level for V logs.",
-    "vscode-dapr.tasks.daprd.properties.vLogFilters.description": "Comma-separated list of <pattern>=<n> settings for file-filtered logging."
+    "vscode-dapr.tasks.daprd.properties.vLogFilters.description": "Comma-separated list of <pattern>=<n> settings for file-filtered logging.",
+
+    "vscode-dapr.tasks.daprd-down.properties.appId.description": "An ID for your application, used for service discovery."
 }

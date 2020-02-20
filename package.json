@@ -325,7 +325,7 @@
 				"properties": {
 					"appId": {
 						"type": "string",
-						"description": ""
+						"description": "%vscode-dapr.tasks.daprd-down.properties.appId.description%"
 					}
 				},
 				"required": [
