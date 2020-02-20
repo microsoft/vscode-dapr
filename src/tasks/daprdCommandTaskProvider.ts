@@ -4,7 +4,7 @@
 import CommandLineBuilder from '../util/commandLineBuilder';
 import CommandTaskProvider from './commandTaskProvider';
 import { TaskDefinition } from './taskDefinition';
-import { callWithTelemetryAndErrorHandling } from 'vscode-azureextensionui';
+import { TelemetryProvider } from '../services/telemetryProvider';
 
 type DaprdLogLevel = 'debug' | 'info' | 'warning' | 'error' | 'fatal' | 'panic';
 
@@ -33,10 +33,10 @@ export interface DaprdTaskDefinition extends TaskDefinition {
 }
 
 export default class DaprdCommandTaskProvider extends CommandTaskProvider {
-    constructor() {
+    constructor(telemetryProvider: TelemetryProvider) {
         super(
             (definition, callback) => {
-                return callWithTelemetryAndErrorHandling(
+                return telemetryProvider.callWithTelemetry(
                     'vscode-dapr.tasks.daprd',
                     () => {
                         const daprDefinition = definition as DaprdTaskDefinition;
