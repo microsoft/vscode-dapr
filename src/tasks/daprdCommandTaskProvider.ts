@@ -4,6 +4,7 @@
 import CommandLineBuilder from '../util/commandLineBuilder';
 import CommandTaskProvider from './commandTaskProvider';
 import { TaskDefinition } from './taskDefinition';
+import { callWithTelemetryAndErrorHandling } from 'vscode-azureextensionui';
 
 type DaprdLogLevel = 'debug' | 'info' | 'warning' | 'error' | 'fatal' | 'panic';
 
@@ -35,35 +36,39 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
     constructor() {
         super(
             (definition, callback) => {
-                const daprDefinition = definition as DaprdTaskDefinition;
+                return callWithTelemetryAndErrorHandling(
+                    'vscode-dapr.tasks.daprd',
+                    () => {
+                        const daprDefinition = definition as DaprdTaskDefinition;
+                        
+                        const command =
+                            CommandLineBuilder
+                                .create('daprd')
+                                .withNamedArg('--allowed-origins', daprDefinition.allowedOrigins)
+                                .withFlagArg('--alsoLogToStdErr', daprDefinition.alsoLogToStdErr)
+                                .withNamedArg('--app-port', daprDefinition.appPort)
+                                .withNamedArg('--components-path', daprDefinition.componentsPath)
+                                .withNamedArg('--config', daprDefinition.config)
+                                .withNamedArg('--control-plane-address', daprDefinition.controlPlaneAddress)
+                                .withNamedArg('--dapr-grpc-port', daprDefinition.grcpPort)
+                                .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
+                                .withNamedArg('--dapr-id', daprDefinition.appId)
+                                .withFlagArg('--enable-profiling', daprDefinition.enableProfiling)
+                                .withNamedArg('--log-level', daprDefinition.logLevel)
+                                .withNamedArg('--log_backtrace_at', daprDefinition.logBacktraceAt)
+                                .withNamedArg('--log_dir', daprDefinition.logDir)
+                                .withNamedArg('--max-concurrency', daprDefinition.maxConcurrency)
+                                .withNamedArg('--mode', daprDefinition.mode)
+                                .withNamedArg('--placement-address', daprDefinition.placementAddress || "localhost:50005" /* NOTE: The placement address is actually required for daprd. */)
+                                .withNamedArg('--profile-port', daprDefinition.profilePort)
+                                .withNamedArg('--protocol', daprDefinition.protocol)
+                                .withNamedArg('--stderrthreshold', daprDefinition.stdErrThreshold)
+                                .withNamedArg('-v', daprDefinition.vLogLevel)
+                                .withNamedArg('-vmodule', daprDefinition.vLogFilters)
+                                .build();
 
-                const command =
-                    CommandLineBuilder
-                        .create('daprd')
-                        .withNamedArg('--allowed-origins', daprDefinition.allowedOrigins)
-                        .withFlagArg('--alsoLogToStdErr', daprDefinition.alsoLogToStdErr)
-                        .withNamedArg('--app-port', daprDefinition.appPort)
-                        .withNamedArg('--components-path', daprDefinition.componentsPath)
-                        .withNamedArg('--config', daprDefinition.config)
-                        .withNamedArg('--control-plane-address', daprDefinition.controlPlaneAddress)
-                        .withNamedArg('--dapr-grpc-port', daprDefinition.grcpPort)
-                        .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
-                        .withNamedArg('--dapr-id', daprDefinition.appId)
-                        .withFlagArg('--enable-profiling', daprDefinition.enableProfiling)
-                        .withNamedArg('--log-level', daprDefinition.logLevel)
-                        .withNamedArg('--log_backtrace_at', daprDefinition.logBacktraceAt)
-                        .withNamedArg('--log_dir', daprDefinition.logDir)
-                        .withNamedArg('--max-concurrency', daprDefinition.maxConcurrency)
-                        .withNamedArg('--mode', daprDefinition.mode)
-                        .withNamedArg('--placement-address', daprDefinition.placementAddress || "localhost:50005" /* NOTE: The placement address is actually required for daprd. */)
-                        .withNamedArg('--profile-port', daprDefinition.profilePort)
-                        .withNamedArg('--protocol', daprDefinition.protocol)
-                        .withNamedArg('--stderrthreshold', daprDefinition.stdErrThreshold)
-                        .withNamedArg('-v', daprDefinition.vLogLevel)
-                        .withNamedArg('-vmodule', daprDefinition.vLogFilters)
-                        .build();
-
-                return callback(command, { cwd: definition.cwd });
+                        return callback(command, { cwd: definition.cwd });
+                    });
             },
             /* isBackgroundTask: */ true,
             /* problemMatchers: */ ['$dapr']);
