@@ -26,6 +26,7 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     placementAddress?: string;
     profilePort?: number;
     protocol?: 'grpc' | 'http';
+    sentryAddress?: string;
     stdErrThreshold?: DaprdLogLevel;
     vLogLevel?: DaprdLogLevel;
     vLogFilters?: string; // TODO: Allow more structured filters.
@@ -58,9 +59,10 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                         .withNamedArg('--placement-address', daprDefinition.placementAddress || "localhost:50005" /* NOTE: The placement address is actually required for daprd. */)
                         .withNamedArg('--profile-port', daprDefinition.profilePort)
                         .withNamedArg('--protocol', daprDefinition.protocol)
+                        .withNamedArg('--sentry-address', daprDefinition.sentryAddress)
                         .withNamedArg('--stderrthreshold', daprDefinition.stdErrThreshold)
-                        .withNamedArg('-v', daprDefinition.vLogLevel)
-                        .withNamedArg('-vmodule', daprDefinition.vLogFilters)
+                        .withNamedArg('--v', daprDefinition.vLogLevel)
+                        .withNamedArg('--vmodule', daprDefinition.vLogFilters)
                         .build();
 
                 return callback(command, { cwd: definition.cwd });
