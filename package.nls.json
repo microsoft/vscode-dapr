@@ -3,5 +3,21 @@
     "vscode-dapr.applications.invoke-post.title": "Invoke (POST) application method",
     "vscode-dapr.applications.publish-message.title": "Publish message to application",
     "vscode-dapr.tasks.scaffoldDaprTasks.title": "Scaffold Dapr Tasks",
-    "vscode-dapr.views.applications.name": "Applications"
+    "vscode-dapr.views.applications.name": "Applications",
+
+    "vscode-dapr.tasks.dapr.properties.appId.description": "An ID for your application, used for service discovery.",
+    "vscode-dapr.tasks.dapr.properties.appPort.description": "The port your application is listening on.",
+    "vscode-dapr.tasks.dapr.properties.command.description": "The command and arguments used to start your application.",
+    "vscode-dapr.tasks.dapr.properties.cwd.description": "The directory in which to start Dapr.",
+    "vscode-dapr.tasks.dapr.properties.config.description": "The path to the Dapr configuration file.",
+    "vscode-dapr.tasks.dapr.properties.enableProfiling.description": "Whether to enable pprof profiling via an HTTP endpoint.",
+    "vscode-dapr.tasks.dapr.properties.grpcPort.description": "The gRPC port for Dapr to listen on.",
+    "vscode-dapr.tasks.dapr.properties.httpPort.description": "The HTTP port for Dapr to listen on.",
+    "vscode-dapr.tasks.dapr.properties.image.description": "The image to build the code in (<repository>/<image>).",
+    "vscode-dapr.tasks.dapr.properties.logLevel.description": "Sets the log verbosity.",
+    "vscode-dapr.tasks.dapr.properties.maxConcurrency.description": "Controls the concurrency level of the application.",
+    "vscode-dapr.tasks.dapr.properties.placementHost.description": "The host on which the placement service resides.",
+    "vscode-dapr.tasks.dapr.properties.profilePort.description": "The port for the profile server to listen on.",
+    "vscode-dapr.tasks.dapr.properties.protocol.description": "Tells Dapr to use HTTP or gRPC to talk to the application.",
+    "vscode-dapr.tasks.dapr.properties.redisHost.description": "The host on which the Redis service resides."
 }
