@@ -10,8 +10,10 @@ namespace App
     [ApiController]
     public class AccountsController : ControllerBase
     {
+        private const string StateStore = "statestore";
+
         [HttpGet("{account}")]
-        public ActionResult<int> GetBalance(StateEntry<int?> account)
+        public ActionResult<int> GetBalance([FromState(StateStore)] StateEntry<int?> account)
         {
             if (account.Value is null)
             {
@@ -22,7 +24,7 @@ namespace App
         }
 
         [HttpPost("{account}/deposit")]
-        public async Task<ActionResult<int>> Deposit([FromRoute] StateEntry<int?> account, [FromBody] int amount)
+        public async Task<ActionResult<int>> Deposit([FromState(StateStore)] [FromRoute] StateEntry<int?> account, [FromBody] int amount)
         {
             account.Value ??= 0;
             account.Value += amount;
@@ -33,7 +35,7 @@ namespace App
         }
 
         [HttpPost("{account}/withdraw")]
-        public async Task<ActionResult<int>> Withdraw([FromRoute] StateEntry<int?> account, [FromBody] int amount)
+        public async Task<ActionResult<int>> Withdraw([FromState(StateStore)] [FromRoute] StateEntry<int?> account, [FromBody] int amount)
         {
             account.Value ??= 0;
             account.Value -= amount;
@@ -47,7 +49,7 @@ namespace App
         [HttpPost("transaction")]
         public async Task<ActionResult<int>> Transaction(Transaction transaction, [FromServices] StateClient stateClient)
         {
-            var account = await stateClient.GetStateEntryAsync<int?>(transaction.AccountId);
+            var account = await stateClient.GetStateEntryAsync<int?>(StateStore, transaction.AccountId);
 
             switch (transaction.Type)
             {
