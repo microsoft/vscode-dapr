@@ -13,6 +13,9 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
+			"env": {
+				"DEBUGTELEMETRY": "v"
+			},
 			"outFiles": [
 				"${workspaceFolder}/out/**/*.js"
 			],
@@ -27,6 +30,7 @@
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"env": {
+				"DEBUGTELEMETRY": "v",
 				"VSCODE_DAPR_LOCALE": "pseudo"
 			},
 			"sourceMaps": true,
