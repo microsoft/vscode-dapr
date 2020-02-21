@@ -49,24 +49,62 @@ export function isError(err: unknown): err is Error {
     return err instanceof Error;
 }
 
+interface InvokeWizardContext {
+    application: DaprApplication;
+    method: string;
+    payload: unknown;
+}
+
 export async function invoke(daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, selectedApplication: DaprApplication | undefined, isPost?: boolean): Promise<void> {
-    const application = await getApplication(daprApplicationProvider, ui, selectedApplication);
-    const method = await getMethod(ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey);
-    const payload = isPost ? await getPayload(ui, workspaceState, invokePostPayloadStateKey) : undefined;
+    const applicationStep =
+        async (context: InvokeWizardContext): Promise<InvokeWizardContext> => {
+            const application = await getApplication(daprApplicationProvider, ui, selectedApplication);
+
+            return {
+                ...context,
+                application
+            }
+        };
+
+    const methodStep =
+        async (context: InvokeWizardContext): Promise<InvokeWizardContext> => {
+            const method = await getMethod(ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey);
+
+            return {
+                ...context,
+                method
+            };
+        }
+
+    const payloadStep =
+        async (context: InvokeWizardContext): Promise<InvokeWizardContext> => {
+            const payload = isPost ? await getPayload(ui, workspaceState, invokePostPayloadStateKey) : undefined;
+
+            return {
+                ...context,
+                payload
+            };
+        }
+
+    const result = await ui.showWizard<InvokeWizardContext>({}, applicationStep, methodStep, payloadStep);
+
+//    const application = await getApplication(daprApplicationProvider, ui, selectedApplication);
+//    const method = await getMethod(ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey);
+//    const payload = isPost ? await getPayload(ui, workspaceState, invokePostPayloadStateKey) : undefined;
 
     await ui.withProgress(
         localize('commands.invokeCommon.invokeMessage', 'Invoking Dapr application'),
         async (_, token) => {
             try {
                 if (isPost) {
-                    outputChannel.appendLine(localize('commands.invokeCommon.invokePostMessage', 'Invoking Dapr application \'{0}\' method \'{1}\' with payload \'{2}\'...', application.appId, method, JSON.stringify(payload)))
+                    outputChannel.appendLine(localize('commands.invokeCommon.invokePostMessage', 'Invoking Dapr application \'{0}\' method \'{1}\' with payload \'{2}\'...', result.application.appId, result.method, JSON.stringify(result.payload)))
                 } else {
-                    outputChannel.appendLine(localize('commands.invokeCommon.invokeGetMessage', 'Invoking Dapr application \'{0}\' method \'{1}\'...', application.appId, method))
+                    outputChannel.appendLine(localize('commands.invokeCommon.invokeGetMessage', 'Invoking Dapr application \'{0}\' method \'{1}\'...', result.application.appId, result.method))
                 }
 
                 const data = isPost
-                    ? await daprClient.invokePost(application, method, payload, token)
-                    : await daprClient.invokeGet(application, method, token);
+                    ? await daprClient.invokePost(result.application, result.method, result.payload, token)
+                    : await daprClient.invokeGet(result.application, result.method, token);
         
                 outputChannel.appendLine(localize('commands.invokeCommon.invokeSucceededMessage', 'Method succeeded: {0}', String(data)));
             } catch (err) {
