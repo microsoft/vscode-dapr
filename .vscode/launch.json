@@ -13,6 +13,9 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
+			"env": {
+				"DEBUGTELEMETRY": "v"
+			},
 			"outFiles": [
 				"${workspaceFolder}/out/**/*.js"
 			],
@@ -27,6 +30,7 @@
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"env": {
+				"DEBUGTELEMETRY": "v",
 				"VSCODE_DAPR_LOCALE": "pseudo"
 			},
 			"sourceMaps": true,
@@ -37,13 +41,27 @@
 			"preLaunchTask": "${defaultBuildTask}"
 		},
 		{
-			"name": "Extension Tests",
+			"name": "Extension Tests (All)",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+				"--extensionTestsPath=${workspaceFolder}/out/test/suite/allTests"
+			],
+			"outFiles": [
+				"${workspaceFolder}/out/test/**/*.js"
+			],
+			"preLaunchTask": "${defaultBuildTask}"
+		},
+		{
+			"name": "Extension Tests (Unit)",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionTestsPath=${workspaceFolder}/out/test/suite/unitTests"
 			],
 			"outFiles": [
 				"${workspaceFolder}/out/test/**/*.js"
