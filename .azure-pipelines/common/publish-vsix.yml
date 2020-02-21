@@ -4,6 +4,8 @@ steps:
   inputs:
     command: custom
     customCommand: run ci-package
+  env:
+    DISPLAY: :10 # Only necessary for linux tests
 
 - task: CopyFiles@2
   displayName: 'Copy vsix to staging directory'
