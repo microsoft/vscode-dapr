@@ -14,6 +14,8 @@ export default class DaprApplicationNode implements TreeNode {
 
         item.contextValue = 'application';
 
+        item.iconPath = new vscode.ThemeIcon('globe');
+
         return Promise.resolve(item);
     }
 }
