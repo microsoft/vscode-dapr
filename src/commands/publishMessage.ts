@@ -3,8 +3,8 @@
 
 import * as vscode from 'vscode';
 import DaprApplicationNode from "../views/applications/daprApplicationNode";
-import { DaprApplicationProvider } from "../services/daprApplicationProvider";
-import { UserInput } from '../services/userInput';
+import { DaprApplicationProvider, DaprApplication } from "../services/daprApplicationProvider";
+import { UserInput, WizardStep } from '../services/userInput';
 import { DaprClient } from '../services/daprClient';
 import { getApplication, getPayload } from './invokeCommon';
 import { localize } from '../util/localize';
@@ -25,19 +25,47 @@ export async function getTopic(context: ITelemetryContext, ui: UserInput, worksp
     return topic;
 }
 
+interface PublishWizardContext {
+    application: DaprApplication;
+    topic: string;
+    payload?: unknown;
+}
+
 export async function publishMessage(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, node: DaprApplicationNode | undefined): Promise<void> {
     context.errorHandling.suppressReportIssue = true;
 
-    const application = await getApplication(context.telemetry, daprApplicationProvider, ui, node?.application);
-    const topic = await getTopic(context.telemetry, ui, workspaceState);
-    const payload = await getPayload(context.telemetry, ui, workspaceState, publishMessagePayloadStateKey);
+    const applicationStep: WizardStep<PublishWizardContext> =
+        async wizardContext => {
+            return {
+                ...wizardContext,
+                application: await getApplication(context.telemetry, daprApplicationProvider, ui, node?.application)
+            }
+        };
+
+    const methodStep: WizardStep<PublishWizardContext> =
+        async wizardContext => {
+            return {
+                ...wizardContext,
+                topic: await getTopic(context.telemetry, ui, workspaceState)
+            };
+        };
+
+    const payloadStep: WizardStep<PublishWizardContext> =
+        async wizardContext => {
+            return {
+                ...wizardContext,
+                payload: await getPayload(context.telemetry, ui, workspaceState, publishMessagePayloadStateKey)
+            };
+        };
+
+    const result = await ui.showWizard<PublishWizardContext>({ application: node?.application }, !node?.application ? applicationStep : undefined, methodStep, payloadStep);
 
     await ui.withProgress(
         localize('commands.publishMessage.publishProgressTitle', 'Publishing Dapr message'),
         async (_, token) => {
-            outputChannel.appendLine(localize('commands.publishMessage.publishMessage', 'Publishing Dapr message \'{0}\' to application \'{1}\' with payload \'{2}\'...', topic, application.appId, JSON.stringify(payload)));
+            outputChannel.appendLine(localize('commands.publishMessage.publishMessage', 'Publishing Dapr message \'{0}\' to application \'{1}\' with payload \'{2}\'...', result.topic, result.application.appId, JSON.stringify(result.payload)));
 
-            await daprClient.publishMessage(application, topic, payload, token);
+            await daprClient.publishMessage(result.application, result.topic, result.payload, token);
     
             outputChannel.appendLine(localize('commands.publishMessage.publishSucceededMessage', 'Message published'));
 

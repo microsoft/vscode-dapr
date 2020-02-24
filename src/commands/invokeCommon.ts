@@ -3,7 +3,7 @@
 
 import * as vscode from 'vscode';
 import { DaprApplication, DaprApplicationProvider } from "../services/daprApplicationProvider";
-import { UserInput } from '../services/userInput';
+import { UserInput, WizardStep } from '../services/userInput';
 import { DaprClient } from '../services/daprClient';
 import { localize } from '../util/localize';
 import { IActionContext, ITelemetryContext } from 'vscode-azureextensionui';
@@ -61,24 +61,24 @@ interface InvokeWizardContext {
 export async function invoke(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, application: DaprApplication | undefined, isPost?: boolean): Promise<void> {
     context.errorHandling.suppressReportIssue = true;
 
-    const applicationStep =
-        async (wizardContext: Partial<InvokeWizardContext>): Promise<Partial<InvokeWizardContext>> => {
+    const applicationStep: WizardStep<InvokeWizardContext> =
+        async wizardContext => {
             return {
                 ...wizardContext,
                 application: await getApplication(context.telemetry, daprApplicationProvider, ui, application)
             }
         };
 
-    const methodStep =
-        async (wizardContext: Partial<InvokeWizardContext>): Promise<Partial<InvokeWizardContext>> => {
+    const methodStep: WizardStep<InvokeWizardContext> =
+        async wizardContext => {
             return {
                 ...wizardContext,
                 method: await getMethod(context.telemetry, ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey)
             };
         };
 
-    const payloadStep =
-        async (wizardContext: Partial<InvokeWizardContext>): Promise<Partial<InvokeWizardContext>> => {
+    const payloadStep: WizardStep<InvokeWizardContext> =
+        async wizardContext => {
             return {
                 ...wizardContext,
                 payload: isPost ? await getPayload(context.telemetry, ui, workspaceState, invokePostPayloadStateKey) : undefined
@@ -86,10 +86,6 @@ export async function invoke(context: IActionContext, daprApplicationProvider: D
         };
 
     const result = await ui.showWizard<InvokeWizardContext>({ application }, !application ? applicationStep : undefined, methodStep, isPost ? payloadStep : undefined);
-
-//    const application = await getApplication(context.telemetry, daprApplicationProvider, ui, selectedApplication);
-//    const method = await getMethod(context.telemetry, ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey);
-//    const payload = isPost ? await getPayload(context.telemetry, ui, workspaceState, invokePostPayloadStateKey) : undefined;
 
     await ui.withProgress(
         localize('commands.invokeCommon.invokeMessage', 'Invoking Dapr application'),
