@@ -21,6 +21,7 @@
 		"onCommand:vscode-dapr.applications.invoke-get",
 		"onCommand:vscode-dapr.applications.invoke-post",
 		"onCommand:vscode-dapr.applications.publish-message",
+		"onCommand:vscode-dapr.help.browseDocumentation",
 		"onCommand:vscode-dapr.tasks.scaffoldDaprTasks",
 		"onCommand:workbench.action.tasks.runTask",
 		"onView:vscode-dapr.views.applications"
@@ -46,6 +47,11 @@
 			{
 				"command": "vscode-dapr.applications.publish-message",
 				"title": "%vscode-dapr.applications.publish-message.title%",
+				"category": "Dapr"
+			},
+			{
+				"command": "vscode-dapr.help.browseDocumentation",
+				"title": "%vscode-dapr.help.browseDocumentation.title%",
 				"category": "Dapr"
 			},
 			{
