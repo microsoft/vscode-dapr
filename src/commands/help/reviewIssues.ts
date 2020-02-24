@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as vscode from 'vscode';
+import { UserInput } from '../../services/userInput';
 
-export function reviewIssues(): Thenable<boolean> {
-    return vscode.env.openExternal(vscode.Uri.parse('https://aka.ms/vscode-dapr-help-review-issues', true));
+export function reviewIssues(ui: UserInput): Thenable<boolean> {
+    return ui.openExternal('https://aka.ms/vscode-dapr-help-review-issues');
 }
 
-const createReviewIssuesCommand = () => (): Thenable<boolean> => reviewIssues();
+const createReviewIssuesCommand = (ui: UserInput) => (): Thenable<boolean> => reviewIssues(ui);
 
 export default createReviewIssuesCommand;

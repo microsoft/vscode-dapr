@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as vscode from 'vscode';
+import { UserInput } from '../../services/userInput';
 
-export function getStarted(): Thenable<boolean> {
-    return vscode.env.openExternal(vscode.Uri.parse('https://aka.ms/vscode-dapr-help-get-started', true));
+export function getStarted(ui: UserInput): Thenable<boolean> {
+    return ui.openExternal('https://aka.ms/vscode-dapr-help-get-started');
 }
 
-const createGetStartedCommand = () => (): Thenable<boolean> => getStarted();
+const createGetStartedCommand = (ui: UserInput) => (): Thenable<boolean> => getStarted(ui);
 
 export default createGetStartedCommand;

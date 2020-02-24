@@ -1,14 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as vscode from 'vscode';
-import { IActionContext } from "vscode-azureextensionui";
 import { UserInput } from '../../services/userInput';
 
-export function readDocumentation(context: IActionContext, ui: UserInput): Thenable<boolean> {
-    return vscode.env.openExternal(vscode.Uri.parse('https://aka.ms/vscode-dapr-help-read-documentation', true));
+export function readDocumentation(ui: UserInput): Thenable<boolean> {
+    return ui.openExternal('https://aka.ms/vscode-dapr-help-read-documentation');
 }
 
-const createReadDocumentationCommand = (ui: UserInput) => (context: IActionContext): Thenable<boolean> => readDocumentation(context, ui);
+const createReadDocumentationCommand = (ui: UserInput) => (): Thenable<boolean> => readDocumentation(ui);
 
 export default createReadDocumentationCommand;

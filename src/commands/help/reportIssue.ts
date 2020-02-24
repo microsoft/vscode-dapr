@@ -1,13 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as vscode from 'vscode';
+import { UserInput } from '../../services/userInput';
 
-export function reportIssue(): Thenable<void> {
-    // TODO: Pull extension ID from package.json.
-    return vscode.commands.executeCommand('vscode.openIssueReporter', 'ms-azuretools.vscode-dapr');
+export function reportIssue(ui: UserInput): Thenable<void> {
+    return ui.showIssueReporter();
 }
 
-const createReportIssueCommand = () => (): Thenable<void> => reportIssue();
+const createReportIssueCommand = (ui: UserInput) => (): Thenable<void> => reportIssue(ui);
 
 export default createReportIssueCommand;
