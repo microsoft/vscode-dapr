@@ -3,6 +3,7 @@
     "vscode-dapr.applications.invoke-post.title": "Invoke (POST) application method",
     "vscode-dapr.applications.publish-message.title": "Publish message to application",
     "vscode-dapr.help.browseDocumentation.title": "Browse documentation",
+    "vscode-dapr.help.getStarted.title": "Get started",
     "vscode-dapr.help.reportIssue.title": "Report issue",
     "vscode-dapr.help.reviewIssues.title": "Review issues",
     "vscode-dapr.tasks.scaffoldDaprTasks.title": "Scaffold Dapr Tasks",
