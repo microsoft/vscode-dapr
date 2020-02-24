@@ -3,7 +3,7 @@
 
 import * as vscode from 'vscode';
 import TreeNode from '../treeNode';
-import BrowseDocumentationNode from './browseDocumentationNode';
+import ReadDocumentationNode from './readDocumentationNode';
 import ReportIssueNode from './reportIssueNode';
 import ReviewIssuesNode from './reviewIssuesNode';
 import GetStartedNode from './getStartedNode';
@@ -18,7 +18,7 @@ export default class HelpTreeDataProvider implements vscode.TreeDataProvider<Tre
     getChildren(): vscode.ProviderResult<TreeNode[]> {
         return [
             new GetStartedNode(),
-            new BrowseDocumentationNode(),
+            new ReadDocumentationNode(),
             new ReviewIssuesNode(),
             new ReportIssueNode()
         ];

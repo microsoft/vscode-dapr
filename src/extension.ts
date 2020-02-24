@@ -19,7 +19,7 @@ import HttpDaprClient from './services/daprClient';
 import createScaffoldDaprTasksCommand from './commands/scaffoldDaprTasks';
 import AzureTelemetryProvider from './services/telemetryProvider';
 import HelpTreeDataProvider from './views/help/helpTreeDataProvider';
-import createBrowseDocumentationCommand from './commands/help/browseDocumentation';
+import createReadDocumentationCommand from './commands/help/readDocumentation';
 import createReportIssueCommand from './commands/help/reportIssue';
 import createReviewIssuesCommand from './commands/help/reviewIssues';
 import createGetStartedCommand from './commands/help/getStarted';
@@ -55,7 +55,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
-			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.browseDocumentation', createBrowseDocumentationCommand(ui));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.readDocumentation', createReadDocumentationCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.getStarted', createGetStartedCommand());
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reportIssue', createReportIssueCommand());
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reviewIssues', createReviewIssuesCommand());
