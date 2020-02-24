@@ -20,6 +20,7 @@ import { AggregateUserInput } from './services/userInput';
 import HttpDaprClient from './services/daprClient';
 import createScaffoldDaprTasksCommand from './commands/scaffoldDaprTasks';
 import AzureTelemetryProvider from './services/telemetryProvider';
+import HelpTreeDataProvider from './views/help/helpTreeDataProvider';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -63,6 +64,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					'vscode-dapr.views.applications',
 					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider))));
 
+			registerDisposable(
+				vscode.window.registerTreeDataProvider(
+					'vscode-dapr.views.help',
+					new HelpTreeDataProvider()));
+		
 			return Promise.resolve();
 	});
 }

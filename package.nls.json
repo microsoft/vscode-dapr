@@ -4,6 +4,7 @@
     "vscode-dapr.applications.publish-message.title": "Publish message to application",
     "vscode-dapr.tasks.scaffoldDaprTasks.title": "Scaffold Dapr Tasks",
     "vscode-dapr.views.applications.name": "Applications",
+    "vscode-dapr.views.help.name": "Help",
 
     "vscode-dapr.tasks.dapr.properties.appId.description": "An ID for your application, used for service discovery.",
     "vscode-dapr.tasks.dapr.properties.appPort.description": "The port your application is listening on.",

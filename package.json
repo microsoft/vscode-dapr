@@ -338,6 +338,10 @@
 				{
 					"id": "vscode-dapr.views.applications",
 					"name": "%vscode-dapr.views.applications.name%"
+				},
+				{
+					"id": "vscode-dapr.views.help",
+					"name": "%vscode-dapr.views.help.name%"
 				}
 			]
 		},
