@@ -4,8 +4,7 @@
 import * as vscode from 'vscode';
 
 export function getStarted(): Thenable<boolean> {
-    // TODO: Create aka.ms link to wiki?
-    return vscode.env.openExternal(vscode.Uri.parse('https://github.com/microsoft/vscode-dapr', true));
+    return vscode.env.openExternal(vscode.Uri.parse('https://aka.ms/vscode-dapr-help-get-started', true));
 }
 
 const createGetStartedCommand = () => (): Thenable<boolean> => getStarted();
