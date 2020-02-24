@@ -7,11 +7,12 @@ import { DaprApplicationProvider } from "../services/daprApplicationProvider";
 import { UserInput } from '../services/userInput';
 import { DaprClient } from '../services/daprClient';
 import { invoke } from './invokeCommon';
+import { IActionContext } from 'vscode-azureextensionui';
 
-export async function invokeGet(daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, node: DaprApplicationNode | undefined): Promise<void> {
-    return invoke(daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, node?.application);
+export async function invokeGet(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, node: DaprApplicationNode | undefined): Promise<void> {
+    return invoke(context, daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, node?.application);
 }
 
-const createInvokeGetCommand = (daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento) => (node: DaprApplicationNode | undefined): Promise<void> => invokeGet(daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, node);
+const createInvokeGetCommand = (daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento) => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => invokeGet(context, daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, node);
 
 export default createInvokeGetCommand;

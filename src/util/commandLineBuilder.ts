@@ -83,7 +83,7 @@ export default class CommandLineBuilder {
         return this;
     }
 
-    public withQuotedArg(value: string): CommandLineBuilder {
+    public withQuotedArg(value: string | undefined): CommandLineBuilder {
         if (value !== undefined) {
             this.withArg(
                 {
