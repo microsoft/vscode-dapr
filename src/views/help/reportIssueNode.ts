@@ -7,7 +7,7 @@ import { localize } from '../../util/localize';
 
 export default class ReportIssueNode implements TreeNode {
     getTreeItem(): Promise<vscode.TreeItem> {
-        const treeItem = new vscode.TreeItem(localize('views.reportIssue.label', 'Report issue'));
+        const treeItem = new vscode.TreeItem(localize('views.reportIssue.label', 'Report Issue'));
 
         treeItem.command = {
             arguments: [ this ],

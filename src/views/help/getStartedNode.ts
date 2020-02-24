@@ -7,7 +7,7 @@ import { localize } from '../../util/localize';
 
 export default class GetStartedNode implements TreeNode {
     getTreeItem(): Promise<vscode.TreeItem> {
-        const treeItem = new vscode.TreeItem(localize('views.getStarted.label', 'Get started'));
+        const treeItem = new vscode.TreeItem(localize('views.getStarted.label', 'Get Started'));
 
         treeItem.command = {
             arguments: [ this ],
