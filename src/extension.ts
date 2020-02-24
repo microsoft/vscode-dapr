@@ -10,19 +10,19 @@ import ext from './ext';
 import { initializeTemplateScaffolder } from './scaffolding/templateScaffolder';
 import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
 import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
-import createInvokeGetCommand from './commands/invokeGet';
-import createInvokePostCommand from './commands/invokePost';
-import createPublishMessageCommand from './commands/publishMessage';
+import createInvokeGetCommand from './commands/applications/invokeGet';
+import createInvokePostCommand from './commands/applications/invokePost';
+import createPublishMessageCommand from './commands/applications/publishMessage';
 import AxiosHttpClient from './services/httpClient';
 import { AggregateUserInput } from './services/userInput';
 import HttpDaprClient from './services/daprClient';
 import createScaffoldDaprTasksCommand from './commands/scaffoldDaprTasks';
 import AzureTelemetryProvider from './services/telemetryProvider';
 import HelpTreeDataProvider from './views/help/helpTreeDataProvider';
-import createBrowseDocumentationCommand from './commands/browseDocumentation';
-import createReportIssueCommand from './commands/reportIssue';
-import createReviewIssuesCommand from './commands/reviewIssues';
-import createGetStartedCommand from './commands/getStarted';
+import createBrowseDocumentationCommand from './commands/help/browseDocumentation';
+import createReportIssueCommand from './commands/help/reportIssue';
+import createReviewIssuesCommand from './commands/help/reviewIssues';
+import createGetStartedCommand from './commands/help/getStarted';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
