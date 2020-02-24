@@ -15,6 +15,8 @@ export default class BrowseDocumentationNode implements TreeNode {
             title: '' // NOTE: Title is required but unused here.
         };
 
+        treeItem.iconPath = new vscode.ThemeIcon('book');
+
         return Promise.resolve(treeItem);
     }
 }

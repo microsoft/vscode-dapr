@@ -15,6 +15,8 @@ export default class ReviewIssuesNode implements TreeNode {
             title: '' // NOTE: Title is required but unused here.
         };
 
+        treeItem.iconPath = new vscode.ThemeIcon('issues');
+
         return Promise.resolve(treeItem);
     }
 }
