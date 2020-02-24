@@ -7,6 +7,14 @@ import { localize } from '../../util/localize';
 
 export default class BrowseDocumentationNode implements TreeNode {
     getTreeItem(): Promise<vscode.TreeItem> {
-        return Promise.resolve(new vscode.TreeItem(localize('views.browseDocumentationNode.label', 'Browse documentation')));
+        const treeItem = new vscode.TreeItem(localize('views.browseDocumentationNode.label', 'Browse documentation'));
+
+        treeItem.command = {
+            arguments: [ this ],
+            command: 'vscode-dapr.help.browseDocumentation',
+            title: '' // NOTE: Title is required but unused here.
+        };
+
+        return Promise.resolve(treeItem);
     }
 }

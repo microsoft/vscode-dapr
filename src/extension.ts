@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import DaprCommandTaskProvider from './tasks/daprCommandTaskProvider';
 import DaprdCommandTaskProvider from './tasks/daprdCommandTaskProvider';
@@ -21,6 +19,7 @@ import HttpDaprClient from './services/daprClient';
 import createScaffoldDaprTasksCommand from './commands/scaffoldDaprTasks';
 import AzureTelemetryProvider from './services/telemetryProvider';
 import HelpTreeDataProvider from './views/help/helpTreeDataProvider';
+import createBrowseDocumentationCommand from './commands/browseDocumentation';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -53,6 +52,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.browseDocumentation', createBrowseDocumentationCommand(ui));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(ui));
 			
 			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(telemetryProvider)));
