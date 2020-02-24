@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import { IAzureUserInput, IAzureQuickPickOptions } from 'vscode-azureextensionui';
+import { IAzureUserInput, IAzureQuickPickOptions, IActionContext, AzureWizardPromptStep, AzureWizard } from 'vscode-azureextensionui';
 
 export interface WizardStep<T> {
     (context: Partial<T>): Promise<Partial<T>>;
@@ -19,6 +19,24 @@ function isStep<T>(step: WizardStep<T> | undefined): step is WizardStep<T> {
     return step !== undefined;
 }
 
+interface WizardContext<T> extends IActionContext {
+    stepContext: Partial<T>;
+}
+
+class WizardPromptStep<T> extends AzureWizardPromptStep<WizardContext<T>> {
+    constructor(private readonly step: WizardStep<T>) {
+        super();
+    }
+
+    async prompt(wizardContext: WizardContext<T>): Promise<void> {
+        wizardContext.stepContext = await this.step(wizardContext.stepContext);
+    }
+    
+    shouldPrompt(): boolean {
+        return true;
+    }
+}
+
 export class AggregateUserInput implements UserInput {
     constructor(private readonly ui: IAzureUserInput) {
     }
@@ -32,15 +50,31 @@ export class AggregateUserInput implements UserInput {
     }
 
     async showWizard<T>(context: Partial<T>, ...steps: (WizardStep<T> | undefined)[]): Promise<T> {
-        const currentSteps = steps.filter(isStep);
+        const filteredSteps = steps.filter(isStep);
 
-        let result = context;
+        // NOTE: AzureWizard<T> requires T extend IActionContext in order to log some telemetry metadata about the last performed step.
+        //       This seems like an onerous requirement, so we fake an IActionContext to make the wizard happy.
 
-        for (let i = 0; i < currentSteps.length; i++) {
-            result = await currentSteps[i](result);
-        }
+        const wizardContext = {
+            errorHandling: {
+                issueProperties: {}
+            },
+            stepContext: context,
+            telemetry: {
+                measurements: {},
+                properties: {}
+            }
+        };
 
-        return result as T;
+        const wizard = new AzureWizard(
+            wizardContext,
+            {
+                promptSteps: filteredSteps.map(step => new WizardPromptStep(step))
+            });
+
+        await wizard.prompt();
+
+        return wizardContext.stepContext as T;
     }
 
     async withProgress<T>(title: string, task: (progress: vscode.Progress<{ message?: string | undefined; increment?: number | undefined }>, token: vscode.CancellationToken) => Promise<T>): Promise<T> {
