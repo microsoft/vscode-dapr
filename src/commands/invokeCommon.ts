@@ -55,43 +55,37 @@ export async function getPayload(context: ITelemetryContext, ui: UserInput, work
 interface InvokeWizardContext {
     application: DaprApplication;
     method: string;
-    payload: unknown;
+    payload?: unknown;
 }
 
-export async function invoke(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, selectedApplication: DaprApplication | undefined, isPost?: boolean): Promise<void> {
+export async function invoke(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, application: DaprApplication | undefined, isPost?: boolean): Promise<void> {
     context.errorHandling.suppressReportIssue = true;
 
     const applicationStep =
-        async (wizardContext: InvokeWizardContext): Promise<InvokeWizardContext> => {
-            const application = await getApplication(context.telemetry, daprApplicationProvider, ui, selectedApplication);
-
+        async (wizardContext: Partial<InvokeWizardContext>): Promise<Partial<InvokeWizardContext>> => {
             return {
                 ...wizardContext,
-                application
+                application: await getApplication(context.telemetry, daprApplicationProvider, ui, application)
             }
         };
 
     const methodStep =
-        async (wizardContext: InvokeWizardContext): Promise<InvokeWizardContext> => {
-            const method = await getMethod(context.telemetry, ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey);
-
+        async (wizardContext: Partial<InvokeWizardContext>): Promise<Partial<InvokeWizardContext>> => {
             return {
                 ...wizardContext,
-                method
+                method: await getMethod(context.telemetry, ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey)
             };
         };
 
     const payloadStep =
-        async (wizardContext: InvokeWizardContext): Promise<InvokeWizardContext> => {
-            const payload = isPost ? await getPayload(context.telemetry, ui, workspaceState, invokePostPayloadStateKey) : undefined;
-
+        async (wizardContext: Partial<InvokeWizardContext>): Promise<Partial<InvokeWizardContext>> => {
             return {
                 ...wizardContext,
-                payload
+                payload: isPost ? await getPayload(context.telemetry, ui, workspaceState, invokePostPayloadStateKey) : undefined
             };
         };
 
-    const result = await ui.showWizard<InvokeWizardContext>({}, applicationStep, methodStep, payloadStep);
+    const result = await ui.showWizard<InvokeWizardContext>({ application }, !application ? applicationStep : undefined, methodStep, isPost ? payloadStep : undefined);
 
 //    const application = await getApplication(context.telemetry, daprApplicationProvider, ui, selectedApplication);
 //    const method = await getMethod(context.telemetry, ui, workspaceState, isPost ? invokePostMethodStateKey : invokeGetMethodStateKey);
