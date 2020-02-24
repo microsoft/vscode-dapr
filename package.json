@@ -61,6 +61,11 @@
 				"category": "Dapr"
 			},
 			{
+				"command": "vscode-dapr.help.reviewIssues",
+				"title": "%vscode-dapr.help.reviewIssues.title%",
+				"category": "Dapr"
+			},
+			{
 				"command": "vscode-dapr.tasks.scaffoldDaprTasks",
 				"title": "%vscode-dapr.tasks.scaffoldDaprTasks.title%",
 				"category": "Dapr"

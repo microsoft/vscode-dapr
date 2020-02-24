@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import TreeNode from '../treeNode';
 import BrowseDocumentationNode from './browseDocumentationNode';
 import ReportIssueNode from './reportIssueNode';
+import ReviewIssuesNode from './reviewIssuesNode';
 
 export default class HelpTreeDataProvider implements vscode.TreeDataProvider<TreeNode> {
     onDidChangeTreeData?: vscode.Event<TreeNode>;
@@ -16,6 +17,7 @@ export default class HelpTreeDataProvider implements vscode.TreeDataProvider<Tre
     getChildren(): vscode.ProviderResult<TreeNode[]> {
         return [
             new BrowseDocumentationNode(),
+            new ReviewIssuesNode(),
             new ReportIssueNode()
         ];
     }
