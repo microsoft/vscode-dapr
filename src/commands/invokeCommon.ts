@@ -16,6 +16,10 @@ export async function getApplication(context: ITelemetryContext, daprApplication
     if (!selectedApplication) {
         const applications = await daprApplicationProvider.getApplications();
 
+        if (applications.length === 0) {
+            throw new Error(localize('commands.invokeCommon.noApplicationsMessage', 'No Dapr applications are running.'));
+        }
+
         context.properties.cancelStep = 'application';
 
         const pickedApplication = await ui.showQuickPick(applications.map(application => ({ application, label: application.appId })), { placeHolder: localize('commands.invokeCommon.applicationPlaceholder', 'Select a Dapr application') });
