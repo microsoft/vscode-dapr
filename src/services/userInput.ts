@@ -4,6 +4,12 @@
 import * as vscode from 'vscode';
 import { IAzureUserInput, IAzureQuickPickOptions, IActionContext, AzureWizardPromptStep, AzureWizard } from 'vscode-azureextensionui';
 
+interface WizardOptions<T> {
+    hideStepCount?: boolean;
+    initialContext?: Partial<T>;
+    title: string;
+}
+
 export interface WizardStep<T> {
     (context: Partial<T>): Promise<Partial<T>>;
 }
@@ -11,7 +17,7 @@ export interface WizardStep<T> {
 export interface UserInput {
     showInputBox(options: vscode.InputBoxOptions): Promise<string>;
     showQuickPick<T extends vscode.QuickPickItem>(items: T[] | Thenable<T[]>, options: IAzureQuickPickOptions): Promise<T>;
-    showWizard<T>(context: Partial<T>, ...steps: (WizardStep<T> | undefined)[]): Promise<T>;
+    showWizard<T>(options: WizardOptions<T>, ...steps: (WizardStep<T> | undefined)[]): Promise<T>;
     withProgress<T>(title: string, task: (progress: vscode.Progress<{ message?: string; increment?: number }>, token: vscode.CancellationToken) => Promise<T>): Promise<T>;
 }
 
@@ -49,17 +55,17 @@ export class AggregateUserInput implements UserInput {
         return this.ui.showQuickPick(items, options);
     }
 
-    async showWizard<T>(context: Partial<T>, ...steps: (WizardStep<T> | undefined)[]): Promise<T> {
+    async showWizard<T>(options: WizardOptions<T>, ...steps: (WizardStep<T> | undefined)[]): Promise<T> {
         const filteredSteps = steps.filter(isStep);
 
         // NOTE: AzureWizard<T> requires T extend IActionContext in order to log some telemetry metadata about the last performed step.
         //       This seems like an onerous requirement, so we fake an IActionContext to make the wizard happy.
 
-        const wizardContext = {
+        const wizardContext: WizardContext<T> = {
             errorHandling: {
                 issueProperties: {}
             },
-            stepContext: context,
+            stepContext: options.initialContext ?? {},
             telemetry: {
                 measurements: {},
                 properties: {}
@@ -69,7 +75,9 @@ export class AggregateUserInput implements UserInput {
         const wizard = new AzureWizard(
             wizardContext,
             {
-                promptSteps: filteredSteps.map(step => new WizardPromptStep(step))
+                hideStepCount: options.hideStepCount,
+                promptSteps: filteredSteps.map(step => new WizardPromptStep(step)),
+                title: options.title
             });
 
         await wizard.prompt();

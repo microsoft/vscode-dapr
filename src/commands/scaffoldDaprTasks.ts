@@ -84,7 +84,7 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
             };
         };
 
-    const result = await ui.showWizard({}, appIdStep, appPortStep, configurationStep);
+    const result = await ui.showWizard({ title: localize('commands.scaffoldDaprTasks.wizardTitle', 'Scaffold Dapr Tasks') }, appIdStep, appPortStep, configurationStep);
 
     const buildTask = result.configuration.preLaunchTask;
     const tearDownTask = result.configuration.postDebugTask;

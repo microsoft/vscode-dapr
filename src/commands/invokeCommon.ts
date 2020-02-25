@@ -85,7 +85,12 @@ export async function invoke(context: IActionContext, daprApplicationProvider: D
             };
         };
 
-    const result = await ui.showWizard<InvokeWizardContext>({ application }, !application ? applicationStep : undefined, methodStep, isPost ? payloadStep : undefined);
+    const result = await ui.showWizard<InvokeWizardContext>(
+        {
+            initialContext: { application },
+            title: localize('commands.invokeCommon.wizardTitle', 'Invoke Dapr Application')
+        },
+        !application ? applicationStep : undefined, methodStep, isPost ? payloadStep : undefined);
 
     await ui.withProgress(
         localize('commands.invokeCommon.invokeMessage', 'Invoking Dapr application'),

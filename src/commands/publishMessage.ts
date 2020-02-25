@@ -58,7 +58,12 @@ export async function publishMessage(context: IActionContext, daprApplicationPro
             };
         };
 
-    const result = await ui.showWizard<PublishWizardContext>({ application: node?.application }, !node?.application ? applicationStep : undefined, methodStep, payloadStep);
+    const result = await ui.showWizard<PublishWizardContext>(
+        {
+            initialContext: { application: node?.application },
+            title: localize('commands.publishMessage.wizardTitle', 'Publish Dapr Message')
+        },
+        !node?.application ? applicationStep : undefined, methodStep, payloadStep);
 
     await ui.withProgress(
         localize('commands.publishMessage.publishProgressTitle', 'Publishing Dapr message'),
