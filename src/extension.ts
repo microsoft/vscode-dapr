@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import DaprCommandTaskProvider from './tasks/daprCommandTaskProvider';
 import DaprdCommandTaskProvider from './tasks/daprdCommandTaskProvider';
@@ -12,14 +10,19 @@ import ext from './ext';
 import { initializeTemplateScaffolder } from './scaffolding/templateScaffolder';
 import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
 import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
-import createInvokeGetCommand from './commands/invokeGet';
-import createInvokePostCommand from './commands/invokePost';
-import createPublishMessageCommand from './commands/publishMessage';
+import createInvokeGetCommand from './commands/applications/invokeGet';
+import createInvokePostCommand from './commands/applications/invokePost';
+import createPublishMessageCommand from './commands/applications/publishMessage';
 import AxiosHttpClient from './services/httpClient';
 import { AggregateUserInput } from './services/userInput';
 import HttpDaprClient from './services/daprClient';
 import createScaffoldDaprTasksCommand from './commands/scaffoldDaprTasks';
 import AzureTelemetryProvider from './services/telemetryProvider';
+import HelpTreeDataProvider from './views/help/helpTreeDataProvider';
+import createReadDocumentationCommand from './commands/help/readDocumentation';
+import createReportIssueCommand from './commands/help/reportIssue';
+import createReviewIssuesCommand from './commands/help/reviewIssues';
+import createGetStartedCommand from './commands/help/getStarted';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -52,6 +55,10 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.readDocumentation', createReadDocumentationCommand(ui));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.getStarted', createGetStartedCommand(ui));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reportIssue', createReportIssueCommand(ui));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reviewIssues', createReviewIssuesCommand(ui));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(ui));
 			
 			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(telemetryProvider)));
@@ -63,6 +70,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					'vscode-dapr.views.applications',
 					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider))));
 
+			registerDisposable(
+				vscode.window.registerTreeDataProvider(
+					'vscode-dapr.views.help',
+					new HelpTreeDataProvider()));
+		
 			return Promise.resolve();
 	});
 }

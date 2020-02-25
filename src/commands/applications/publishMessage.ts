@@ -2,12 +2,12 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import DaprApplicationNode from "../views/applications/daprApplicationNode";
-import { DaprApplicationProvider, DaprApplication } from "../services/daprApplicationProvider";
-import { UserInput, WizardStep } from '../services/userInput';
-import { DaprClient } from '../services/daprClient';
+import DaprApplicationNode from "../../views/applications/daprApplicationNode";
+import { DaprApplicationProvider, DaprApplication } from "../../services/daprApplicationProvider";
+import { UserInput, WizardStep } from '../../services/userInput';
+import { DaprClient } from '../../services/daprClient';
 import { getApplication, getPayload } from './invokeCommon';
-import { localize } from '../util/localize';
+import { localize } from '../../util/localize';
 import { IActionContext, ITelemetryContext } from 'vscode-azureextensionui';
 
 const publishMessageTopicStateKey = 'vscode-docker.state.publishMessage.topic';
