@@ -94,7 +94,6 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
                 ?? (wizardContext.configuration?.type ? defaultPortMap[wizardContext.configuration.type] : undefined)
                 ?? defaultPort;
             
-            // TODO: Infer port from application manifest/project file, or application stack.
             const appPortString = await ui.showInputBox(
                 {
                     prompt: localize('commands.scaffoldDaprTasks.portPrompt', 'Enter the port on which the application listens.'),
