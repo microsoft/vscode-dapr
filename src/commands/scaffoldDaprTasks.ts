@@ -63,6 +63,13 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
     const configurationStep: WizardStep<ScaffoldWizardContext> =
         async wizardContext => {
             const workspaceConfigurations = getWorkspaceConfigurations();
+
+            if (workspaceConfigurations.length === 0) {
+                context.errorHandling.suppressReportIssue = true;
+
+                throw new Error(localize('commands.scaffoldDaprTasks.noConfigurationsMessage', 'Open a folder or workspace with a debug launch configuration.'));
+            }
+
             const configurationItems = workspaceConfigurations.map(configuration => ({ label: configuration.name, configuration }));
 
             telemetryProperties.cancelStep = 'configuration';
@@ -146,7 +153,7 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
     }
 
     const daprDebugConfiguration = {
-        ...result.configuration.configuration,
+        ...result.configuration,
         name: localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),
         preLaunchTask: daprdUpTask.label,
         postDebugTask: daprdDownTask.label
