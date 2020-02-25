@@ -48,32 +48,17 @@ interface ScaffoldWizardContext {
     configuration: vscode.DebugConfiguration;
 }
 
+const defaultPortMap: { [key: string]: number } = {
+    'coreclr': 5000,
+    'node': 3000,
+    'node2': 3000,
+    'python': 8000,
+};
+
+const defaultPort = 80;
+
 export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput): Promise<void> {
     const telemetryProperties = context.telemetry.properties as ScaffoldTelemetryProperties;
-
-    const appIdStep: WizardStep<ScaffoldWizardContext> =
-        async wizardContext => {
-            telemetryProperties.cancelStep = 'appId';
-
-            // TODO: Infer name from application manifest/project file, or repo folder name.
-            return {
-                ...wizardContext,
-                appId: await ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.appIdPrompt', 'Enter a Dapr ID for the application'), value: wizardContext.appId ?? 'app' })
-            };
-        };
-
-    const appPortStep: WizardStep<ScaffoldWizardContext> =
-        async wizardContext => {
-            telemetryProperties.cancelStep = 'appPort';
-
-            // TODO: Infer port from application manifest/project file, or application stack.
-            const appPortString = await ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.portPrompt', 'Enter the port on which the application listens.'), value: wizardContext.appPort !== undefined ? wizardContext.appPort.toString() : '5000' });
-
-            return {
-                ...wizardContext,
-                appPort: parseInt(appPortString, 10)
-            };
-        };
 
     const configurationStep: WizardStep<ScaffoldWizardContext> =
         async wizardContext => {
@@ -90,7 +75,50 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
             };
         };
 
-    const result = await ui.showWizard({ title: localize('commands.scaffoldDaprTasks.wizardTitle', 'Scaffold Dapr Tasks') }, appIdStep, appPortStep, configurationStep);
+    const appIdStep: WizardStep<ScaffoldWizardContext> =
+        async wizardContext => {
+            telemetryProperties.cancelStep = 'appId';
+
+            // TODO: Infer name from application manifest/project file, or repo folder name.
+            return {
+                ...wizardContext,
+                appId: await ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.appIdPrompt', 'Enter a Dapr ID for the application'), value: wizardContext.appId ?? 'app' })
+            };
+        };
+
+    const appPortStep: WizardStep<ScaffoldWizardContext> =
+        async wizardContext => {
+            telemetryProperties.cancelStep = 'appPort';
+
+            const appPort = wizardContext.appPort
+                ?? (wizardContext.configuration?.type ? defaultPortMap[wizardContext.configuration.type] : undefined)
+                ?? defaultPort;
+            
+            // TODO: Infer port from application manifest/project file, or application stack.
+            const appPortString = await ui.showInputBox(
+                {
+                    prompt: localize('commands.scaffoldDaprTasks.portPrompt', 'Enter the port on which the application listens.'),
+                    validateInput: value => {
+                        if (/^\d+$/.test(value)) {
+                            const port = parseInt(value, 10);
+
+                            if (port >= 1 && port <= 65535) {
+                                return undefined;
+                            }
+                        }
+                        
+                        return localize('commands.scaffoldDaprTasks.invalidPortMessage', 'A valid port number is a positive integer (1 to 65535).');
+                    },
+                    value: appPort.toString()
+                });
+
+            return {
+                ...wizardContext,
+                appPort: parseInt(appPortString, 10)
+            };
+        };
+
+    const result = await ui.showWizard({ title: localize('commands.scaffoldDaprTasks.wizardTitle', 'Scaffold Dapr Tasks') }, configurationStep, appIdStep, appPortStep);
 
     const buildTask = result.configuration.preLaunchTask;
     const tearDownTask = result.configuration.postDebugTask;
