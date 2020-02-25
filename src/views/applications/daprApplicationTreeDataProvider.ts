@@ -3,7 +3,7 @@
 
 import * as vscode from 'vscode';
 import { DaprApplicationProvider } from '../../services/daprApplicationProvider';
-import TreeNode from './treeNode';
+import TreeNode from '../treeNode';
 import DaprApplicationNode from './daprApplicationNode';
 import NoApplicationsRunningNode from './noApplicationsRunningNode';
 

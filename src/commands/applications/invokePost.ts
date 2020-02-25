@@ -2,10 +2,10 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import DaprApplicationNode from "../views/applications/daprApplicationNode";
-import { DaprApplicationProvider } from "../services/daprApplicationProvider";
-import { UserInput } from '../services/userInput';
-import { DaprClient } from '../services/daprClient';
+import DaprApplicationNode from "../../views/applications/daprApplicationNode";
+import { DaprApplicationProvider } from "../../services/daprApplicationProvider";
+import { UserInput } from '../../services/userInput';
+import { DaprClient } from '../../services/daprClient';
 import { invoke } from './invokeCommon';
 import { IActionContext } from 'vscode-azureextensionui';
 
