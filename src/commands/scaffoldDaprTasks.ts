@@ -48,20 +48,21 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
     const appIdStep: WizardStep<ScaffoldWizardContext> =
         async wizardContext => {
             context.telemetry.properties.cancelStep = 'appId';
-            
+
             // TODO: Infer name from application manifest/project file, or repo folder name.
             return {
                 ...wizardContext,
-                appId: await ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.appIdPrompt', 'Enter a Dapr ID for the application'), value: 'app' })
+                appId: await ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.appIdPrompt', 'Enter a Dapr ID for the application'), value: wizardContext.appId ?? 'app' })
             };
         };
 
     const appPortStep: WizardStep<ScaffoldWizardContext> =
         async wizardContext => {
             context.telemetry.properties.cancelStep = 'appPort';
-            
+
             // TODO: Infer port from application manifest/project file, or application stack.
-            const appPortString = await ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.portPrompt', 'Enter the port on which the application listens.'), value: '5000' });
+            const appPortString = await ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.portPrompt', 'Enter the port on which the application listens.'), value: wizardContext.appPort !== undefined ? wizardContext.appPort.toString() : '5000' });
+
             return {
                 ...wizardContext,
                 appPort: parseInt(appPortString, 10)
@@ -72,9 +73,9 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
         async wizardContext => {
             const workspaceConfigurations = getWorkspaceConfigurations();
             const configurationItems = workspaceConfigurations.map(configuration => ({ label: configuration.name, configuration }));
-            
+
             context.telemetry.properties.cancelStep = 'configuration';
-            
+
             const debugConfigurationItem = await ui.showQuickPick(configurationItems, { placeHolder: localize('commands.scaffoldDaprTasks.configurationPlaceholder', 'Select the configuration used to debug the application') });
 
             return {
