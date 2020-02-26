@@ -1,5 +1,7 @@
 # Dapr for Visual Studio Code (Preview)
 
+[![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-dapr-nightly?branchName=master)](https://dev.azure.com/ms-azuretools/AzCode/_build/latest?definitionId=26&branchName=master)
+
 The Dapr extension makes it easy to setup debugging of applications within the Dapr environment as well as interact with applications via the Dapr runtime.
 
 ## Prerequisites
