@@ -16,23 +16,33 @@ Follow the [Dapr guide](https://dapr.io/#download) to install the Dapr CLI for y
 
 This extension requires Visual Studio Code version 1.42 and above; follow the [VS Code guide](https://code.visualstudio.com/) for installing VS Code for your platform.
 
-## Features
+## Feature Overview
 
 ### Scaffold Dapr task, launch, and component assets
 
-> TODO: Implement me!
+While extensions for Visual Studio Code make it easy to debug applications for a variety of platforms (like .NET Core, Node.js, Python, etc.), coordinating the debugger with the Dapr runtime can be tricky. The Dapr extension helps scaffold VS Code tasks, augments debug launch configurations, and generates the Dapr component assets needed to debug your application within the Dapr environment.
+
+![Scaffold Dapr Tasks](assets/readme/scaffoldDaprTasks.png)
 
 ### View running Dapr applications
 
-> TODO: Implement me!
+The Dapr extension adds a new tab which shows locally-running Dapr applications and allows quickly invoking application methods or publishing events.
+
+![Dapr Tab](assets/readme/daprTab.png)
 
 ### Invoke Dapr application methods
 
-> TODO: Implement me!
+When your application is running, you can quickly invoke its GET/POST methods without using a command line or switching to another HTTP request tool, including specifying an optional payload for POST methods.
+
+![Invoke GET](assets/readme/invokeGet.png)
+
+![Invoke POST](assets/readme/invokePost.png)
 
 ### Publish events to Dapr applications
 
-> TODO: Implement me!
+You can also use the extension to directly publish events to running applications, specifying both the topic and an optional payload.
+
+![Publish Message](assets/readme/publishMessage.png)
 
 ## Telemetry
 
