@@ -1,68 +1,38 @@
-# vscode-dapr README
+# Dapr for Visual Studio Code (Preview)
 
-An extension related to Dapr.
+The Dapr extension makes it easy to setup debugging of applications within the Dapr environment as well as interact with applications via the Dapr runtime.
+
+## Prerequisites
+
+### Docker
+
+Local development with Dapr requires a running instance of Docker; follow the [Docker guide](https://www.docker.com/products/docker-desktop) to installing Docker Desktop for your platform.
+
+### Dapr CLI and Runtime
+
+Follow the [Dapr guide](https://dapr.io/#download) to install the Dapr CLI for your platform and initialize the Dapr runtime.
+
+### Visual Studio Code
+
+This extension requires Visual Studio Code version 1.42 and above; follow the [VS Code guide](https://code.visualstudio.com/) for installing VS Code for your platform.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### Scaffold Dapr task, launch, and component assets
 
-For example if there is an image subfolder under your extension project workspace:
+> TODO: Implement me!
 
-\!\[feature X\]\(images/feature-x.png\)
+### View running Dapr applications
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+> TODO: Implement me!
 
-## Requirements
+### Invoke Dapr application methods
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+> TODO: Implement me!
 
-## Extension Settings
+### Publish events to Dapr applications
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+> TODO: Implement me!
 
 ## Telemetry
 
