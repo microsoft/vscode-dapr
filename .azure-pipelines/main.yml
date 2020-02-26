@@ -11,8 +11,8 @@ jobs:
     vmImage: ubuntu-latest
   steps:
   - template: common/setup.yml
-  - template: common/publish-vsix.yml # Only publish vsix from linux build since we use this to release and want to stay consistent
   - template: common/governance.yml
+  - template: common/publish-vsix.yml # Only publish vsix from linux build since we use this to release and want to stay consistent
 
 - job: macOS
   pool:
