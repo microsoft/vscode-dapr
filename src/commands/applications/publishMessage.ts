@@ -18,7 +18,16 @@ export async function getTopic(context: ITelemetryContext, ui: UserInput, worksp
 
     context.properties.cancelStep = 'topic';
 
-    const topic = await ui.showInputBox({ prompt: localize('commands.publishMessage.topicPrompt', 'Enter the topic to publish'), value: previousMethod });
+    const topic = await ui.showInputBox(
+        {
+            prompt: localize('commands.publishMessage.topicPrompt', 'Enter the topic to publish'),
+            value: previousMethod,
+            validateInput: value => {
+                return value === ''
+                    ? localize('commands.publishMessage.invalidTopic', 'A topic must be a non-empty string.')
+                    : undefined;
+            }
+        });
 
     await workspaceState.update(publishMessageTopicStateKey, topic);
 
@@ -42,7 +51,7 @@ export async function publishMessage(context: IActionContext, daprApplicationPro
             }
         };
 
-    const methodStep: WizardStep<PublishWizardContext> =
+    const topicStep: WizardStep<PublishWizardContext> =
         async wizardContext => {
             return {
                 ...wizardContext,
@@ -63,7 +72,7 @@ export async function publishMessage(context: IActionContext, daprApplicationPro
             initialContext: { application: node?.application },
             title: localize('commands.publishMessage.wizardTitle', 'Publish Dapr Message')
         },
-        !node?.application ? applicationStep : undefined, methodStep, payloadStep);
+        !node?.application ? applicationStep : undefined, topicStep, payloadStep);
 
     await ui.withProgress(
         localize('commands.publishMessage.publishProgressTitle', 'Publishing Dapr message'),

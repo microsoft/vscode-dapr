@@ -89,7 +89,16 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
             // TODO: Infer name from application manifest/project file, or repo folder name.
             return {
                 ...wizardContext,
-                appId: await ui.showInputBox({ prompt: localize('commands.scaffoldDaprTasks.appIdPrompt', 'Enter a Dapr ID for the application'), value: wizardContext.appId ?? 'app' })
+                appId: await ui.showInputBox(
+                    {
+                        prompt: localize('commands.scaffoldDaprTasks.appIdPrompt', 'Enter a Dapr ID for the application'),
+                        value: wizardContext.appId ?? 'app',
+                        validateInput: value => {
+                            return value === ''
+                                ? localize('commands.scaffoldDaprTasks.invalidAppId', 'An application ID must be a non-empty string.')
+                                : undefined;
+                        }
+                    })
             };
         };
 
