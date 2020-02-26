@@ -1,6 +1,9 @@
+.azure-pipelines
+.eslintignore
 .vscode/**
 .vscode-test/**
 out/test/**
+samples/**
 src/**
 .gitignore
 vsc-extension-quickstart.md
