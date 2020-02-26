@@ -1,68 +1,48 @@
-# vscode-dapr README
+# Dapr for Visual Studio Code (Preview)
 
-An extension related to Dapr.
+The Dapr extension makes it easy to setup debugging of applications within the Dapr environment as well as interact with applications via the Dapr runtime.
 
-## Features
+## Prerequisites
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### Docker
 
-For example if there is an image subfolder under your extension project workspace:
+Local development with Dapr requires a running instance of Docker; follow the [Docker guide](https://www.docker.com/products/docker-desktop) to installing Docker Desktop for your platform.
 
-\!\[feature X\]\(images/feature-x.png\)
+### Dapr CLI and Runtime
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+Follow the [Dapr guide](https://dapr.io/#download) to install the Dapr CLI for your platform and initialize the Dapr runtime.
 
-## Requirements
+### Visual Studio Code
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+This extension requires Visual Studio Code version 1.42 and above; follow the [VS Code guide](https://code.visualstudio.com/) for installing VS Code for your platform.
 
-## Extension Settings
+## Feature Overview
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### Scaffold Dapr task, launch, and component assets
 
-For example:
+While extensions for Visual Studio Code make it easy to debug applications for a variety of platforms (like .NET Core, Node.js, Python, etc.), coordinating the debugger with the Dapr runtime can be tricky. The Dapr extension helps scaffold VS Code tasks, augments debug launch configurations, and generates the Dapr component assets needed to debug your application within the Dapr environment.
 
-This extension contributes the following settings:
+![Scaffold Dapr Tasks](assets/readme/scaffoldDaprTasks.png)
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+### View running Dapr applications
 
-## Known Issues
+The Dapr extension adds a new tab which shows locally-running Dapr applications and allows quickly invoking application methods or publishing events.
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+![Dapr Tab](assets/readme/daprTab.png)
 
-## Release Notes
+### Invoke Dapr application methods
 
-Users appreciate release notes as you update your extension.
+When your application is running, you can quickly invoke its GET/POST methods without using a command line or switching to another HTTP request tool, including specifying an optional payload for POST methods.
 
-### 1.0.0
+![Invoke GET](assets/readme/invokeGet.png)
 
-Initial release of ...
+![Invoke POST](assets/readme/invokePost.png)
 
-### 1.0.1
+### Publish events to Dapr applications
 
-Fixed issue #.
+You can also use the extension to directly publish events to running applications, specifying both the topic and an optional payload.
 
-### 1.1.0
-
-Added features X, Y, and Z.
-
------------------------------------------------------------------------------------------------------------
-
-## Working with Markdown
-
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+![Publish Message](assets/readme/publishMessage.png)
 
 ## Telemetry
 
