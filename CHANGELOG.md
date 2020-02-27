@@ -23,7 +23,7 @@ Release for internal product review.
 
 ## v0.0.1-alpha - 16 January 2020
 
-Prototype release for internal demo.
+Prototype release.
 
 ### Added
 
