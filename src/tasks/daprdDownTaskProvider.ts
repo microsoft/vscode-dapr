@@ -1,12 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as psList from 'ps-list';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { TaskDefinition } from './taskDefinition';
 import { localize } from '../util/localize';
 import { TelemetryProvider } from '../services/telemetryProvider';
-import { ProcessProvider } from '../services/processProvider';
 import { DaprApplicationProvider } from '../services/daprApplicationProvider';
 
 export interface DaprdDownTaskDefinition extends TaskDefinition {

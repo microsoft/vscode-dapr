@@ -3,7 +3,6 @@
 
 import * as psList from 'ps-list';
 import * as os from 'os';
-import * as sysinfo from 'systeminformation';
 import { Process } from '../util/process';
 
 export interface ProcessInfo {
