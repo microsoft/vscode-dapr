@@ -42,8 +42,6 @@ export class WindowsProcessProvider implements ProcessProvider {
 
         // Each item in the list is prefixed by two empty lines, then <property>=<value> lines, in alphabetical order.
         for (let i = 0; i < lines.length / 5; i++) {
-            const obj = {};
-
             // Stop if the input is truncated (as there is an upper output limit)...
             if ((i * 5) + 4 >= lines.length) {
                 break;
