@@ -4,6 +4,7 @@
 import * as psList from 'ps-list';
 import * as vscode from 'vscode';
 import Timer from '../util/timer';
+import { ProcessProvider } from './processProvider';
 
 export interface DaprApplication {
     appId: string;
@@ -59,7 +60,7 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
     private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
     private readonly timer: vscode.Disposable;
 
-    constructor() {
+    constructor(private readonly processProvider: ProcessProvider) {
         super(() => {
             this.timer.dispose();
             this.onDidChangeEmitter.dispose();
@@ -96,10 +97,9 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
     }
 
     private async onRefresh(): Promise<void> {
-        const processes = await psList();
-        const daprdProcesses = processes.filter(p => p.name === 'daprd');
+        const processes = await this.processProvider.listProcesses('daprd');
         
-        this.applications = daprdProcesses
+        this.applications = processes
             .map(process => toApplication(process.cmd))
             .filter((application): application is DaprApplication => application !== undefined);
         
