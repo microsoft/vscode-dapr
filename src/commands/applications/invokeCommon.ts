@@ -109,7 +109,7 @@ export async function invoke(context: IActionContext, daprApplicationProvider: D
                 ? await daprClient.invokePost(result.application, result.method, result.payload, token)
                 : await daprClient.invokeGet(result.application, result.method, token);
     
-            outputChannel.appendLine(localize('commands.invokeCommon.invokeSucceededMessage', 'Method succeeded: {0}', String(data)));
+            outputChannel.appendLine(localize('commands.invokeCommon.invokeSucceededMessage', 'Method succeeded: {0}', JSON.stringify(data)));
 
             outputChannel.show();
         });
