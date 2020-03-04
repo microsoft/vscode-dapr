@@ -40,14 +40,14 @@ interface PublishWizardContext {
     payload?: unknown;
 }
 
-export async function publishMessage(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, node: DaprApplicationNode | undefined): Promise<void> {
+export async function publishMessageCore(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, application: DaprApplication | undefined): Promise<void> {
     context.errorHandling.suppressReportIssue = true;
 
     const applicationStep: WizardStep<PublishWizardContext> =
         async wizardContext => {
             return {
                 ...wizardContext,
-                application: await getApplication(context.telemetry, daprApplicationProvider, ui, node?.application)
+                application: await getApplication(context.telemetry, daprApplicationProvider, ui, application)
             }
         };
 
@@ -69,10 +69,10 @@ export async function publishMessage(context: IActionContext, daprApplicationPro
 
     const result = await ui.showWizard<PublishWizardContext>(
         {
-            initialContext: { application: node?.application },
+            initialContext: { application },
             title: localize('commands.publishMessage.wizardTitle', 'Publish Dapr Message')
         },
-        !node?.application ? applicationStep : undefined, topicStep, payloadStep);
+        !application ? applicationStep : undefined, topicStep, payloadStep);
 
     await ui.withProgress(
         localize('commands.publishMessage.publishProgressTitle', 'Publishing Dapr message'),
@@ -87,6 +87,16 @@ export async function publishMessage(context: IActionContext, daprApplicationPro
         });
 }
 
-const createPublishMessageCommand = (daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento) => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => publishMessage(context, daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, node);
+export async function publishAllMessage(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento): Promise<void> {
+    const applications = await daprApplicationProvider.getApplications();
 
-export default createPublishMessageCommand;
+    // Published messages go to all applications, regardless of the application through which they are published, so use the first one...
+    return await publishMessageCore(context, daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, applications[0]);
+}
+
+export function publishMessage(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento, node: DaprApplicationNode | undefined): Promise<void> {
+    return publishMessageCore(context, daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, node?.application);
+}
+
+export const createPublishAllMessageCommand = (daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento) => (context: IActionContext): Promise<void> => publishAllMessage(context, daprApplicationProvider, daprClient, outputChannel, ui, workspaceState);
+export const createPublishMessageCommand = (daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento) => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => publishMessage(context, daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, node);

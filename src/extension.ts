@@ -12,7 +12,7 @@ import DaprApplicationTreeDataProvider from './views/applications/daprApplicatio
 import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
 import createInvokeGetCommand from './commands/applications/invokeGet';
 import createInvokePostCommand from './commands/applications/invokePost';
-import createPublishMessageCommand from './commands/applications/publishMessage';
+import { createPublishAllMessageCommand, createPublishMessageCommand } from './commands/applications/publishMessage';
 import AxiosHttpClient from './services/httpClient';
 import { AggregateUserInput } from './services/userInput';
 import HttpDaprClient from './services/daprClient';
@@ -55,6 +55,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-all-message', createPublishAllMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.readDocumentation', createReadDocumentationCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.getStarted', createGetStartedCommand(ui));
