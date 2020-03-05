@@ -11,7 +11,7 @@ import * as ts from 'gulp-typescript';
 import * as vsce from 'vsce';
 import * as webpack from 'webpack';
 
-const webpackConfig: webpack.Configuration =  require('./webpack.config');
+import { config as webpackConfig } from './webpack.config';
 
 const languages: nls.Language[] = [
     { folderName: 'jpn', id: 'ja' }
@@ -21,7 +21,7 @@ const tsProject = ts.createProject('./tsconfig.json');
 
 function getDistDir(): string {
     if (!webpackConfig.output?.path) {
-        throw new Error('path is not defined in webpack.config.js');
+        throw new Error('path is not defined in webpack.config.ts');
     }
 
     return webpackConfig.output.path;

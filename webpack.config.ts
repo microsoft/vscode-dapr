@@ -1,15 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-//@ts-check
+import * as path from 'path';
+import * as webpack from 'webpack';
 
-'use strict';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const path = require('path');
-
-/**@type {import('webpack').Configuration}*/
-const config = {
+export const config: webpack.Configuration = {
     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
 
     entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
@@ -44,4 +39,4 @@ const config = {
     },
 }
 
-module.exports = config;
+export default config;

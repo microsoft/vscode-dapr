@@ -10,7 +10,7 @@ samples/**
 src/**
 .gitignore
 vsc-extension-quickstart.md
-webpack.config.js
+webpack.config.ts
 **/tsconfig.json
 **/tslint.json
 **/*.map
