@@ -43,7 +43,7 @@
 		"url": "https://github.com/microsoft/vscode-dapr"
 	},
 	"homepage": "https://github.com/Microsoft/vscode-dapr/blob/master/README.md",
-	"main": "./out/extension.js",
+	"main": "./main.js",
 	"contributes": {
 		"commands": [
 			{
