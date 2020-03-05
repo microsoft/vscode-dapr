@@ -59,7 +59,7 @@ export const config: webpack.Configuration = {
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
-        // Fix error:
+        // Fix warning:
         //   > WARNING in ./node_modules/ms-rest/lib/serviceClient.js 441:19-43
         //   > Critical dependency: the request of a dependency is an expression
         // in this code:
@@ -92,6 +92,21 @@ export const config: webpack.Configuration = {
     ],
     resolve: {
         alias: {
+            // Fix warning:
+            //
+            // > ./node_modules/handlebars/lib/index.js 22:38-56
+            // > require.extensions is not supported by webpack. Use a loader instead.
+            // >  @ ./src/scaffolding/templateScaffolder.ts 15:19-40
+            // >  @ ./src/extension.ts
+            // > ./node_modules/handlebars/lib/index.js 23:2-20
+            // > require.extensions is not supported by webpack. Use a loader instead.
+            // >  @ ./src/scaffolding/templateScaffolder.ts 15:19-40
+            // >  @ ./src/extension.ts
+            // > ./node_modules/handlebars/lib/index.js 24:2-20
+            // > require.extensions is not supported by webpack. Use a loader instead.
+            // >  @ ./src/scaffolding/templateScaffolder.ts 15:19-40
+            // >  @ ./src/extension.ts
+            //
             'handlebars' : 'handlebars/dist/handlebars.js'
         },
         extensions: ['.ts', '.js']
