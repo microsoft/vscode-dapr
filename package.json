@@ -29,6 +29,7 @@
 	"activationEvents": [
 		"onCommand:vscode-dapr.applications.invoke-get",
 		"onCommand:vscode-dapr.applications.invoke-post",
+		"onCommand:vscode-dapr.applications.publish-all-message",
 		"onCommand:vscode-dapr.applications.publish-message",
 		"onCommand:vscode-dapr.help.getStarted",
 		"onCommand:vscode-dapr.help.readDocumentation",
@@ -55,6 +56,12 @@
 				"command": "vscode-dapr.applications.invoke-post",
 				"title": "%vscode-dapr.applications.invoke-post.title%",
 				"category": "Dapr"
+			},
+			{
+				"command": "vscode-dapr.applications.publish-all-message",
+				"title": "%vscode-dapr.applications.publish-all-message.title%",
+				"category": "Dapr",
+				"icon": "$(radio-tower)"
 			},
 			{
 				"command": "vscode-dapr.applications.publish-message",
@@ -100,6 +107,12 @@
 				{
 					"command": "vscode-dapr.applications.publish-message",
 					"when": "view == vscode-dapr.views.applications && viewItem == application"
+				}
+			],
+			"view/title": [
+				{
+					"command": "vscode-dapr.applications.publish-all-message",
+					"group": "navigation"
 				}
 			]
 		},

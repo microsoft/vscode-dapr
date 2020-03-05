@@ -2,6 +2,7 @@
     "vscode-dapr.applications.invoke-get.title": "Invoke (GET) Application Method",
     "vscode-dapr.applications.invoke-post.title": "Invoke (POST) Application Method",
     "vscode-dapr.applications.publish-message.title": "Publish Message to Application",
+    "vscode-dapr.applications.publish-all-message.title": "Publish Message to All Applications",
     "vscode-dapr.help.readDocumentation.title": "Read Documentation",
     "vscode-dapr.help.getStarted.title": "Get Started",
     "vscode-dapr.help.reportIssue.title": "Report Issue",
