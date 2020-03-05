@@ -34,7 +34,8 @@
 			},
 			"outFiles": [
 				"${workspaceFolder}/out/**/*.js"
-			]
+			],
+			"preLaunchTask": "build-packed"
 		},
 		{
 			"name": "Run Extension (Pseudo)",

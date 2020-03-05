@@ -9,6 +9,9 @@ import * as nls from 'vscode-nls-dev';
 import * as sourcemaps from 'gulp-sourcemaps';
 import * as ts from 'gulp-typescript';
 import * as vsce from 'vsce';
+import * as webpack from 'webpack';
+
+const webpackConfig: webpack.Configuration =  require('./webpack.config');
 
 const languages: nls.Language[] = [
     { folderName: 'jpn', id: 'ja' }
@@ -65,6 +68,36 @@ function compileTask(): NodeJS.ReadWriteStream {
         .pipe(gulp.dest(outDir));
 }
 
+function compilePackedTaskFactory(mode: 'production' | 'development'): () => Promise<void> {
+    return function compilePackedTask() {
+        return new Promise(
+            (resolve, reject) => {
+                webpack(
+                    {
+                        ...webpackConfig,
+                        mode
+                    },
+                    (err, stats) => {
+                        if (err) {
+                            return reject(err);
+                        }
+
+                        const info = stats.toJson();
+
+                        if (stats.hasErrors()) {
+                            return reject(new Error(info.errors.join('\n')));
+                        }
+
+                        if (stats.hasWarnings()) {
+                            info.warnings.forEach(warning => console.warn(warning));
+                        }
+
+                        return resolve();
+                    });
+            });
+    }
+}
+
 function addI18nTask() {
     return gulp.src(['package.nls.json'])
         .pipe(wrapThroughStream(nls.createAdditionalLanguageFiles(languages, 'i18n')))
@@ -85,9 +118,9 @@ function vscePackageTask() {
 
 const buildTask = gulp.series(cleanTask, compileTask, addI18nTask);
 
-const buildPackedTask = gulp.series(cleanTask, compileTask, addI18nTask);
+const buildPackedTask = gulp.series(cleanTask, compilePackedTaskFactory('development'));
 
-const ciBuildTask = gulp.series(buildTask, lintTaskFactory(/* warningsAsErrors: */ true), testTask);
+const ciBuildTask = gulp.series(cleanTask, compilePackedTaskFactory('production'), lintTaskFactory(/* warningsAsErrors: */ true), testTask);
 
 gulp.task('clean', cleanTask);
 
