@@ -76,13 +76,23 @@ export const config: webpack.Configuration = {
         extensions: ['.ts', '.js']
     },
     module: {
-        rules: [{
-            test: /\.ts$/,
-            exclude: /node_modules/,
-            use: [{
-                loader: 'ts-loader'
-            }]
-        }]
+        rules: [
+            {
+                test: /\.ts$/,
+                exclude: /node_modules/,
+                use: [{
+                    loader: 'ts-loader'
+                }]
+            },
+            {
+                // vscode-nls-dev loader:
+                // * rewrite nls-calls
+                loader: 'vscode-nls-dev/lib/webpack-loader',
+                options: {
+                    base: path.join(__dirname, 'src')
+                }
+            }
+        ]
     },
 }
 
