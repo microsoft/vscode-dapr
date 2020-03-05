@@ -3,8 +3,6 @@
 .vscode/**
 .vscode-test/**
 node_modules/**
-# Included as it cannot be packed.
-!node_modules/ms-rest
 out/test/**
 samples/**
 src/**

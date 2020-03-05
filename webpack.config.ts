@@ -19,8 +19,6 @@ export const config: webpack.Configuration = {
     externals: {
         // Required by applicationinsights as a development dependency
         'applicationinsights-native-metrics': 'applicationinsights-native-metrics',
-        // Has dynamic requires; ensure folder in node_modules is included in VSIX!
-        'ms-rest': 'ms-rest',
         vscode: "commonjs vscode" // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
     },
     optimization: {
@@ -39,6 +37,38 @@ export const config: webpack.Configuration = {
             })
         ]
     },
+    plugins: [
+        // Fix error:
+        //   > WARNING in ./node_modules/ms-rest/lib/serviceClient.js 441:19-43
+        //   > Critical dependency: the request of a dependency is an expression
+        // in this code:
+        //   let data = require(packageJsonPath);
+        //
+        new webpack.ContextReplacementPlugin(
+            // Whenever there is a dynamic require that webpack can't analyze at all (i.e. resourceRegExp=/^\./), ...
+            /^\./,
+            // CONSIDER: Is there a type for the context argument?  Can't seem to find one.
+            (context: any): void => {
+                // ... and the call was from within node_modules/ms-rest/lib...
+                if (/node_modules[/\\]ms-rest[/\\]lib/.test(context.context)) {
+                    /* CONSIDER: Figure out how to make this work properly.
+                        // ... tell webpack that the call may be loading any of the package.json files from the 'node_modules/azure-arm*' folders
+                        // so it will include those in the package to be available for lookup at runtime
+                        context.request = path.resolve(options.projectRoot, 'node_modules');
+                        context.regExp = /azure-arm.*package\.json/;
+                    */
+
+                    // In the meantime, just ignore the error by telling webpack we've solved the critical dependency issue.
+                    // The consequences of ignoring this error are that
+                    //   the Azure SDKs (e.g. azure-arm-resource) don't get their info stamped into the user agent info for their calls.
+                    for (const d of context.dependencies) {
+                        if (d.critical) {
+                            d.critical = false;
+                        }
+                    }
+                }
+            })
+    ],
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         alias: {
             'handlebars' : 'handlebars/dist/handlebars.js'
