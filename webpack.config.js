@@ -21,9 +21,16 @@ const config = {
     },
     devtool: 'source-map',
     externals: {
+        // Required by applicationinsights as a development dependency
+        'applicationinsights-native-metrics': 'applicationinsights-native-metrics',
+        // Has dynamic requires; ensure folder in node_modules is included in VSIX!
+        'ms-rest': 'ms-rest',
         vscode: "commonjs vscode" // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
     },
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
+        alias: {
+            'handlebars' : 'handlebars/dist/handlebars.js'
+        },
         extensions: ['.ts', '.js']
     },
     module: {
@@ -31,12 +38,7 @@ const config = {
             test: /\.ts$/,
             exclude: /node_modules/,
             use: [{
-                loader: 'ts-loader',
-                options: {
-                    compilerOptions: {
-//                        "module": "es6" // override `tsconfig.json` so that TypeScript emits native JavaScript modules.
-                    }
-                }
+                loader: 'ts-loader'
             }]
         }]
     },

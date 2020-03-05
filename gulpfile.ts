@@ -19,8 +19,16 @@ const languages: nls.Language[] = [
 
 const tsProject = ts.createProject('./tsconfig.json');
 
+function getDistDir(): string {
+    if (!webpackConfig.output?.path) {
+        throw new Error('path is not defined in webpack.config.js');
+    }
+
+    return webpackConfig.output.path;
+}
+
 function getOutDir(): string {
-    if (!tsProject.options.outDir) {
+    if (!tsProject.options?.outDir) {
         throw new Error('outDir is not defined in tsconfig.json.');
     }
 
@@ -32,7 +40,7 @@ function wrapThroughStream(stream: nls.ThroughStream): NodeJS.ReadWriteStream {
 }
 
 function cleanTask(): Promise<string[]> {
-    return del([getOutDir(), 'package.nls.*.json', 'vscode-dapr-*.vsix']);
+    return del([getDistDir(), getOutDir(), 'package.nls.*.json', 'vscode-dapr-*.vsix']);
 }
 
 function lintTaskFactory(warningsAsErrors?: boolean) {
