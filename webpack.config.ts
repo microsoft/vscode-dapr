@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import * as path from 'path';
+import * as TerserPlugin from 'terser-webpack-plugin';
 import * as webpack from 'webpack';
 
 export const config: webpack.Configuration = {
@@ -21,6 +22,22 @@ export const config: webpack.Configuration = {
         // Has dynamic requires; ensure folder in node_modules is included in VSIX!
         'ms-rest': 'ms-rest',
         vscode: "commonjs vscode" // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+    },
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                terserOptions: {
+                    // https://github.com/webpack-contrib/terser-webpack-plugin/
+
+                    // Don't mangle class names.  Otherwise parseError() will not recognize user cancelled errors (because their constructor name
+                    // will match the mangled name, not UserCancelledError).  Also makes debugging easier in minified code.
+                    keep_classnames: true,
+
+                    // Don't mangle function names. https://github.com/microsoft/vscode-azurestorage/issues/525
+                    keep_fnames: true
+                }
+            })
+        ]
     },
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
         alias: {
