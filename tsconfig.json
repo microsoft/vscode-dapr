@@ -23,7 +23,9 @@
 	},
 	"exclude": [
 		"gulpfile.ts",
+		"main.js",
 		"node_modules",
-		".vscode-test"
+		".vscode-test",
+		"webpack.config.ts"
 	]
 }

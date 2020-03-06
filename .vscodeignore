@@ -2,10 +2,12 @@
 .eslintignore
 .vscode/**
 .vscode-test/**
-out/test/**
+node_modules/**
+out/**
 samples/**
 src/**
 .gitignore
+webpack.config.ts
 **/tsconfig.json
 **/tslint.json
 **/*.map

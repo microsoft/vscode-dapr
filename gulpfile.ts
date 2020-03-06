@@ -9,6 +9,9 @@ import * as nls from 'vscode-nls-dev';
 import * as sourcemaps from 'gulp-sourcemaps';
 import * as ts from 'gulp-typescript';
 import * as vsce from 'vsce';
+import * as webpack from 'webpack';
+
+import { config as webpackConfig } from './webpack.config';
 
 const languages: nls.Language[] = [
     { folderName: 'jpn', id: 'ja' }
@@ -16,8 +19,16 @@ const languages: nls.Language[] = [
 
 const tsProject = ts.createProject('./tsconfig.json');
 
+function getDistDir(): string {
+    if (!webpackConfig.output?.path) {
+        throw new Error('path is not defined in webpack.config.ts');
+    }
+
+    return webpackConfig.output.path;
+}
+
 function getOutDir(): string {
-    if (!tsProject.options.outDir) {
+    if (!tsProject.options?.outDir) {
         throw new Error('outDir is not defined in tsconfig.json.');
     }
 
@@ -29,7 +40,7 @@ function wrapThroughStream(stream: nls.ThroughStream): NodeJS.ReadWriteStream {
 }
 
 function cleanTask(): Promise<string[]> {
-    return del([getOutDir(), 'package.nls.*.json', 'vscode-dapr-*.vsix']);
+    return del([getDistDir(), getOutDir(), 'package.nls.*.json', 'vscode-dapr-*.vsix']);
 }
 
 function lintTaskFactory(warningsAsErrors?: boolean) {
@@ -65,6 +76,36 @@ function compileTask(): NodeJS.ReadWriteStream {
         .pipe(gulp.dest(outDir));
 }
 
+function compilePackedTaskFactory(mode: 'production' | 'development'): () => Promise<void> {
+    return function compilePackedTask() {
+        return new Promise(
+            (resolve, reject) => {
+                webpack(
+                    {
+                        ...webpackConfig,
+                        mode
+                    },
+                    (err, stats) => {
+                        if (err) {
+                            return reject(err);
+                        }
+
+                        const info = stats.toJson();
+
+                        if (stats.hasErrors()) {
+                            return reject(new Error(info.errors.join('\n')));
+                        }
+
+                        if (stats.hasWarnings()) {
+                            info.warnings.forEach(warning => console.warn(warning));
+                        }
+
+                        return resolve();
+                    });
+            });
+    }
+}
+
 function addI18nTask() {
     return gulp.src(['package.nls.json'])
         .pipe(wrapThroughStream(nls.createAdditionalLanguageFiles(languages, 'i18n')))
@@ -85,13 +126,15 @@ function vscePackageTask() {
 
 const buildTask = gulp.series(cleanTask, compileTask, addI18nTask);
 
-const ciBuildTask = gulp.series(buildTask, lintTaskFactory(/* warningsAsErrors: */ true), testTask);
+const ciBuildTask = gulp.series(cleanTask, compilePackedTaskFactory('production'), lintTaskFactory(/* warningsAsErrors: */ true));
 
 gulp.task('clean', cleanTask);
 
 gulp.task('lint', lintTaskFactory());
 
 gulp.task('build', buildTask);
+
+gulp.task('build-packed', gulp.series(cleanTask, compilePackedTaskFactory('development')));
 
 gulp.task('unit-test', gulp.series(buildTask, unitTestTask));
 

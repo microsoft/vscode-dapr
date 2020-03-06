@@ -14,12 +14,29 @@
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"env": {
-				"DEBUGTELEMETRY": "v"
+				"DEBUGTELEMETRY": "v",
+				"VSCODE_DAPR_IGNORE_BUNDLE": "true"
 			},
 			"outFiles": [
 				"${workspaceFolder}/out/**/*.js"
 			],
 			"preLaunchTask": "${defaultBuildTask}"
+		},
+		{
+			"name": "Run Extension (Packed)",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}"
+			],
+			"env": {
+				"DEBUGTELEMETRY": "v"
+			},
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "build-packed"
 		},
 		{
 			"name": "Run Extension (Pseudo)",
@@ -31,6 +48,7 @@
 			],
 			"env": {
 				"DEBUGTELEMETRY": "v",
+				"VSCODE_DAPR_IGNORE_BUNDLE": "true",
 				"VSCODE_DAPR_LOCALE": "pseudo"
 			},
 			"sourceMaps": true,
@@ -49,6 +67,10 @@
 				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/allTests"
 			],
+			"env": {
+				"DEBUGTELEMETRY": "v",
+				"VSCODE_DAPR_IGNORE_BUNDLE": "true"
+			},
 			"outFiles": [
 				"${workspaceFolder}/out/test/**/*.js"
 			],
@@ -63,6 +85,10 @@
 				"--extensionDevelopmentPath=${workspaceFolder}",
 				"--extensionTestsPath=${workspaceFolder}/out/test/suite/unitTests"
 			],
+			"env": {
+				"DEBUGTELEMETRY": "v",
+				"VSCODE_DAPR_IGNORE_BUNDLE": "true"
+			},
 			"outFiles": [
 				"${workspaceFolder}/out/test/**/*.js"
 			],

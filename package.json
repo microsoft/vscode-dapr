@@ -44,7 +44,7 @@
 		"url": "https://github.com/microsoft/vscode-dapr"
 	},
 	"homepage": "https://github.com/Microsoft/vscode-dapr/blob/master/README.md",
-	"main": "./out/extension.js",
+	"main": "./main.js",
 	"contributes": {
 		"commands": [
 			{
@@ -405,6 +405,7 @@
 	"scripts": {
 		"clean": "gulp clean",
 		"build": "gulp build",
+		"build-packed": "gulp build-packed",
 		"lint": "gulp lint",
 		"watch": "tsc -watch -p ./",
 		"package": "gulp package",
@@ -421,7 +422,9 @@
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^12.12.28",
 		"@types/ps-list": "^6.2.1",
+		"@types/terser-webpack-plugin": "^2.2.0",
 		"@types/vscode": "^1.42.0",
+		"@types/webpack": "^4.41.7",
 		"@typescript-eslint/eslint-plugin": "^2.22.0",
 		"@typescript-eslint/parser": "^2.22.0",
 		"del": "^5.1.0",
@@ -432,12 +435,15 @@
 		"gulp-sourcemaps": "^2.6.5",
 		"gulp-typescript": "^6.0.0-alpha.1",
 		"mocha": "^7.1.0",
+		"terser-webpack-plugin": "^2.3.5",
+		"ts-loader": "^6.2.1",
 		"ts-node": "^8.6.2",
 		"tslint": "^6.0.0",
 		"typescript": "^3.8.3",
 		"vsce": "^1.74.0",
 		"vscode-nls-dev": "^3.3.1",
-		"vscode-test": "^1.3.0"
+		"vscode-test": "^1.3.0",
+		"webpack": "^4.42.0"
 	},
 	"dependencies": {
 		"axios": "^0.19.2",
