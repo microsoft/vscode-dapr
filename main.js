@@ -6,7 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 
 const ignoreBundle = !/^(false|0)?$/i.test(process.env.VSCODE_DAPR_IGNORE_BUNDLE || '');
-const extensionPath = ignoreBundle ? "./out/src/extension" : "./dist/extension";
+const extensionPath = ignoreBundle ? "./out/extension" : "./dist/extension";
 const extension = require(extensionPath);
 
 function activate(ctx) {
