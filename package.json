@@ -1,7 +1,7 @@
 {
 	"name": "vscode-dapr",
 	"displayName": "Dapr",
-	"description": "Makes it easy to run, debug, and interact with Dapr-enabled applications.",
+	"description": "%vscode-dapr.description%",
 	"icon": "assets/images/extensionIcon.png",
 	"version": "0.1.1-alpha",
 	"preview": true,
@@ -112,7 +112,8 @@
 			"view/title": [
 				{
 					"command": "vscode-dapr.applications.publish-all-message",
-					"group": "navigation"
+					"group": "navigation",
+					"when": "view == vscode-dapr.views.applications"
 				}
 			]
 		},

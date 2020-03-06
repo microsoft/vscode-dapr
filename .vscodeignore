@@ -7,7 +7,6 @@ out/**
 samples/**
 src/**
 .gitignore
-vsc-extension-quickstart.md
 webpack.config.ts
 **/tsconfig.json
 **/tslint.json
