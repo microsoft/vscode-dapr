@@ -112,7 +112,8 @@
 			"view/title": [
 				{
 					"command": "vscode-dapr.applications.publish-all-message",
-					"group": "navigation"
+					"group": "navigation",
+					"when": "view == vscode-dapr.views.applications"
 				}
 			]
 		},
