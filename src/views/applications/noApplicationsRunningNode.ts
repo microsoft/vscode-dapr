@@ -15,7 +15,7 @@ export default class NoApplicationsRunningNode implements TreeNode {
 
         const version = await this.installationManager.getVersion();
         
-        if (version) {
+        if (version && version.cli) {
             label = localize('views.noApplicationsRunningNode.notInitializedLabel', 'Dapr is not initialized.');
 
             const isInitialized = await this.installationManager.isInitialized();
