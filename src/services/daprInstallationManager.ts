@@ -1,4 +1,8 @@
-import { Process } from "../util/process";
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
+import { AsyncLazy } from '../util/lazy';
+import { Process } from '../util/process';
 
 export interface DaprVersion {
     cli: string | undefined;
@@ -23,19 +27,31 @@ function getRuntimeVersion(versionOutput: string): string | undefined {
 }
 
 export default class LocalDaprInstallationManager implements DaprInstallationManager {
+    private readonly version: AsyncLazy<DaprVersion>;
+
+    constructor() {
+        this.version = new AsyncLazy<DaprVersion>(
+            async () => {
+                const versionResult = await Process.exec('dapr --version');
+
+                if (versionResult.code === 0) {
+                    return {
+                        cli: getCliVersion(versionResult.stdout),
+                        runtime: getRuntimeVersion(versionResult.stdout)
+                    };
+                }
+
+                return undefined;
+            });
+    }
+
     async getVersion(): Promise<DaprVersion | undefined> {
         try {
-            const versionResult = await Process.exec('dapr --version');
-
-            if (versionResult.code === 0) {
-                return {
-                    cli: getCliVersion(versionResult.stdout),
-                    runtime: getRuntimeVersion(versionResult.stdout)
-                };
-            }
+            return await this.version.getValue();
         } catch {
             // No-op errors.
         }
+
         return undefined;
     }
 
