@@ -28,6 +28,7 @@ function getRuntimeVersion(versionOutput: string): string | undefined {
 
 export default class LocalDaprInstallationManager implements DaprInstallationManager {
     private readonly version: AsyncLazy<DaprVersion>;
+    private readonly initialized: AsyncLazy<boolean>;
 
     constructor() {
         this.version = new AsyncLazy<DaprVersion>(
@@ -39,6 +40,23 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
                         cli: getCliVersion(versionResult.stdout),
                         runtime: getRuntimeVersion(versionResult.stdout)
                     };
+                }
+
+                return undefined;
+            });
+
+        this.initialized = new AsyncLazy<boolean>(
+            async () => {
+                const psResults = await Process.exec('docker ps --format "{{json .}}"');
+
+                if (psResults.code === 0) {
+                    const lines = psResults.stdout.split('\n');
+                    const containers = lines.map(line => JSON.parse(line));
+                    const daprContainers = containers.filter(container => container.Image === 'daprio/dapr');
+
+                    if (daprContainers.length >= 0) {
+                        return true;
+                    }
                 }
 
                 return undefined;
@@ -55,7 +73,15 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
         return undefined;
     }
 
-    isInitialized(): Promise<boolean> {
-        return Promise.resolve(false);
+    async isInitialized(): Promise<boolean> {
+        try {
+            if (await this.initialized.getValue()) {
+                return true;
+            }
+        } catch {
+            // No-op errors.
+        }
+
+        return false;
     }
 }
