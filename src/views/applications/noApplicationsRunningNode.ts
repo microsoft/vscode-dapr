@@ -11,12 +11,12 @@ export default class NoApplicationsRunningNode implements TreeNode {
     }
 
     async getTreeItem(): Promise<vscode.TreeItem> {
-        let label = localize('views.noApplicationsRunningNode.notInstalledLabel', 'Dapr is not installed.');
+        let label = localize('views.noApplicationsRunningNode.notInstalledLabel', 'The Dapr CLI and runtime do not appear to be installed.');
 
         const version = await this.installationManager.getVersion();
         
         if (version && version.cli) {
-            label = localize('views.noApplicationsRunningNode.notInitializedLabel', 'Dapr is not initialized.');
+            label = localize('views.noApplicationsRunningNode.notInitializedLabel', 'The Dapr runtime does not appear to be initialized.');
 
             const isInitialized = await this.installationManager.isInitialized();
 
