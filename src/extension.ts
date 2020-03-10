@@ -24,6 +24,7 @@ import createReportIssueCommand from './commands/help/reportIssue';
 import createReviewIssuesCommand from './commands/help/reviewIssues';
 import createGetStartedCommand from './commands/help/getStarted';
 import createPlatformProcessProvider from './services/processProvider';
+import LocalDaprInstallationManager from './services/daprInstallationManager';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -70,7 +71,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			registerDisposable(
 				vscode.window.registerTreeDataProvider(
 					'vscode-dapr.views.applications',
-					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider))));
+					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider, new LocalDaprInstallationManager()))));
 
 			registerDisposable(
 				vscode.window.registerTreeDataProvider(
