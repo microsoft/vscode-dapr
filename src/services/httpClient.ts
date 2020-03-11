@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, CancelToken } from 'axios';
 import * as vscode from 'vscode';
 
 export interface HttpResponse {
@@ -10,35 +10,39 @@ export interface HttpResponse {
     status: number;
 }
 
-export interface HttpGetOptions {
+export interface HttpOptions {
     allowRedirects?: boolean;
 }
 
-export interface HttpPostOptions {
+export interface HttpPostOptions extends HttpOptions {
     json?: boolean;
 }
 
 export interface HttpClient {
-    get(url: string, options?: HttpGetOptions, token?: vscode.CancellationToken): Promise<HttpResponse>;
+    get(url: string, options?: HttpOptions, token?: vscode.CancellationToken): Promise<HttpResponse>;
     post(url: string, data?: unknown, options?: HttpPostOptions, token?: vscode.CancellationToken): Promise<HttpResponse>;
 }
 
+function createConfig(allowRedirects: boolean | undefined, token: CancelToken): AxiosRequestConfig {
+    const config: AxiosRequestConfig = {
+        cancelToken: token
+    };
+
+    if (allowRedirects === false) {
+        config.maxRedirects = 0;
+        config.validateStatus = (status: number): boolean => status >= 200 && status < 400;
+    }
+
+    return config;
+}
+
 export default class AxiosHttpClient implements HttpClient {
-    async get(url: string, options?: HttpGetOptions, token?: vscode.CancellationToken): Promise<HttpResponse> {
+    async get(url: string, options?: HttpOptions, token?: vscode.CancellationToken): Promise<HttpResponse> {
         const cancelTokenSource = axios.CancelToken.source();
         const tokenListener = token ? token.onCancellationRequested(() => cancelTokenSource.cancel()) : undefined;
 
-        const config: AxiosRequestConfig = {
-            cancelToken: cancelTokenSource.token
-        };
-
-        if (options?.allowRedirects === false) {
-            config.maxRedirects = 0;
-            config.validateStatus = (status: number): boolean => status >= 200 && status < 400;
-        }
-
         try {
-            const response = await axios.get(url, config);
+            const response = await axios.get(url, createConfig(options?.allowRedirects, cancelTokenSource.token));
 
             return { data: response.data, headers: response.headers, status: response.status };
         } finally {
@@ -52,16 +56,17 @@ export default class AxiosHttpClient implements HttpClient {
         const cancelTokenSource = axios.CancelToken.source();
         const tokenListener = token ? token.onCancellationRequested(() => cancelTokenSource.cancel()) : undefined;
 
+        const config = createConfig(options?.allowRedirects, cancelTokenSource.token);
+
+        config.headers = {
+            'content-type': options?.json ? 'application/json' : undefined
+        };
+
         try {
             const response = await axios.post(
                 url,
                 options?.json ? JSON.stringify(data) : data,
-                {
-                    cancelToken: cancelTokenSource.token,
-                    headers: {
-                        'content-type': options?.json ? 'application/json' : undefined
-                    }
-                });
+                config);
 
             return { data: response.data, headers: response.headers, status: response.status };
         } finally {
