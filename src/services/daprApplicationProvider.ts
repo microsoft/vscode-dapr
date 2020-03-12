@@ -18,7 +18,7 @@ export interface DaprApplicationProvider {
 }
 
 function getAppId(cmd: string): string | undefined {
-    const appIdRegEx = /--dapr-id "?(?<appId>[a-zA-Z0-9_-]+)"?/g;
+    const appIdRegEx = /--app-id "?(?<appId>[a-zA-Z0-9_-]+)"?/g;
         
     const appIdMatch = appIdRegEx.exec(cmd);
     
