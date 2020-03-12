@@ -14,6 +14,8 @@ Local development with Dapr requires a running instance of Docker; follow the [D
 
 Follow the [Dapr guide](https://dapr.io/#download) to install the Dapr CLI for your platform and initialize the Dapr runtime.
 
+> This extension requires Dapr 0.5.0 or later.
+
 ### Visual Studio Code
 
 This extension requires Visual Studio Code version 1.42 and above; follow the [VS Code guide](https://code.visualstudio.com/) for installing VS Code for your platform.
