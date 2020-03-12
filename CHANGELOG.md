@@ -1,5 +1,11 @@
 # Change Log
 
+## v0.1.1 - 12 March 2020
+
+### Updated
+
+* Accommodate Dapr 0.5.0 breaking changes. [#65](https://github.com/microsoft/vscode-dapr/issues/65)
+
 ## v0.1.0 - 27 February 2020
 
 Initial public release.
