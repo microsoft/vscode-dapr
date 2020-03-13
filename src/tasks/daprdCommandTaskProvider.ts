@@ -17,12 +17,17 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     config?: string;
     controlPlaneAddress?: string;
     enableProfiling?: boolean;
-    grcpPort?: number;
+    enableMetrics?: boolean;
+    enableMtls?: boolean;
+    grpcPort?: number;
     httpPort?: number;
+    logAsJson?: boolean;
     logLevel?: DaprdLogLevel;
     logBacktraceAt?: number;
     logDir?: string;
+    logToStdErr?: boolean;
     maxConcurrency?: number;
+    metricsPort?: number;
     mode?: 'standalone' | 'kubernetes';
     placementAddress?: string;
     profilePort?: number;
@@ -46,19 +51,25 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                             CommandLineBuilder
                                 .create('daprd')
                                 .withNamedArg('--allowed-origins', daprDefinition.allowedOrigins)
-                                .withFlagArg('--alsoLogToStdErr', daprDefinition.alsoLogToStdErr)
+                                .withFlagArg('--alsologtostderr', daprDefinition.alsoLogToStdErr)
                                 .withNamedArg('--app-id', daprDefinition.appId)
                                 .withNamedArg('--app-port', daprDefinition.appPort)
                                 .withNamedArg('--components-path', daprDefinition.componentsPath)
                                 .withNamedArg('--config', daprDefinition.config)
                                 .withNamedArg('--control-plane-address', daprDefinition.controlPlaneAddress)
-                                .withNamedArg('--dapr-grpc-port', daprDefinition.grcpPort)
+                                .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
                                 .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
+                                // TODO: Are these really just flags?
+                                .withFlagArg('--enable-metrics', daprDefinition.enableMetrics)
+                                .withFlagArg('--enable-mtls', daprDefinition.enableMtls)
                                 .withFlagArg('--enable-profiling', daprDefinition.enableProfiling)
+                                .withFlagArg('--log-as-json', daprDefinition.logAsJson)
                                 .withNamedArg('--log-level', daprDefinition.logLevel)
                                 .withNamedArg('--log_backtrace_at', daprDefinition.logBacktraceAt)
                                 .withNamedArg('--log_dir', daprDefinition.logDir)
+                                .withFlagArg('--logtostderr', daprDefinition.logToStdErr)
                                 .withNamedArg('--max-concurrency', daprDefinition.maxConcurrency)
+                                .withNamedArg('--metrics-port', daprDefinition.metricsPort)
                                 .withNamedArg('--mode', daprDefinition.mode)
                                 .withNamedArg('--placement-address', daprDefinition.placementAddress || "localhost:50005" /* NOTE: The placement address is actually required for daprd. */)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
