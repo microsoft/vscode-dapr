@@ -151,6 +151,13 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.appPort.description%",
 						"default": -1
 					},
+					"args": {
+						"type": "array",
+						"description": "%vscode-dapr.tasks.dapr.properties.args.description%",
+						"additionalItems": {
+							"type": "string"
+						}
+					},
 					"command": {
 						"type": "array",
 						"description": "%vscode-dapr.tasks.dapr.properties.command.description%",
@@ -251,6 +258,13 @@
 					"appPort": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.appPort.description%"
+					},
+					"args": {
+						"type": "array",
+						"description": "%vscode-dapr.tasks.daprd.properties.args.description%",
+						"additionalItems": {
+							"type": "string"
+						}
 					},
 					"componentsPath": {
 						"type": "string",

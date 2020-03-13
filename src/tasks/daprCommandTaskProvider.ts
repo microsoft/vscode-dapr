@@ -9,6 +9,7 @@ import { TelemetryProvider } from '../services/telemetryProvider';
 export interface DaprTaskDefinition extends TaskDefinition {
     appId?: string;
     appPort?: number;
+    args?: string[];
     command?: string[];
     config?: string;
     cwd?: string;
@@ -50,6 +51,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
                                 .withNamedArg('--protocol', daprDefinition.protocol)
                                 .withNamedArg('--redis-host', daprDefinition.redisHost)
+                                .withArgs(daprDefinition.args)
                                 .withArgs(daprDefinition.command)
                                 .build();
                         

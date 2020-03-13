@@ -13,6 +13,7 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     alsoLogToStdErr?: boolean;
     appId?: string;
     appPort?: number;
+    args?: string[];
     componentsPath?: string;
     config?: string;
     controlPlaneAddress?: string;
@@ -79,6 +80,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--stderrthreshold', daprDefinition.stdErrThreshold)
                                 .withNamedArg('--v', daprDefinition.vLogLevel)
                                 .withNamedArg('--vmodule', daprDefinition.vLogFilters)
+                                .withArgs(daprDefinition.args)
                                 .build();
 
                         return callback(command, { cwd: definition.cwd });

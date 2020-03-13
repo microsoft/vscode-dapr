@@ -14,6 +14,7 @@
 
     "vscode-dapr.tasks.dapr.properties.appId.description": "An ID for your application, used for service discovery.",
     "vscode-dapr.tasks.dapr.properties.appPort.description": "The port your application is listening on.",
+    "vscode-dapr.tasks.dapr.properties.args.description": "Additional arguments passed to the Dapr command.",
     "vscode-dapr.tasks.dapr.properties.command.description": "The command and arguments used to start your application.",
     "vscode-dapr.tasks.dapr.properties.cwd.description": "The directory in which to start Dapr.",
     "vscode-dapr.tasks.dapr.properties.config.description": "The path to the Dapr configuration file.",
@@ -32,6 +33,7 @@
     "vscode-dapr.tasks.daprd.properties.alsoLogToStdError.description": "Whether to log to standard error as well as files.",
     "vscode-dapr.tasks.daprd.properties.appId.description": "An ID for your application, used for service discovery.",
     "vscode-dapr.tasks.daprd.properties.appPort.description": "The port the application is listening on.",
+    "vscode-dapr.tasks.daprd.properties.args.description": "Additional arguments passed to the Dapr command.",
     "vscode-dapr.tasks.daprd.properties.componentsPath.description": "Path for the components directory. (Standalone mode only.)",
     "vscode-dapr.tasks.daprd.properties.config.description": "Path to the configuration file, or the name of a configuration object.",
     "vscode-dapr.tasks.daprd.properties.controlPlaneAddress.description": "Address for the Dapr control plane.",
