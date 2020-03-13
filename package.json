@@ -286,12 +286,12 @@
 					},
 					"enableMetrics": {
 						"type": "boolean",
-						"description": "%vscode-dapr.tasks.daprd.properties.enableMetrics%",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableMetrics.description%",
 						"default": true
 					},
 					"enableMtls": {
 						"type": "boolean",
-						"description": "%vscode-dapr.tasks.daprd.properties.enableMtls%",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableMtls.description%",
 						"default": false
 					},
 					"grpcPort": {
@@ -306,7 +306,7 @@
 					},
 					"logAsJson": {
 						"type": "boolean",
-						"description": "%vscode-dapr.tasks.daprd.properties.logAsJson%",
+						"description": "%vscode-dapr.tasks.daprd.properties.logAsJson.description%",
 						"default": false
 					},
 					"logLevel": {
@@ -332,7 +332,7 @@
 					},
 					"logToStdErr": {
 						"type": "boolean",
-						"description": "%vscode-dapr.tasks.daprd.properties.logToStdErr%",
+						"description": "%vscode-dapr.tasks.daprd.properties.logToStdErr.description%",
 						"default": false
 					},
 					"maxConcurrency": {
@@ -342,7 +342,7 @@
 					},
 					"metricsPort": {
 						"type": "number",
-						"description": "%vscode-dapr.tasks.daprd.properties.metricsPort%",
+						"description": "%vscode-dapr.tasks.daprd.properties.metricsPort.description%",
 						"default": 9090
 					},
 					"mode": {

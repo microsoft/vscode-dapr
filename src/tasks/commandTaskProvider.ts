@@ -6,6 +6,7 @@ import * as vscode from 'vscode';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { Process } from '../util/process';
 import { localize } from '../util/localize';
+import { write } from 'fs';
 
 export type CommandTaskSpawnCallback = (command: string, options?: cp.SpawnOptions) => Promise<void>;
 export type CommandTaskProviderCallback = (definition: vscode.TaskDefinition, callback: CommandTaskSpawnCallback, token?: vscode.CancellationToken) => Promise<void>;
@@ -42,6 +43,9 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
 
                                 spawnOptions.cwd = vscode.workspace.workspaceFolders[0].uri.fsPath;
                             }
+
+                            writer.writeLine(localize('tasks.commandTaskProvider.executingMessage', '> Executing command: {0} <', command), 'bold');
+                            writer.writeLine('');
 
                             await process.spawn(command, spawnOptions, token);
                         } finally {
