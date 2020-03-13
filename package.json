@@ -158,13 +158,13 @@
 							"type": "string"
 						}
 					},
-					"cwd": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.dapr.properties.cwd.description%"
-					},
 					"config": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.config.description%"
+					},
+					"cwd": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.cwd.description%"
 					},
 					"enableProfiling": {
 						"type": "boolean",
@@ -203,7 +203,7 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.maxConcurrency.description%",
 						"default": -1
 					},
-					"placmentHost": {
+					"placementHost": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.placementHost.description%",
 						"default": "localhost"

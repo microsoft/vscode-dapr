@@ -20,6 +20,8 @@ export interface DaprTaskDefinition extends TaskDefinition {
     maxConcurrency?: number;
     placementHost?: string;
     profilePort?: number;
+    protocol?: 'grpc' | 'http';
+    redisHost?: string;
     type: 'daprd';
 }
 
@@ -46,6 +48,8 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--placement-host', daprDefinition.placementHost)
                                 .withNamedArg('--port', daprDefinition.httpPort)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
+                                .withNamedArg('--protocol', daprDefinition.protocol)
+                                .withNamedArg('--redis-host', daprDefinition.redisHost)
                                 .withArgs(daprDefinition.command)
                                 .build();
                         

@@ -34,6 +34,7 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     protocol?: 'grpc' | 'http';
     sentryAddress?: string;
     stdErrThreshold?: DaprdLogLevel;
+    type: 'daprd';
     vLogLevel?: DaprdLogLevel;
     vLogFilters?: string; // TODO: Allow more structured filters.
 }
