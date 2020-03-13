@@ -6,7 +6,6 @@ import * as vscode from 'vscode';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { Process } from '../util/process';
 import { localize } from '../util/localize';
-import { write } from 'fs';
 
 export type CommandTaskSpawnCallback = (command: string, options?: cp.SpawnOptions) => Promise<void>;
 export type CommandTaskProviderCallback = (definition: vscode.TaskDefinition, callback: CommandTaskSpawnCallback, token?: vscode.CancellationToken) => Promise<void>;

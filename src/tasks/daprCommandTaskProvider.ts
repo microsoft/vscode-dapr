@@ -41,7 +41,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--app-id', daprDefinition.appId)
                                 .withNamedArg('--app-port', daprDefinition.appPort)
                                 .withNamedArg('--config', daprDefinition.config)
-                                .withFlagArg('--enable-profiling', daprDefinition.enableProfiling)
+                                .withNamedArg('--enable-profiling', daprDefinition.enableProfiling, { assignValue: true })
                                 .withNamedArg('--grpc-port', daprDefinition.grpcPort)
                                 .withNamedArg('--image', daprDefinition.image)
                                 .withNamedArg('--log-level', daprDefinition.logLevel)
