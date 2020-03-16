@@ -141,37 +141,52 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
     telemetryProperties.configurationType = result.configuration.type;
 
-    const daprdUpTask: DaprTaskDefinition = {
-        type: 'daprd',
-        label: 'daprd-debug',
-        appId: result.appId,
-        appPort: result.appPort,
-    };
+    const preLaunchTask = await scaffolder.scaffoldTask(
+        'daprd-debug',
+        label => {
+            const daprdUpTask: DaprTaskDefinition = {
+                type: 'daprd',
+                label,
+                appId: result.appId,
+                appPort: result.appPort,
+            };
+        
+            if (buildTask && buildTask !== label) {
+                daprdUpTask.dependsOn = buildTask;
+            }
 
-    if (buildTask && buildTask !== daprdUpTask.label) {
-        daprdUpTask.dependsOn = buildTask;
-    }
+            return daprdUpTask;
+        },
+        onConflictingTask);
 
-    const daprdDownTask: DaprdDownTaskDefinition = {
-        type: 'daprd-down',
-        label: 'daprd-down',
-        appId: result.appId
-    };
+    const postDebugTask = await scaffolder.scaffoldTask(
+        'daprd-down',
+        label => {
+            const daprdDownTask: DaprdDownTaskDefinition = {
+                type: 'daprd-down',
+                label,
+                appId: result.appId
+            };
+        
+            if (tearDownTask && tearDownTask !== label) {
+                daprdDownTask.dependsOn = tearDownTask;
+            }
 
-    if (tearDownTask && tearDownTask !== daprdDownTask.label) {
-        daprdDownTask.dependsOn = tearDownTask;
-    }
+            return daprdDownTask;
+        },
+        onConflictingTask);
 
-    const daprDebugConfiguration = {
-        ...result.configuration,
-        name: localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),
-        preLaunchTask: daprdUpTask.label,
-        postDebugTask: daprdDownTask.label
-    };
-
-    await scaffolder.scaffoldTask('daprd-debug', () => daprdUpTask, onConflictingTask);
-    await scaffolder.scaffoldTask('daprd-down', () => daprdDownTask, onConflictingTask);
-    await scaffolder.scaffoldConfiguration(daprDebugConfiguration.name, () => daprDebugConfiguration, onConflictingTask);
+    await scaffolder.scaffoldConfiguration(
+        localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),
+        name => {
+            return {
+                ...result.configuration,
+                name,
+                preLaunchTask,
+                postDebugTask
+            };
+        },
+        onConflictingTask);
 
     await scaffoldDaprComponents(templateScaffolder);
 }
