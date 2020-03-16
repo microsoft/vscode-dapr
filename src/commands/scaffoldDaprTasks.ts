@@ -68,18 +68,22 @@ function getDefaultPort(configuration: vscode.DebugConfiguration | undefined): n
             return NodePort;
 
         case 'python':
+            // "module": "flask" is a primary indicator of a Flask application...
             if (configuration?.module === 'flask') {
                 return FlaskPort;
             }
 
+            // "django": true is a primary indicator of a Django application...
             if (configuration?.django === true) {
                 return DjangoPort;
             }
 
+            // "jinja": true is a secondary indicator of a Flask application...
             if (configuration?.jinja === true) {
                 return FlaskPort;
             }
 
+            // Django seems to have a slight edge over Flask in popularity, so default to that...
             return DjangoPort;
     }
 
