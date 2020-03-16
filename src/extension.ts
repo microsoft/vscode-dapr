@@ -26,6 +26,7 @@ import createGetStartedCommand from './commands/help/getStarted';
 import createPlatformProcessProvider from './services/processProvider';
 import LocalDaprInstallationManager from './services/daprInstallationManager';
 import HandlebarsTemplateScaffolder from './scaffolding/templateScaffolder';
+import LocalScaffolder from './scaffolding/scaffolder';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -53,6 +54,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const daprClient = new HttpDaprClient(new AxiosHttpClient());
 			const ui = new AggregateUserInput(ext.ui);
 
+			const scaffolder = new LocalScaffolder();
 			const templatesPath = path.join(context.extensionPath, 'assets', 'templates');
 			const templateScaffolder = new HandlebarsTemplateScaffolder(templatesPath);
 
@@ -64,7 +66,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.getStarted', createGetStartedCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reportIssue', createReportIssueCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reviewIssues', createReviewIssuesCommand(ui));
-			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(templateScaffolder, ui));
+			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
 			
 			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(telemetryProvider)));

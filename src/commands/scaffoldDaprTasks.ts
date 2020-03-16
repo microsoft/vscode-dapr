@@ -6,13 +6,13 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
-import scaffoldTask from "../scaffolding/taskScaffolder";
-import scaffoldConfiguration, { getWorkspaceConfigurations } from '../scaffolding/configurationScaffolder';
+import { getWorkspaceConfigurations } from '../scaffolding/configurationScaffolder';
 import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
 import { localize } from '../util/localize';
 import { UserInput, WizardStep } from '../services/userInput';
 import { IActionContext, TelemetryProperties } from 'vscode-azureextensionui';
 import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
+import { Scaffolder } from '../scaffolding/scaffolder';
 
 interface ScaffoldTelemetryProperties extends TelemetryProperties {
     configurationType: string;
@@ -58,7 +58,7 @@ const defaultPortMap: { [key: string]: number } = {
 
 const defaultPort = 80;
 
-export async function scaffoldDaprTasks(context: IActionContext, templateScaffolder: TemplateScaffolder, ui: UserInput): Promise<void> {
+export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput): Promise<void> {
     const telemetryProperties = context.telemetry.properties as ScaffoldTelemetryProperties;
 
     const configurationStep: WizardStep<ScaffoldWizardContext> =
@@ -169,13 +169,13 @@ export async function scaffoldDaprTasks(context: IActionContext, templateScaffol
         postDebugTask: daprdDownTask.label
     };
 
-    await scaffoldTask(daprdUpTask, onConflictingTask);
-    await scaffoldTask(daprdDownTask, onConflictingTask);
-    await scaffoldConfiguration(daprDebugConfiguration, onConflictingTask);
+    await scaffolder.scaffoldTask('daprd-debug', () => daprdUpTask, onConflictingTask);
+    await scaffolder.scaffoldTask('daprd-down', () => daprdDownTask, onConflictingTask);
+    await scaffolder.scaffoldConfiguration(daprDebugConfiguration.name, () => daprDebugConfiguration, onConflictingTask);
 
     await scaffoldDaprComponents(templateScaffolder);
 }
 
-const createScaffoldDaprTasksCommand = (templateScaffolder: TemplateScaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, templateScaffolder, ui);
+const createScaffoldDaprTasksCommand = (scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, scaffolder, templateScaffolder, ui);
 
 export default createScaffoldDaprTasksCommand;
