@@ -12,6 +12,7 @@ import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffol
 import { localize } from '../util/localize';
 import { UserInput, WizardStep } from '../services/userInput';
 import { IActionContext, TelemetryProperties } from 'vscode-azureextensionui';
+import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
 
 interface ScaffoldTelemetryProperties extends TelemetryProperties {
     configurationType: string;
@@ -21,7 +22,7 @@ async function onConflictingTask(): Promise<boolean> {
     return Promise.resolve(true);
 }
 
-async function scaffoldDaprComponents(): Promise<void> {
+async function scaffoldDaprComponents(templateScaffolder: TemplateScaffolder): Promise<void> {
     // TODO: Verify open workspace/folder.
     const rootWorkspaceFolderPath = (vscode.workspace.workspaceFolders ?? [])[0]?.uri?.fsPath;
 
@@ -37,8 +38,8 @@ async function scaffoldDaprComponents(): Promise<void> {
 
     // Only scaffold the components if none exist...
     if (components.length === 0) {
-        await scaffoldStateStoreComponent(componentsPath);
-        await scaffoldPubSubComponent(componentsPath);
+        await scaffoldStateStoreComponent(templateScaffolder, componentsPath);
+        await scaffoldPubSubComponent(templateScaffolder, componentsPath);
     }
 }
 
@@ -57,7 +58,7 @@ const defaultPortMap: { [key: string]: number } = {
 
 const defaultPort = 80;
 
-export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput): Promise<void> {
+export async function scaffoldDaprTasks(context: IActionContext, templateScaffolder: TemplateScaffolder, ui: UserInput): Promise<void> {
     const telemetryProperties = context.telemetry.properties as ScaffoldTelemetryProperties;
 
     const configurationStep: WizardStep<ScaffoldWizardContext> =
@@ -172,9 +173,9 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
     await scaffoldTask(daprdDownTask, onConflictingTask);
     await scaffoldConfiguration(daprDebugConfiguration, onConflictingTask);
 
-    await scaffoldDaprComponents();
+    await scaffoldDaprComponents(templateScaffolder);
 }
 
-const createScaffoldDaprTasksCommand = (ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, ui);
+const createScaffoldDaprTasksCommand = (templateScaffolder: TemplateScaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, templateScaffolder, ui);
 
 export default createScaffoldDaprTasksCommand;
