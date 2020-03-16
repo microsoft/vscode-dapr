@@ -51,6 +51,7 @@ interface ScaffoldWizardContext {
 const DefaultPort = 80;
 const DjangoPort = 8000;
 const FlaskPort = 5000;
+const JavaPort = 8080;
 const NetCorePort = 5000;
 const NodePort = 3000;
 
@@ -58,6 +59,9 @@ function getDefaultPort(configuration: vscode.DebugConfiguration | undefined): n
     switch (configuration?.type) {
         case 'coreclr':
             return NetCorePort;
+
+        case 'java':
+            return JavaPort;
 
         case 'node':
         case 'node2':
