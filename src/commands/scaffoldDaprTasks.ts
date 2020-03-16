@@ -48,14 +48,39 @@ interface ScaffoldWizardContext {
     configuration: vscode.DebugConfiguration;
 }
 
-const defaultPortMap: { [key: string]: number } = {
-    'coreclr': 5000,
-    'node': 3000,
-    'node2': 3000,
-    'python': 8000,
-};
+const DefaultPort = 80;
+const DjangoPort = 8000;
+const FlaskPort = 5000;
+const NetCorePort = 5000;
+const NodePort = 3000;
 
-const defaultPort = 80;
+function getDefaultPort(configuration: vscode.DebugConfiguration | undefined): number {
+    switch (configuration?.type) {
+        case 'coreclr':
+            return NetCorePort;
+
+        case 'node':
+        case 'node2':
+            return NodePort;
+
+        case 'python':
+            if (configuration?.module === 'flask') {
+                return FlaskPort;
+            }
+
+            if (configuration?.django === true) {
+                return DjangoPort;
+            }
+
+            if (configuration?.jinja === true) {
+                return FlaskPort;
+            }
+
+            return DjangoPort;
+    }
+
+    return DefaultPort;
+}
 
 export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput): Promise<void> {
     const telemetryProperties = context.telemetry.properties as ScaffoldTelemetryProperties;
@@ -106,9 +131,7 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
         async wizardContext => {
             telemetryProperties.cancelStep = 'appPort';
 
-            const appPort = wizardContext.appPort
-                ?? (wizardContext.configuration?.type ? defaultPortMap[wizardContext.configuration.type] : undefined)
-                ?? defaultPort;
+            const appPort = wizardContext.appPort ?? getDefaultPort(wizardContext.configuration);
             
             const appPortString = await ui.showInputBox(
                 {
