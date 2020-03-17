@@ -176,10 +176,10 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
         'daprd-debug',
         label => {
             const daprdUpTask: DaprTaskDefinition = {
-                type: 'daprd',
-                label,
                 appId: result.appId,
                 appPort: result.appPort,
+                label,
+                type: 'daprd'
             };
         
             if (buildTask && buildTask !== label) {
@@ -188,15 +188,15 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
             return daprdUpTask;
         },
-        onConflictingTask);
+        () => Promise.resolve({ type: 'overwrite' }));
 
     const postDebugTask = await scaffolder.scaffoldTask(
         'daprd-down',
         label => {
             const daprdDownTask: DaprdDownTaskDefinition = {
-                type: 'daprd-down',
+                appId: result.appId,
                 label,
-                appId: result.appId
+                type: 'daprd-down'
             };
         
             if (tearDownTask && tearDownTask !== label) {
@@ -205,7 +205,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
             return daprdDownTask;
         },
-        onConflictingTask);
+        () => Promise.resolve({ type: 'overwrite' }));
 
     await scaffolder.scaffoldConfiguration(
         localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),

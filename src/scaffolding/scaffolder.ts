@@ -1,12 +1,10 @@
-import * as vscode from 'vscode';
 import scaffoldConfiguration, { DebugConfiguration } from './configurationScaffolder';
-import { TaskDefinition } from '../tasks/taskDefinition';
-import scaffoldTask from './taskScaffolder';
+import scaffoldTask, { TaskContentFactory, TaskConflictHandler } from './taskScaffolder';
 
 export interface Scaffolder {
     scaffoldConfiguration(name: string, contentFactory: (name: string) => DebugConfiguration, onConflict: (configuration: DebugConfiguration) => Promise<boolean>): Promise<string | undefined>;
     scaffoldFile(fileName: string, contentFactory: (fileName: string) => string, onConflict: (fileName: string) => Promise<boolean>): Promise<string | undefined>;
-    scaffoldTask(label: string, contentFactory: (label: string) => TaskDefinition, onConflict: (task: TaskDefinition) => Promise<boolean>): Promise<string | undefined>;
+    scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: TaskConflictHandler): Promise<string | undefined>;
 }
 
 export default class LocalScaffolder implements Scaffolder {
@@ -24,13 +22,7 @@ export default class LocalScaffolder implements Scaffolder {
         return Promise.resolve(undefined);
     }
 
-    async scaffoldTask(label: string, contentFactory: (label: string) => vscode.TaskDefinition, onConflict: (task: TaskDefinition) => Promise<boolean>): Promise<string | undefined> {
-        const content = contentFactory(label);
-
-        if (await scaffoldTask(content, onConflict)) {
-            return label;
-        }
-
-        return undefined;
+    scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: TaskConflictHandler): Promise<string | undefined> {
+        return scaffoldTask(label, contentFactory, onConflict);
     }
 }
