@@ -53,7 +53,10 @@ suite('util/commandLineBuilder', () => {
     });
 
     suite('withNamedArg', () => {
-        testBuilder('With value', builder => builder.withNamedArg('--arg', 'value'), '--arg "value"', 'The command line should contain the value.');
+        testBuilder('With string value', builder => builder.withNamedArg('--arg', 'value'), '--arg "value"', 'The command line should contain the string.');
+        testBuilder('With number value', builder => builder.withNamedArg('--arg', 42), '--arg "42"', 'The command line should contain the number.');
+        testBuilder('With true boolean value', builder => builder.withNamedArg('--arg', true), '--arg "true"', 'The command line should contain true.');
+        testBuilder('With false boolean value', builder => builder.withNamedArg('--arg', false), '--arg "false"', 'The command line should contain the false.');
         testBuilder('With assigned value', builder => builder.withNamedArg('--arg', 'value', { assignValue: true }), '"--arg=value"', 'The command line should contain the value assigned to the argument.');
         testBuilder('With undefined', builder => builder.withNamedArg('--arg', undefined), '', 'The command line should not contain the value.');
     });

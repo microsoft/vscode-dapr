@@ -151,6 +151,13 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.appPort.description%",
 						"default": -1
 					},
+					"args": {
+						"type": "array",
+						"description": "%vscode-dapr.tasks.dapr.properties.args.description%",
+						"additionalItems": {
+							"type": "string"
+						}
+					},
 					"command": {
 						"type": "array",
 						"description": "%vscode-dapr.tasks.dapr.properties.command.description%",
@@ -158,13 +165,13 @@
 							"type": "string"
 						}
 					},
-					"cwd": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.dapr.properties.cwd.description%"
-					},
 					"config": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.config.description%"
+					},
+					"cwd": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.cwd.description%"
 					},
 					"enableProfiling": {
 						"type": "boolean",
@@ -203,7 +210,7 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.maxConcurrency.description%",
 						"default": -1
 					},
-					"placmentHost": {
+					"placementHost": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.placementHost.description%",
 						"default": "localhost"
@@ -252,6 +259,13 @@
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.appPort.description%"
 					},
+					"args": {
+						"type": "array",
+						"description": "%vscode-dapr.tasks.daprd.properties.args.description%",
+						"additionalItems": {
+							"type": "string"
+						}
+					},
 					"componentsPath": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.componentsPath.description%",
@@ -270,6 +284,16 @@
 						"description": "%vscode-dapr.tasks.daprd.properties.enableProfiling.description%",
 						"default": false
 					},
+					"enableMetrics": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableMetrics.description%",
+						"default": true
+					},
+					"enableMtls": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableMtls.description%",
+						"default": false
+					},
 					"grpcPort": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.grpcPort.description%",
@@ -279,6 +303,11 @@
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.httpPort.description%",
 						"default": 3500
+					},
+					"logAsJson": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.logAsJson.description%",
+						"default": false
 					},
 					"logLevel": {
 						"type": "string",
@@ -301,10 +330,20 @@
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.logDir.description%"
 					},
+					"logToStdErr": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.logToStdErr.description%",
+						"default": false
+					},
 					"maxConcurrency": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.maxConcurrency.description%",
 						"default": -1
+					},
+					"metricsPort": {
+						"type": "number",
+						"description": "%vscode-dapr.tasks.daprd.properties.metricsPort.description%",
+						"default": 9090
 					},
 					"mode": {
 						"type": "string",

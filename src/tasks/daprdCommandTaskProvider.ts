@@ -13,22 +13,29 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     alsoLogToStdErr?: boolean;
     appId?: string;
     appPort?: number;
+    args?: string[];
     componentsPath?: string;
     config?: string;
     controlPlaneAddress?: string;
     enableProfiling?: boolean;
-    grcpPort?: number;
+    enableMetrics?: boolean;
+    enableMtls?: boolean;
+    grpcPort?: number;
     httpPort?: number;
+    logAsJson?: boolean;
     logLevel?: DaprdLogLevel;
     logBacktraceAt?: number;
     logDir?: string;
+    logToStdErr?: boolean;
     maxConcurrency?: number;
+    metricsPort?: number;
     mode?: 'standalone' | 'kubernetes';
     placementAddress?: string;
     profilePort?: number;
     protocol?: 'grpc' | 'http';
     sentryAddress?: string;
     stdErrThreshold?: DaprdLogLevel;
+    type: 'daprd';
     vLogLevel?: DaprdLogLevel;
     vLogFilters?: string; // TODO: Allow more structured filters.
 }
@@ -46,19 +53,24 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                             CommandLineBuilder
                                 .create('daprd')
                                 .withNamedArg('--allowed-origins', daprDefinition.allowedOrigins)
-                                .withFlagArg('--alsoLogToStdErr', daprDefinition.alsoLogToStdErr)
+                                .withNamedArg('--alsologtostderr', daprDefinition.alsoLogToStdErr, { assignValue: true })
                                 .withNamedArg('--app-id', daprDefinition.appId)
                                 .withNamedArg('--app-port', daprDefinition.appPort)
                                 .withNamedArg('--components-path', daprDefinition.componentsPath)
                                 .withNamedArg('--config', daprDefinition.config)
                                 .withNamedArg('--control-plane-address', daprDefinition.controlPlaneAddress)
-                                .withNamedArg('--dapr-grpc-port', daprDefinition.grcpPort)
+                                .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
                                 .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
-                                .withFlagArg('--enable-profiling', daprDefinition.enableProfiling)
+                                .withNamedArg('--enable-metrics', daprDefinition.enableMetrics, { assignValue: true })
+                                .withNamedArg('--enable-mtls', daprDefinition.enableMtls, { assignValue: true })
+                                .withNamedArg('--enable-profiling', daprDefinition.enableProfiling, { assignValue: true })
+                                .withNamedArg('--log-as-json', daprDefinition.logAsJson, { assignValue: true })
                                 .withNamedArg('--log-level', daprDefinition.logLevel)
                                 .withNamedArg('--log_backtrace_at', daprDefinition.logBacktraceAt)
                                 .withNamedArg('--log_dir', daprDefinition.logDir)
+                                .withNamedArg('--logtostderr', daprDefinition.logToStdErr, { assignValue: true })
                                 .withNamedArg('--max-concurrency', daprDefinition.maxConcurrency)
+                                .withNamedArg('--metrics-port', daprDefinition.metricsPort)
                                 .withNamedArg('--mode', daprDefinition.mode)
                                 .withNamedArg('--placement-address', daprDefinition.placementAddress || "localhost:50005" /* NOTE: The placement address is actually required for daprd. */)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
@@ -67,6 +79,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--stderrthreshold', daprDefinition.stdErrThreshold)
                                 .withNamedArg('--v', daprDefinition.vLogLevel)
                                 .withNamedArg('--vmodule', daprDefinition.vLogFilters)
+                                .withArgs(daprDefinition.args)
                                 .build();
 
                         return callback(command, { cwd: definition.cwd });
