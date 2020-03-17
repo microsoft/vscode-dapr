@@ -27,7 +27,7 @@ export interface SkipResult {
 
 export type ConflictResult = OverwriteResult | RenameResult | SkipResult;
 export type TaskContentFactory = (label: string | undefined) => TaskDefinition;
-export type TaskConflictHandler = (task: TaskDefinition) => Promise<ConflictResult>;
+export type TaskConflictHandler = (task: TaskDefinition, isUnique: (label: string) => Promise<boolean>) => Promise<ConflictResult>;
 
 export function getWorkspaceTasks(): TaskDefinition[] {
     const workspaceConfigurations = vscode.workspace.getConfiguration('tasks');
@@ -44,7 +44,7 @@ export default async function scaffoldTask(label: string, contentFactory: TaskCo
     const conflictingTaskIndex = workspaceTasks.findIndex(existingTask => isConflictingTask(label, existingTask));
 
     if (conflictingTaskIndex >= 0) {
-        const result = await onConflict(workspaceTasks[conflictingTaskIndex]);
+        const result = await onConflict(workspaceTasks[conflictingTaskIndex], label => Promise.resolve(workspaceTasks.find(task => task.label === label) === undefined));
 
         switch (result.type) {
             case 'overwrite':

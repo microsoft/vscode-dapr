@@ -19,6 +19,7 @@ export interface UserInput {
     showInputBox(options: vscode.InputBoxOptions): Promise<string>;
     showIssueReporter(): Promise<void>;
     showQuickPick<T extends vscode.QuickPickItem>(items: T[] | Thenable<T[]>, options: IAzureQuickPickOptions): Promise<T>;
+    showWarningMessage<T extends vscode.MessageItem>(message: string, ...items: T[]): Promise<T>;
     showWizard<T>(options: WizardOptions<T>, ...steps: (WizardStep<T> | undefined)[]): Promise<T>;
     withProgress<T>(title: string, task: (progress: vscode.Progress<{ message?: string; increment?: number }>, token: vscode.CancellationToken) => Promise<T>): Promise<T>;
 }
@@ -64,6 +65,10 @@ export class AggregateUserInput implements UserInput {
 
     showQuickPick<T extends vscode.QuickPickItem>(items: T[] | Thenable<T[]>, options: IAzureQuickPickOptions): Promise<T> {
         return this.ui.showQuickPick(items, options);
+    }
+
+    showWarningMessage<T extends vscode.MessageItem>(message: string, ...items: T[]): Promise<T> {
+        return this.ui.showWarningMessage<T>(message, ...items);
     }
 
     async showWizard<T>(options: WizardOptions<T>, ...steps: (WizardStep<T> | undefined)[]): Promise<T> {

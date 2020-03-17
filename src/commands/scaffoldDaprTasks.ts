@@ -13,6 +13,7 @@ import { UserInput, WizardStep } from '../services/userInput';
 import { IActionContext, TelemetryProperties } from 'vscode-azureextensionui';
 import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
 import { Scaffolder } from '../scaffolding/scaffolder';
+import { TaskConflictHandler } from '../scaffolding/taskScaffolder';
 
 interface ScaffoldTelemetryProperties extends TelemetryProperties {
     configurationType: string;
@@ -89,6 +90,22 @@ function getDefaultPort(configuration: vscode.DebugConfiguration | undefined): n
     }
 
     return DefaultPort;
+}
+
+function* range(start: number = 0) {
+    while (true) {
+        yield start++;
+    }
+}
+
+function* nameGenerator(prefix: string, rangeGenerator: Generator<number, void, unknown>) {
+    let index = rangeGenerator.next();
+
+    while (!index.done) {
+        yield `${prefix}${index.value}`;
+
+        index = rangeGenerator.next();
+    }
 }
 
 export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput): Promise<void> {
@@ -172,6 +189,31 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
     telemetryProperties.configurationType = result.configuration.type;
 
+    const onTaskConflict: TaskConflictHandler =
+        async (task, isUnique) => {
+            const overwrite: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.overwriteTask', 'Overwrite') };
+            const newTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.createTask', 'Create task') };
+
+            const result = await ui.showWarningMessage(localize('commands.scaffoldDaprTasks.taskExists', 'The task \'{0}\' already exists. Do you want to overwrite it or create a new task?', task.label), overwrite, newTask);
+
+            if (result === overwrite) {
+                return { 'type': 'overwrite' };
+            } else {
+                const generator = nameGenerator(task.label ?? '', range());
+                let name = generator.next();
+
+                while (!name.done && !await isUnique(name.value)) {
+                    name = generator.next();
+                }
+
+                if (name.done) {
+                    throw new Error(localize('commands.scaffoldDaprTasks.renameError', 'Unable to generate a unique task.'));
+                }
+
+                return { 'type': 'rename', value: name.value };
+            }
+        };
+
     const preLaunchTask = await scaffolder.scaffoldTask(
         'daprd-debug',
         label => {
@@ -188,7 +230,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
             return daprdUpTask;
         },
-        () => Promise.resolve({ type: 'overwrite' }));
+        onTaskConflict);
 
     const postDebugTask = await scaffolder.scaffoldTask(
         'daprd-down',
@@ -205,7 +247,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
             return daprdDownTask;
         },
-        () => Promise.resolve({ type: 'overwrite' }));
+        onTaskConflict);
 
     await scaffolder.scaffoldConfiguration(
         localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),
