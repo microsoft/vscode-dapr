@@ -3,7 +3,7 @@
 	"displayName": "Dapr",
 	"description": "%vscode-dapr.description%",
 	"icon": "assets/images/extensionIcon.png",
-	"version": "0.1.1-alpha",
+	"version": "0.1.2-alpha",
 	"preview": true,
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",
@@ -151,6 +151,13 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.appPort.description%",
 						"default": -1
 					},
+					"args": {
+						"type": "array",
+						"description": "%vscode-dapr.tasks.dapr.properties.args.description%",
+						"additionalItems": {
+							"type": "string"
+						}
+					},
 					"command": {
 						"type": "array",
 						"description": "%vscode-dapr.tasks.dapr.properties.command.description%",
@@ -158,13 +165,13 @@
 							"type": "string"
 						}
 					},
-					"cwd": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.dapr.properties.cwd.description%"
-					},
 					"config": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.config.description%"
+					},
+					"cwd": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.cwd.description%"
 					},
 					"enableProfiling": {
 						"type": "boolean",
@@ -203,7 +210,7 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.maxConcurrency.description%",
 						"default": -1
 					},
-					"placmentHost": {
+					"placementHost": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.placementHost.description%",
 						"default": "localhost"
@@ -252,6 +259,13 @@
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.appPort.description%"
 					},
+					"args": {
+						"type": "array",
+						"description": "%vscode-dapr.tasks.daprd.properties.args.description%",
+						"additionalItems": {
+							"type": "string"
+						}
+					},
 					"componentsPath": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.componentsPath.description%",
@@ -270,6 +284,16 @@
 						"description": "%vscode-dapr.tasks.daprd.properties.enableProfiling.description%",
 						"default": false
 					},
+					"enableMetrics": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableMetrics.description%",
+						"default": true
+					},
+					"enableMtls": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableMtls.description%",
+						"default": false
+					},
 					"grpcPort": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.grpcPort.description%",
@@ -279,6 +303,11 @@
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.httpPort.description%",
 						"default": 3500
+					},
+					"logAsJson": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.logAsJson.description%",
+						"default": false
 					},
 					"logLevel": {
 						"type": "string",
@@ -301,10 +330,20 @@
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.logDir.description%"
 					},
+					"logToStdErr": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.logToStdErr.description%",
+						"default": false
+					},
 					"maxConcurrency": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.maxConcurrency.description%",
 						"default": -1
+					},
+					"metricsPort": {
+						"type": "number",
+						"description": "%vscode-dapr.tasks.daprd.properties.metricsPort.description%",
+						"default": 9090
 					},
 					"mode": {
 						"type": "string",
@@ -420,13 +459,13 @@
 		"@types/gulp-sourcemaps": "0.0.32",
 		"@types/handlebars": "^4.1.0",
 		"@types/mocha": "^7.0.2",
-		"@types/node": "^12.12.28",
+		"@types/node": "^12.12.30",
 		"@types/ps-list": "^6.2.1",
 		"@types/terser-webpack-plugin": "^2.2.0",
 		"@types/vscode": "^1.42.0",
 		"@types/webpack": "^4.41.7",
-		"@typescript-eslint/eslint-plugin": "^2.22.0",
-		"@typescript-eslint/parser": "^2.22.0",
+		"@typescript-eslint/eslint-plugin": "^2.24.0",
+		"@typescript-eslint/parser": "^2.24.0",
 		"del": "^5.1.0",
 		"eslint": "^6.8.0",
 		"glob": "^7.1.5",
@@ -438,7 +477,7 @@
 		"terser-webpack-plugin": "^2.3.5",
 		"ts-loader": "^6.2.1",
 		"ts-node": "^8.6.2",
-		"tslint": "^6.0.0",
+		"tslint": "^6.1.0",
 		"typescript": "^3.8.3",
 		"vsce": "^1.74.0",
 		"vscode-nls-dev": "^3.3.1",
@@ -450,7 +489,7 @@
 		"fs-extra": "^8.1.0",
 		"handlebars": "^4.7.3",
 		"ps-list": "^7.0.0",
-		"vscode-azureextensionui": "^0.29.10",
+		"vscode-azureextensionui": "^0.29.11",
 		"vscode-nls": "^4.1.1"
 	}
 }

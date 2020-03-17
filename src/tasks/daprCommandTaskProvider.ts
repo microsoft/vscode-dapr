@@ -9,6 +9,7 @@ import { TelemetryProvider } from '../services/telemetryProvider';
 export interface DaprTaskDefinition extends TaskDefinition {
     appId?: string;
     appPort?: number;
+    args?: string[];
     command?: string[];
     config?: string;
     cwd?: string;
@@ -20,6 +21,8 @@ export interface DaprTaskDefinition extends TaskDefinition {
     maxConcurrency?: number;
     placementHost?: string;
     profilePort?: number;
+    protocol?: 'grpc' | 'http';
+    redisHost?: string;
     type: 'daprd';
 }
 
@@ -38,7 +41,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--app-id', daprDefinition.appId)
                                 .withNamedArg('--app-port', daprDefinition.appPort)
                                 .withNamedArg('--config', daprDefinition.config)
-                                .withFlagArg('--enable-profiling', daprDefinition.enableProfiling)
+                                .withNamedArg('--enable-profiling', daprDefinition.enableProfiling, { assignValue: true })
                                 .withNamedArg('--grpc-port', daprDefinition.grpcPort)
                                 .withNamedArg('--image', daprDefinition.image)
                                 .withNamedArg('--log-level', daprDefinition.logLevel)
@@ -46,6 +49,9 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--placement-host', daprDefinition.placementHost)
                                 .withNamedArg('--port', daprDefinition.httpPort)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
+                                .withNamedArg('--protocol', daprDefinition.protocol)
+                                .withNamedArg('--redis-host', daprDefinition.redisHost)
+                                .withArgs(daprDefinition.args)
                                 .withArgs(daprDefinition.command)
                                 .build();
                         

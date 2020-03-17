@@ -49,14 +49,47 @@ interface ScaffoldWizardContext {
     configuration: vscode.DebugConfiguration;
 }
 
-const defaultPortMap: { [key: string]: number } = {
-    'coreclr': 5000,
-    'node': 3000,
-    'node2': 3000,
-    'python': 8000,
-};
+const DefaultPort = 80;
+const DjangoPort = 8000;
+const FlaskPort = 5000;
+const JavaPort = 8080;
+const NetCorePort = 5000;
+const NodePort = 3000;
 
-const defaultPort = 80;
+function getDefaultPort(configuration: vscode.DebugConfiguration | undefined): number {
+    switch (configuration?.type) {
+        case 'coreclr':
+            return NetCorePort;
+
+        case 'java':
+            return JavaPort;
+
+        case 'node':
+        case 'node2':
+            return NodePort;
+
+        case 'python':
+            // "module": "flask" is a primary indicator of a Flask application...
+            if (configuration?.module === 'flask') {
+                return FlaskPort;
+            }
+
+            // "django": true is a primary indicator of a Django application...
+            if (configuration?.django === true) {
+                return DjangoPort;
+            }
+
+            // "jinja": true is a secondary indicator of a Flask application...
+            if (configuration?.jinja === true) {
+                return FlaskPort;
+            }
+
+            // Django seems to have a slight edge over Flask in popularity, so default to that...
+            return DjangoPort;
+    }
+
+    return DefaultPort;
+}
 
 export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput): Promise<void> {
     const telemetryProperties = context.telemetry.properties as ScaffoldTelemetryProperties;
@@ -107,9 +140,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
         async wizardContext => {
             telemetryProperties.cancelStep = 'appPort';
 
-            const appPort = wizardContext.appPort
-                ?? (wizardContext.configuration?.type ? defaultPortMap[wizardContext.configuration.type] : undefined)
-                ?? defaultPort;
+            const appPort = wizardContext.appPort ?? getDefaultPort(wizardContext.configuration);
             
             const appPortString = await ui.showInputBox(
                 {

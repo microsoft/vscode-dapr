@@ -57,8 +57,8 @@ export default class CommandLineBuilder {
         return this;
     }
 
-    public withNamedArg(name: string, value: string | number | vscode.ShellQuotedString | undefined, options?: { assignValue?: boolean }): CommandLineBuilder {
-        if (typeof (value) === 'string' || typeof(value) === 'number') {
+    public withNamedArg(name: string, value: string | number | boolean | vscode.ShellQuotedString | undefined, options?: { assignValue?: boolean }): CommandLineBuilder {
+        if (typeof (value) === 'string' || typeof(value) === 'number' || typeof(value) === 'boolean') {
             if (options && options.assignValue) {
                 this.withArg(
                     {
