@@ -3,6 +3,7 @@
 
 import * as vscode from 'vscode';
 import { TaskDefinition } from '../tasks/taskDefinition';
+import { ConflictHandler } from './conflicts';
 
 function isConflictingTask(label: string, taskB: TaskDefinition): boolean {
     if (label && taskB.label) {
@@ -12,22 +13,7 @@ function isConflictingTask(label: string, taskB: TaskDefinition): boolean {
     }
 }
 
-export interface OverwriteResult {
-    type: 'overwrite';
-}
-
-export interface RenameResult {
-    type: 'rename';
-    value: string;
-}
-
-export interface SkipResult {
-    type: 'skip';
-}
-
-export type ConflictResult = OverwriteResult | RenameResult | SkipResult;
-export type TaskContentFactory = (label: string | undefined) => TaskDefinition;
-export type TaskConflictHandler = (task: TaskDefinition, isUnique: (label: string) => Promise<boolean>) => Promise<ConflictResult>;
+export type TaskContentFactory = (label: string) => TaskDefinition;
 
 export function getWorkspaceTasks(): TaskDefinition[] {
     const workspaceConfigurations = vscode.workspace.getConfiguration('tasks');
@@ -35,7 +21,7 @@ export function getWorkspaceTasks(): TaskDefinition[] {
     return workspaceConfigurations.tasks ?? [];
 }
 
-export default async function scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: TaskConflictHandler): Promise<string | undefined> {
+export default async function scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
     const workspaceConfigurations = vscode.workspace.getConfiguration('tasks');
     const workspaceTasks: TaskDefinition[] = workspaceConfigurations.tasks ?? [];
 
@@ -44,14 +30,15 @@ export default async function scaffoldTask(label: string, contentFactory: TaskCo
     const conflictingTaskIndex = workspaceTasks.findIndex(existingTask => isConflictingTask(label, existingTask));
 
     if (conflictingTaskIndex >= 0) {
-        const result = await onConflict(workspaceTasks[conflictingTaskIndex], label => Promise.resolve(workspaceTasks.find(task => task.label === label) === undefined));
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const result = await onConflict(workspaceTasks[conflictingTaskIndex].label!, label => Promise.resolve(workspaceTasks.find(task => task.label === label) === undefined));
 
         switch (result.type) {
             case 'overwrite':
                 taskIndex = conflictingTaskIndex;
                 break;
             case 'rename':
-                label = result.value;
+                label = result.name;
                 break;
             case 'skip':
                 return undefined;
