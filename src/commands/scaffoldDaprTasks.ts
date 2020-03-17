@@ -98,7 +98,7 @@ function* range(start = 0) {
     }
 }
 
-function* nameGenerator(prefix: string, rangeGenerator: Generator<number, void, unknown>) {
+function* names(prefix: string, rangeGenerator: Generator<number, void, unknown>) {
     let index = rangeGenerator.next();
 
     while (!index.done) {
@@ -199,15 +199,15 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
             if (result === overwrite) {
                 return { 'type': 'overwrite' };
             } else {
-                const generator = nameGenerator(`${label ?? ''}-`, range(1));
-                let name = generator.next();
+                const nameGenerator = names(`${label ?? ''}-`, range(1));
+                let name = nameGenerator.next();
 
                 while (!name.done && !await isUnique(name.value)) {
-                    name = generator.next();
+                    name = nameGenerator.next();
                 }
 
                 if (name.done) {
-                    throw new Error(localize('commands.scaffoldDaprTasks.renameError', 'Unable to generate a unique task.'));
+                    throw new Error(localize('commands.scaffoldDaprTasks.renameTaskError', 'Unable to generate a unique task.'));
                 }
 
                 return { 'type': 'rename', name: name.value };
@@ -259,7 +259,29 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                 postDebugTask
             };
         },
-        onConflictingTask);
+        async (name: string, isUnique) => {
+            const overwrite: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.overwriteConfiguration', 'Overwrite') };
+            const newConfiguration: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.createConfiguration', 'Create configuration') };
+
+            const result = await ui.showWarningMessage(localize('commands.scaffoldDaprTasks.configurationExists', 'The configuration \'{0}\' already exists. Do you want to overwrite it or create a new configuration?', name), overwrite, newConfiguration);
+
+            if (result === overwrite) {
+                return { 'type': 'overwrite' };
+            } else {
+                const nameGenerator = names(`${name?? ''}-`, range(1));
+                let generatedName = nameGenerator.next();
+
+                while (!generatedName.done && !await isUnique(generatedName.value)) {
+                    generatedName = nameGenerator.next();
+                }
+
+                if (generatedName.done) {
+                    throw new Error(localize('commands.scaffoldDaprTasks.renameConfigurationError', 'Unable to generate a unique task.'));
+                }
+
+                return { 'type': 'rename', name: generatedName.value };
+            }
+        });
 
     await scaffoldDaprComponents(templateScaffolder);
 }
