@@ -8,6 +8,7 @@ Further updates related to the Dapr 0.5.0 release.
 
 * Bundle extension assets for size/performance. [#16](https://github.com/microsoft/vscode-dapr/issues/16)
 * Expose publish command at tree view level. [#26](https://github.com/microsoft/vscode-dapr/issues/26)
+* Manage conflicts during scaffolding. [#33](https://github.com/microsoft/vscode-dapr/issues/33)
 * Detect when Dapr is not installed or initialized. [#46](https://github.com/microsoft/vscode-dapr/issues/46)
 
 ### Updated
