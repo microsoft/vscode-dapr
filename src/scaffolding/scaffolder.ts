@@ -35,6 +35,8 @@ export default class LocalScaffolder implements Scaffolder {
         const content = await contentFactory(path);
 
         await fse.writeFile(path, content, 'utf8');
+
+        return path;
     }
 
     scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
