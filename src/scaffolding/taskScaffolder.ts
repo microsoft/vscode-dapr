@@ -5,14 +5,6 @@ import * as vscode from 'vscode';
 import { TaskDefinition } from '../tasks/taskDefinition';
 import { ConflictHandler } from './conflicts';
 
-function isConflictingTask(label: string, taskB: TaskDefinition): boolean {
-    if (label && taskB.label) {
-        return label === taskB.label;
-    } else {
-        return false;
-    }
-}
-
 export type TaskContentFactory = (label: string) => TaskDefinition;
 
 export function getWorkspaceTasks(): TaskDefinition[] {
@@ -27,11 +19,12 @@ export default async function scaffoldTask(label: string, contentFactory: TaskCo
 
     let taskIndex: number | undefined;
 
-    const conflictingTaskIndex = workspaceTasks.findIndex(existingTask => isConflictingTask(label, existingTask));
+    const getConflictingIndex = (targetLabel: string): number => workspaceTasks.findIndex(task => task.label === targetLabel);
+    const conflictingTaskIndex = getConflictingIndex(label);
 
     if (conflictingTaskIndex >= 0) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const result = await onConflict(workspaceTasks[conflictingTaskIndex].label!, label => Promise.resolve(workspaceTasks.find(task => task.label === label) === undefined));
+        const result = await onConflict(label, targetLabel => Promise.resolve(getConflictingIndex(targetLabel) === -1));
 
         switch (result.type) {
             case 'overwrite':
