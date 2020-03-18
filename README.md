@@ -1,5 +1,7 @@
 # Dapr for Visual Studio Code (Preview)
 
+[![Marketplace Version](https://vsmarketplacebadge.apphb.com/version/ms-azuretools.vscode-dapr.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-dapr)
+[![Marketplace Installs](https://vsmarketplacebadge.apphb.com/installs-short/ms-azuretools.vscode-dapr.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-dapr)
 [![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-dapr-nightly?branchName=master)](https://dev.azure.com/ms-azuretools/AzCode/_build/latest?definitionId=26&branchName=master)
 
 The Dapr extension makes it easy to setup debugging of applications within the Dapr environment as well as interact with applications via the Dapr runtime.
@@ -13,6 +15,8 @@ Local development with Dapr requires a running instance of Docker; follow the [D
 ### Dapr CLI and Runtime
 
 Follow the [Dapr guide](https://dapr.io/#download) to install the Dapr CLI for your platform and initialize the Dapr runtime.
+
+> This extension requires Dapr 0.5.0 or later.
 
 ### Visual Studio Code
 
