@@ -192,7 +192,10 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
             const overwrite: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.overwriteTask', 'Overwrite') };
             const newTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.createTask', 'Create task') };
 
-            const result = await ui.showWarningMessage(localize('commands.scaffoldDaprTasks.taskExists', 'The task \'{0}\' already exists. Do you want to overwrite it or create a new task?', label), overwrite, newTask);
+            const result = await ui.showWarningMessage(
+                localize('commands.scaffoldDaprTasks.taskExists', 'The task \'{0}\' already exists. Do you want to overwrite it or create a new task?', label),
+                { modal: true },
+                overwrite, newTask);
 
             if (result === overwrite) {
                 return { 'type': 'overwrite' };
@@ -254,7 +257,10 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
             const overwrite: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.overwriteConfiguration', 'Overwrite') };
             const newConfiguration: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.createConfiguration', 'Create configuration') };
 
-            const result = await ui.showWarningMessage(localize('commands.scaffoldDaprTasks.configurationExists', 'The configuration \'{0}\' already exists. Do you want to overwrite it or create a new configuration?', name), overwrite, newConfiguration);
+            const result = await ui.showWarningMessage(
+                localize('commands.scaffoldDaprTasks.configurationExists', 'The configuration \'{0}\' already exists. Do you want to overwrite it or create a new configuration?', name),
+                { modal: true },
+                overwrite, newConfiguration);
 
             if (result === overwrite) {
                 return { 'type': 'overwrite' };
