@@ -5,18 +5,21 @@ import * as fse from 'fs-extra';
 import * as handlebars from 'handlebars';
 import * as path from 'path';
 
-let templatesPath: string;
-
-export function initializeTemplateScaffolder(extensionPath: string): void {
-    templatesPath = path.join(extensionPath, 'assets', 'templates');
+export interface TemplateScaffolder {
+    scaffoldTemplate<T>(name: string, context: T): Promise<string>;
 }
 
-export default async function scaffoldTemplate<T>(name: string, context: T): Promise<string> {
-    const templatePath = path.join(templatesPath, name);
+export default class HandlebarsTemplateScaffolder implements TemplateScaffolder {
+    constructor(private readonly templatesPath: string) {
+    }
 
-    const templateContent = await fse.readFile(templatePath, 'utf8');
+    async scaffoldTemplate<T>(name: string, context: T): Promise<string> {
+        const templatePath = path.join(this.templatesPath, name);
 
-    const template = handlebars.compile(templateContent);
+        const templateContent = await fse.readFile(templatePath, 'utf8');
 
-    return template(context);
+        const template = handlebars.compile(templateContent);
+
+        return template(context);
+    }
 }

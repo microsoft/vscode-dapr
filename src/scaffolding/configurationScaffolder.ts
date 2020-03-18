@@ -2,15 +2,14 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
+import { ConflictHandler } from './conflicts';
 
 export interface DebugConfiguration extends vscode.DebugConfiguration {
     preLaunchTask?: string;
     postDebugTask?: string;
 }
 
-function isConflictingTask(taskA: DebugConfiguration, taskB: DebugConfiguration): boolean {
-    return taskA.name === taskB.name;
-}
+export type ConfigurationContentFactory = (name: string) => DebugConfiguration;
 
 export function getWorkspaceConfigurations(): DebugConfiguration[] {
     const workspaceConfigurations = vscode.workspace.getConfiguration('launch');
@@ -18,23 +17,40 @@ export function getWorkspaceConfigurations(): DebugConfiguration[] {
     return workspaceConfigurations.configurations ?? [];
 }
 
-export default async function scaffoldConfiguration(configuration: DebugConfiguration, onConflict: (configuration: DebugConfiguration) => Promise<boolean>): Promise<boolean> {
+export default async function scaffoldConfiguration(name: string, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
     const workspaceConfiguration = vscode.workspace.getConfiguration('launch');
     const workspaceConfigurations: DebugConfiguration[] = workspaceConfiguration.configurations ?? [];
 
-    const conflictingConfigurationIndex = workspaceConfigurations.findIndex(existingConfiguration => isConflictingTask(existingConfiguration, configuration));
+    let configurationIndex: number | undefined;
+
+
+    const getConflictingIndex = (targetName: string): number => workspaceConfigurations.findIndex(configuration => configuration.name === targetName);
+    const conflictingConfigurationIndex = getConflictingIndex(name);
 
     if (conflictingConfigurationIndex >= 0) {
-        if (await onConflict(workspaceConfigurations[conflictingConfigurationIndex])){
-            workspaceConfigurations[conflictingConfigurationIndex] = configuration;
-        } else {
-            return false;
+        const result = await onConflict(name, targetName => Promise.resolve(getConflictingIndex(targetName) === -1));
+
+        switch (result.type) {
+            case 'overwrite':
+                configurationIndex = conflictingConfigurationIndex;
+                break;
+            case 'rename':
+                name = result.name;
+                break;
+            case 'skip':
+                return undefined;
         }
+    }
+
+    const configuration = contentFactory(name);
+
+    if (configurationIndex !== undefined) {
+        workspaceConfigurations[configurationIndex] = configuration;
     } else {
         workspaceConfigurations.push(configuration);
     }
 
     await workspaceConfiguration.update('configurations', workspaceConfigurations);
 
-    return true;
+    return name;
 }
