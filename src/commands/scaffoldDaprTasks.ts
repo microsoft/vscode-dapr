@@ -187,6 +187,8 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
     const onTaskConflict: ConflictHandler =
         async (label, isUnique) => {
+            telemetryProperties.cancelStep = 'taskConflict';
+
             const overwrite: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.overwriteTask', 'Overwrite') };
             const newTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.createTask', 'Create task') };
 
@@ -246,7 +248,9 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                 postDebugTask
             };
         },
-        async (name: string, isUnique) => {
+        async (name, isUnique) => {
+            telemetryProperties.cancelStep = 'configurationConflict';
+
             const overwrite: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.overwriteConfiguration', 'Overwrite') };
             const newConfiguration: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.createConfiguration', 'Create configuration') };
 
