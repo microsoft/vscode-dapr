@@ -6,22 +6,21 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
-import scaffoldTask from "../scaffolding/taskScaffolder";
-import scaffoldConfiguration, { getWorkspaceConfigurations } from '../scaffolding/configurationScaffolder';
+import { getWorkspaceConfigurations } from '../scaffolding/configurationScaffolder';
 import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
 import { localize } from '../util/localize';
 import { UserInput, WizardStep } from '../services/userInput';
 import { IActionContext, TelemetryProperties } from 'vscode-azureextensionui';
+import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
+import { Scaffolder } from '../scaffolding/scaffolder';
+import { ConflictHandler, ConflictUniquenessPredicate } from '../scaffolding/conflicts';
+import { names, range } from '../util/generators';
 
 interface ScaffoldTelemetryProperties extends TelemetryProperties {
     configurationType: string;
 }
 
-async function onConflictingTask(): Promise<boolean> {
-    return Promise.resolve(true);
-}
-
-async function scaffoldDaprComponents(): Promise<void> {
+async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder): Promise<void> {
     // TODO: Verify open workspace/folder.
     const rootWorkspaceFolderPath = (vscode.workspace.workspaceFolders ?? [])[0]?.uri?.fsPath;
 
@@ -37,8 +36,8 @@ async function scaffoldDaprComponents(): Promise<void> {
 
     // Only scaffold the components if none exist...
     if (components.length === 0) {
-        await scaffoldStateStoreComponent(componentsPath);
-        await scaffoldPubSubComponent(componentsPath);
+        await scaffoldStateStoreComponent(scaffolder, templateScaffolder, componentsPath);
+        await scaffoldPubSubComponent(scaffolder, templateScaffolder, componentsPath);
     }
 }
 
@@ -90,7 +89,22 @@ function getDefaultPort(configuration: vscode.DebugConfiguration | undefined): n
     return DefaultPort;
 }
 
-export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput): Promise<void> {
+async function createUniqueName(prefix: string, isUnique: ConflictUniquenessPredicate): Promise<string> {
+    const nameGenerator = names(prefix, range(1));
+    let name = nameGenerator.next();
+
+    while (!name.done && !await isUnique(name.value)) {
+        name = nameGenerator.next();
+    }
+
+    if (name.done) {
+        throw new Error(localize('commands.scaffoldDaprTasks.uniqueNameError', 'Unable to generate a unique name.'));
+    }
+
+    return name.value;
+}
+
+export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput): Promise<void> {
     const telemetryProperties = context.telemetry.properties as ScaffoldTelemetryProperties;
 
     const configurationStep: WizardStep<ScaffoldWizardContext> =
@@ -171,41 +185,95 @@ export async function scaffoldDaprTasks(context: IActionContext, ui: UserInput):
 
     telemetryProperties.configurationType = result.configuration.type;
 
-    const daprdUpTask: DaprTaskDefinition = {
-        type: 'daprd',
-        label: 'daprd-debug',
-        appId: result.appId,
-        appPort: result.appPort,
-    };
+    const onTaskConflict: ConflictHandler =
+        async (label, isUnique) => {
+            telemetryProperties.cancelStep = 'taskConflict';
 
-    if (buildTask && buildTask !== daprdUpTask.label) {
-        daprdUpTask.dependsOn = buildTask;
-    }
+            const overwrite: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.overwriteTask', 'Overwrite') };
+            const newTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.createTask', 'Create task') };
 
-    const daprdDownTask: DaprdDownTaskDefinition = {
-        type: 'daprd-down',
-        label: 'daprd-down',
-        appId: result.appId
-    };
+            const result = await ui.showWarningMessage(
+                localize('commands.scaffoldDaprTasks.taskExists', 'The task \'{0}\' already exists. Do you want to overwrite it or create a new task?', label),
+                { modal: true },
+                overwrite, newTask);
 
-    if (tearDownTask && tearDownTask !== daprdDownTask.label) {
-        daprdDownTask.dependsOn = tearDownTask;
-    }
+            if (result === overwrite) {
+                return { 'type': 'overwrite' };
+            } else {
+                label = await createUniqueName(localize('commands.scaffoldDaprTasks.taskPrefix', '{0}-', label), isUnique);
 
-    const daprDebugConfiguration = {
-        ...result.configuration,
-        name: localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),
-        preLaunchTask: daprdUpTask.label,
-        postDebugTask: daprdDownTask.label
-    };
+                return { 'type': 'rename', name: label };
+            }
+        };
 
-    await scaffoldTask(daprdUpTask, onConflictingTask);
-    await scaffoldTask(daprdDownTask, onConflictingTask);
-    await scaffoldConfiguration(daprDebugConfiguration, onConflictingTask);
+    const preLaunchTask = await scaffolder.scaffoldTask(
+        'daprd-debug',
+        label => {
+            const daprdUpTask: DaprTaskDefinition = {
+                appId: result.appId,
+                appPort: result.appPort,
+                label,
+                type: 'daprd'
+            };
+        
+            if (buildTask && buildTask !== label) {
+                daprdUpTask.dependsOn = buildTask;
+            }
 
-    await scaffoldDaprComponents();
+            return daprdUpTask;
+        },
+        onTaskConflict);
+
+    const postDebugTask = await scaffolder.scaffoldTask(
+        'daprd-down',
+        label => {
+            const daprdDownTask: DaprdDownTaskDefinition = {
+                appId: result.appId,
+                label,
+                type: 'daprd-down'
+            };
+        
+            if (tearDownTask && tearDownTask !== label) {
+                daprdDownTask.dependsOn = tearDownTask;
+            }
+
+            return daprdDownTask;
+        },
+        onTaskConflict);
+
+    await scaffolder.scaffoldConfiguration(
+        localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),
+        name => {
+            return {
+                ...result.configuration,
+                name,
+                preLaunchTask,
+                postDebugTask
+            };
+        },
+        async (name, isUnique) => {
+            telemetryProperties.cancelStep = 'configurationConflict';
+
+            const overwrite: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.overwriteConfiguration', 'Overwrite') };
+            const newConfiguration: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.createConfiguration', 'Create configuration') };
+
+            const result = await ui.showWarningMessage(
+                localize('commands.scaffoldDaprTasks.configurationExists', 'The configuration \'{0}\' already exists. Do you want to overwrite it or create a new configuration?', name),
+                { modal: true },
+                overwrite, newConfiguration);
+
+            if (result === overwrite) {
+                return { 'type': 'overwrite' };
+            } else {
+                name = await createUniqueName(localize('commands.scaffoldDaprTasks.configurationPrefix', '{0} - ', name), isUnique);
+
+                return { 'type': 'rename', name };
+            }
+        });
+
+    await scaffoldDaprComponents(scaffolder, templateScaffolder);
 }
 
-const createScaffoldDaprTasksCommand = (ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, ui);
+const createScaffoldDaprTasksCommand = (scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, scaffolder, templateScaffolder, ui);
 
 export default createScaffoldDaprTasksCommand;

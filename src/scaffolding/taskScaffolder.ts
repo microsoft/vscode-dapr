@@ -3,16 +3,9 @@
 
 import * as vscode from 'vscode';
 import { TaskDefinition } from '../tasks/taskDefinition';
+import { ConflictHandler } from './conflicts';
 
-function isConflictingTask(taskA: TaskDefinition, taskB: TaskDefinition): boolean {
-    if (taskA.label && taskB.label) {
-        return taskA.label === taskB.label;
-    } else if (!taskA.label && !taskB.label) {
-        return taskA.type === taskB.type;
-    } else {
-        return false;
-    }
-}
+export type TaskContentFactory = (label: string) => TaskDefinition;
 
 export function getWorkspaceTasks(): TaskDefinition[] {
     const workspaceConfigurations = vscode.workspace.getConfiguration('tasks');
@@ -20,23 +13,40 @@ export function getWorkspaceTasks(): TaskDefinition[] {
     return workspaceConfigurations.tasks ?? [];
 }
 
-export default async function scaffoldTask(task: TaskDefinition, onConflict: (task: TaskDefinition) => Promise<boolean>): Promise<boolean> {
+export default async function scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
     const workspaceConfigurations = vscode.workspace.getConfiguration('tasks');
     const workspaceTasks: TaskDefinition[] = workspaceConfigurations.tasks ?? [];
 
-    const conflictingTaskIndex = workspaceTasks.findIndex(existingTask => isConflictingTask(existingTask, task));
+    let taskIndex: number | undefined;
+
+    const getConflictingIndex = (targetLabel: string): number => workspaceTasks.findIndex(task => task.label === targetLabel);
+    const conflictingTaskIndex = getConflictingIndex(label);
 
     if (conflictingTaskIndex >= 0) {
-        if (await onConflict(workspaceTasks[conflictingTaskIndex])){
-            workspaceTasks[conflictingTaskIndex] = task;
-        } else {
-            return false;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const result = await onConflict(label, targetLabel => Promise.resolve(getConflictingIndex(targetLabel) === -1));
+
+        switch (result.type) {
+            case 'overwrite':
+                taskIndex = conflictingTaskIndex;
+                break;
+            case 'rename':
+                label = result.name;
+                break;
+            case 'skip':
+                return undefined;
         }
+    }
+
+    const task = contentFactory(label);
+
+    if (taskIndex !== undefined) {
+        workspaceTasks[taskIndex] = task;
     } else {
         workspaceTasks.push(task);
     }
 
     await workspaceConfigurations.update('tasks', workspaceTasks);
 
-    return true;
+    return label;
 }
