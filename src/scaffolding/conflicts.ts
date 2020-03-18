@@ -16,4 +16,6 @@ export interface SkipResult {
 
 export type ConflictResult = OverwriteResult | RenameResult | SkipResult;
 
-export type ConflictHandler = (name: string, isUnique: (name: string) => Promise<boolean>) => Promise<ConflictResult>;
+export type ConflictUniquenessPredicate = (name: string) => Promise<boolean>;
+
+export type ConflictHandler = (name: string, isUnique: ConflictUniquenessPredicate) => Promise<ConflictResult>;

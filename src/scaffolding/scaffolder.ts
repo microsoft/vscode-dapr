@@ -1,13 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import scaffoldConfiguration, { DebugConfiguration, ConfigurationContentFactory } from './configurationScaffolder';
+import * as fse from 'fs-extra';
+import scaffoldConfiguration, { ConfigurationContentFactory } from './configurationScaffolder';
 import scaffoldTask, { TaskContentFactory } from './taskScaffolder';
 import { ConflictHandler } from './conflicts';
 
+export type FileContentFactory = (path: string) => Promise<string>;
+
 export interface Scaffolder {
     scaffoldConfiguration(name: string, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined>;
-    scaffoldFile(fileName: string, contentFactory: (fileName: string) => string, onConflict: (fileName: string) => Promise<boolean>): Promise<string | undefined>;
+    scaffoldFile(path: string, contentFactory: FileContentFactory, onConflict: ConflictHandler): Promise<string | undefined>;
     scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined>;
 }
 
@@ -16,8 +19,22 @@ export default class LocalScaffolder implements Scaffolder {
         return scaffoldConfiguration(name, contentFactory, onConflict);
     }
 
-    scaffoldFile(fileName: string, contentFactory: (fileName: string) => string, onConflict: (fileName: string) => Promise<boolean>): Promise<string | undefined> {
-        return Promise.resolve(undefined);
+    async scaffoldFile(path: string, contentFactory: FileContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
+        if (await fse.pathExists(path)) {
+            const result = await onConflict(path, async targetPath => !(await fse.pathExists(targetPath)));
+
+            switch (result.type) {
+                case 'rename':
+                    path = result.name;
+                    break;
+                case 'skip':
+                    return undefined;
+            }
+        }
+
+        const content = await contentFactory(path);
+
+        await fse.writeFile(path, content, 'utf8');
     }
 
     scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {

@@ -13,17 +13,14 @@ import { UserInput, WizardStep } from '../services/userInput';
 import { IActionContext, TelemetryProperties } from 'vscode-azureextensionui';
 import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
 import { Scaffolder } from '../scaffolding/scaffolder';
-import { ConflictHandler } from '../scaffolding/conflicts';
+import { ConflictHandler, ConflictUniquenessPredicate } from '../scaffolding/conflicts';
+import { names, range } from '../util/generators';
 
 interface ScaffoldTelemetryProperties extends TelemetryProperties {
     configurationType: string;
 }
 
-async function onConflictingTask(): Promise<boolean> {
-    return Promise.resolve(true);
-}
-
-async function scaffoldDaprComponents(templateScaffolder: TemplateScaffolder): Promise<void> {
+async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder): Promise<void> {
     // TODO: Verify open workspace/folder.
     const rootWorkspaceFolderPath = (vscode.workspace.workspaceFolders ?? [])[0]?.uri?.fsPath;
 
@@ -39,8 +36,8 @@ async function scaffoldDaprComponents(templateScaffolder: TemplateScaffolder): P
 
     // Only scaffold the components if none exist...
     if (components.length === 0) {
-        await scaffoldStateStoreComponent(templateScaffolder, componentsPath);
-        await scaffoldPubSubComponent(templateScaffolder, componentsPath);
+        await scaffoldStateStoreComponent(scaffolder, templateScaffolder, componentsPath);
+        await scaffoldPubSubComponent(scaffolder, templateScaffolder, componentsPath);
     }
 }
 
@@ -92,20 +89,19 @@ function getDefaultPort(configuration: vscode.DebugConfiguration | undefined): n
     return DefaultPort;
 }
 
-function* range(start = 0) {
-    while (true) {
-        yield start++;
+async function createUniqueName(prefix: string, isUnique: ConflictUniquenessPredicate): Promise<string> {
+    const nameGenerator = names(prefix, range(1));
+    let name = nameGenerator.next();
+
+    while (!name.done && !await isUnique(name.value)) {
+        name = nameGenerator.next();
     }
-}
 
-function* names(prefix: string, rangeGenerator: Generator<number, void, unknown>) {
-    let index = rangeGenerator.next();
-
-    while (!index.done) {
-        yield `${prefix}${index.value}`;
-
-        index = rangeGenerator.next();
+    if (name.done) {
+        throw new Error(localize('commands.scaffoldDaprTasks.uniqueNameError', 'Unable to generate a unique name.'));
     }
+
+    return name.value;
 }
 
 export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput): Promise<void> {
@@ -199,18 +195,9 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
             if (result === overwrite) {
                 return { 'type': 'overwrite' };
             } else {
-                const nameGenerator = names(`${label ?? ''}-`, range(1));
-                let name = nameGenerator.next();
+                label = await createUniqueName(localize('commands.scaffoldDaprTasks.taskPrefix', '{0}-', label), isUnique);
 
-                while (!name.done && !await isUnique(name.value)) {
-                    name = nameGenerator.next();
-                }
-
-                if (name.done) {
-                    throw new Error(localize('commands.scaffoldDaprTasks.renameTaskError', 'Unable to generate a unique task.'));
-                }
-
-                return { 'type': 'rename', name: name.value };
+                return { 'type': 'rename', name: label };
             }
         };
 
@@ -268,22 +255,13 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
             if (result === overwrite) {
                 return { 'type': 'overwrite' };
             } else {
-                const nameGenerator = names(`${name?? ''}-`, range(1));
-                let generatedName = nameGenerator.next();
+                name = await createUniqueName(localize('commands.scaffoldDaprTasks.configurationPrefix', '{0} - ', name), isUnique);
 
-                while (!generatedName.done && !await isUnique(generatedName.value)) {
-                    generatedName = nameGenerator.next();
-                }
-
-                if (generatedName.done) {
-                    throw new Error(localize('commands.scaffoldDaprTasks.renameConfigurationError', 'Unable to generate a unique task.'));
-                }
-
-                return { 'type': 'rename', name: generatedName.value };
+                return { 'type': 'rename', name };
             }
         });
 
-    await scaffoldDaprComponents(templateScaffolder);
+    await scaffoldDaprComponents(scaffolder, templateScaffolder);
 }
 
 const createScaffoldDaprTasksCommand = (scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, scaffolder, templateScaffolder, ui);
