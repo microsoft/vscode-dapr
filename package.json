@@ -1,9 +1,9 @@
 {
 	"name": "vscode-dapr",
 	"displayName": "Dapr",
-	"description": "%vscode-dapr.description%",
+	"description": "Makes it easy to run, debug, and interact with Dapr-enabled applications.",
 	"icon": "assets/images/extensionIcon.png",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"preview": true,
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",

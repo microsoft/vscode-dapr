@@ -1,5 +1,13 @@
 # Change Log
 
+## v0.2.1 - 19 March 2020
+
+Minor fixes.
+
+### Fixed
+
+* "Localized" extension description isn't resolved in Marketplace. [#77](https://github.com/microsoft/vscode-dapr/issues/77)
+
 ## v0.2.0 - 18 March 2020
 
 Further updates related to the Dapr 0.5.0 release.
