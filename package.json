@@ -134,7 +134,7 @@
 				],
 				"background": {
 					"beginsPattern": "^.*starting Dapr Runtime",
-					"endsPattern": "^.*waiting on port"
+					"endsPattern": "^.*(waiting on port|dapr initialized)"
 				}
 			}
 		],
