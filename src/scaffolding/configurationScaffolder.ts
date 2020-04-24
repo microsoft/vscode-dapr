@@ -11,14 +11,14 @@ export interface DebugConfiguration extends vscode.DebugConfiguration {
 
 export type ConfigurationContentFactory = (name: string) => DebugConfiguration;
 
-export function getWorkspaceConfigurations(): DebugConfiguration[] {
-    const workspaceConfigurations = vscode.workspace.getConfiguration('launch');
+export function getWorkspaceConfigurations(folder: vscode.WorkspaceFolder): DebugConfiguration[] {
+    const workspaceConfigurations = vscode.workspace.getConfiguration('launch', folder.uri);
     
     return workspaceConfigurations.configurations ?? [];
 }
 
-export default async function scaffoldConfiguration(name: string, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
-    const workspaceConfiguration = vscode.workspace.getConfiguration('launch');
+export default async function scaffoldConfiguration(name: string, folder: vscode.WorkspaceFolder, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
+    const workspaceConfiguration = vscode.workspace.getConfiguration('launch', folder.uri);
     const workspaceConfigurations: DebugConfiguration[] = workspaceConfiguration.configurations ?? [];
 
     let configurationIndex: number | undefined;
@@ -50,7 +50,7 @@ export default async function scaffoldConfiguration(name: string, contentFactory
         workspaceConfigurations.push(configuration);
     }
 
-    await workspaceConfiguration.update('configurations', workspaceConfigurations);
+    await workspaceConfiguration.update('configurations', workspaceConfigurations, vscode.ConfigurationTarget.WorkspaceFolder);
 
     return name;
 }
