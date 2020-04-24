@@ -72,7 +72,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--max-concurrency', daprDefinition.maxConcurrency)
                                 .withNamedArg('--metrics-port', daprDefinition.metricsPort)
                                 .withNamedArg('--mode', daprDefinition.mode)
-                                .withNamedArg('--placement-address', daprDefinition.placementAddress || "localhost:50005" /* NOTE: The placement address is actually required for daprd. */)
+                                .withNamedArg('--placement-address', daprDefinition.placementAddress ?? `${process.env.DAPR_PLACEMENT_HOST ?? 'localhost'}:50005` /* NOTE: The placement address is actually required for daprd. */)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
                                 .withNamedArg('--protocol', daprDefinition.protocol)
                                 .withNamedArg('--sentry-address', daprDefinition.sentryAddress)
