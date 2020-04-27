@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import * as fse from 'fs-extra';
+import * as vscode from 'vscode';
 import scaffoldConfiguration, { ConfigurationContentFactory } from './configurationScaffolder';
 import scaffoldTask, { TaskContentFactory } from './taskScaffolder';
 import { ConflictHandler } from './conflicts';
@@ -9,14 +10,14 @@ import { ConflictHandler } from './conflicts';
 export type FileContentFactory = (path: string) => Promise<string>;
 
 export interface Scaffolder {
-    scaffoldConfiguration(name: string, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined>;
+    scaffoldConfiguration(name: string, folder: vscode.WorkspaceFolder, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined>;
     scaffoldFile(path: string, contentFactory: FileContentFactory, onConflict: ConflictHandler): Promise<string | undefined>;
-    scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined>;
+    scaffoldTask(label: string, folder: vscode.WorkspaceFolder, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined>;
 }
 
 export default class LocalScaffolder implements Scaffolder {
-    scaffoldConfiguration(name: string, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
-        return scaffoldConfiguration(name, contentFactory, onConflict);
+    scaffoldConfiguration(name: string, folder: vscode.WorkspaceFolder, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
+        return scaffoldConfiguration(name, folder, contentFactory, onConflict);
     }
 
     async scaffoldFile(path: string, contentFactory: FileContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
@@ -39,7 +40,7 @@ export default class LocalScaffolder implements Scaffolder {
         return path;
     }
 
-    scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
-        return scaffoldTask(label, contentFactory, onConflict);
+    scaffoldTask(label: string, folder: vscode.WorkspaceFolder, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
+        return scaffoldTask(label, folder, contentFactory, onConflict);
     }
 }

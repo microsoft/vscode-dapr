@@ -7,14 +7,14 @@ import { ConflictHandler } from './conflicts';
 
 export type TaskContentFactory = (label: string) => TaskDefinition;
 
-export function getWorkspaceTasks(): TaskDefinition[] {
-    const workspaceConfigurations = vscode.workspace.getConfiguration('tasks');
+export function getWorkspaceTasks(folder: vscode.WorkspaceFolder): TaskDefinition[] {
+    const workspaceConfigurations = vscode.workspace.getConfiguration('tasks', folder.uri);
     
     return workspaceConfigurations.tasks ?? [];
 }
 
-export default async function scaffoldTask(label: string, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
-    const workspaceConfigurations = vscode.workspace.getConfiguration('tasks');
+export default async function scaffoldTask(label: string, folder: vscode.WorkspaceFolder, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
+    const workspaceConfigurations = vscode.workspace.getConfiguration('tasks', folder.uri);
     const workspaceTasks: TaskDefinition[] = workspaceConfigurations.tasks ?? [];
 
     let taskIndex: number | undefined;
@@ -46,7 +46,7 @@ export default async function scaffoldTask(label: string, contentFactory: TaskCo
         workspaceTasks.push(task);
     }
 
-    await workspaceConfigurations.update('tasks', workspaceTasks);
+    await workspaceConfigurations.update('tasks', workspaceTasks, vscode.ConfigurationTarget.WorkspaceFolder);
 
     return label;
 }

@@ -45,6 +45,7 @@ interface ScaffoldWizardContext {
     appId: string;
     appPort: number;
     configuration: vscode.DebugConfiguration;
+    folder: vscode.WorkspaceFolder;
 }
 
 const DefaultPort = 80;
@@ -109,12 +110,20 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
     const configurationStep: WizardStep<ScaffoldWizardContext> =
         async wizardContext => {
-            const workspaceConfigurations = getWorkspaceConfigurations();
+            const folder = vscode.workspace.workspaceFolders?.[0];
+
+            if (!folder) {
+                context.errorHandling.suppressReportIssue = true;
+
+                throw new Error(localize('commands.scaffoldDaprTasks.noFolderOrWorkspace', 'Open a folder or workspace.'));
+            }
+
+            const workspaceConfigurations = getWorkspaceConfigurations(folder);
 
             if (workspaceConfigurations.length === 0) {
                 context.errorHandling.suppressReportIssue = true;
 
-                throw new Error(localize('commands.scaffoldDaprTasks.noConfigurationsMessage', 'Open a folder or workspace with a debug launch configuration.'));
+                throw new Error(localize('commands.scaffoldDaprTasks.noConfigurationsMessage', 'Open a folder or workspace with a folder-scoped debug launch configuration.'));
             }
 
             const configurationItems = workspaceConfigurations.map(configuration => ({ label: configuration.name, configuration }));
@@ -125,7 +134,8 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
             return {
                 ...wizardContext,
-                configuration: debugConfigurationItem.configuration
+                configuration: debugConfigurationItem.configuration,
+                folder: folder
             };
         };
 
@@ -208,6 +218,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
     const preLaunchTask = await scaffolder.scaffoldTask(
         'daprd-debug',
+        result.folder,
         label => {
             const daprdUpTask: DaprTaskDefinition = {
                 appId: result.appId,
@@ -226,6 +237,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
     const postDebugTask = await scaffolder.scaffoldTask(
         'daprd-down',
+        result.folder,
         label => {
             const daprdDownTask: DaprdDownTaskDefinition = {
                 appId: result.appId,
@@ -243,6 +255,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
     await scaffolder.scaffoldConfiguration(
         localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),
+        result.folder,
         name => {
             return {
                 ...result.configuration,
