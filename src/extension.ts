@@ -27,6 +27,7 @@ import createPlatformProcessProvider from './services/processProvider';
 import LocalDaprInstallationManager from './services/daprInstallationManager';
 import HandlebarsTemplateScaffolder from './scaffolding/templateScaffolder';
 import LocalScaffolder from './scaffolding/scaffolder';
+import NodeEnvironmentProvider from './services/environmentProvider';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -69,7 +70,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
 			
 			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(telemetryProvider)));
-			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(telemetryProvider)));
+			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(new NodeEnvironmentProvider(), telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider(daprApplicationProvider, telemetryProvider)));
 			
 			registerDisposable(

@@ -5,6 +5,7 @@ import CommandLineBuilder from '../util/commandLineBuilder';
 import CommandTaskProvider from './commandTaskProvider';
 import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
+import { EnvironmentProvider } from '../services/environmentProvider';
 
 type DaprdLogLevel = 'debug' | 'info' | 'warning' | 'error' | 'fatal' | 'panic';
 
@@ -41,7 +42,9 @@ export interface DaprdTaskDefinition extends TaskDefinition {
 }
 
 export default class DaprdCommandTaskProvider extends CommandTaskProvider {
-    constructor(telemetryProvider: TelemetryProvider) {
+    constructor(
+        environmentProvider: EnvironmentProvider,
+        telemetryProvider: TelemetryProvider) {
         super(
             (definition, callback) => {
                 return telemetryProvider.callWithTelemetry(
@@ -72,7 +75,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--max-concurrency', daprDefinition.maxConcurrency)
                                 .withNamedArg('--metrics-port', daprDefinition.metricsPort)
                                 .withNamedArg('--mode', daprDefinition.mode)
-                                .withNamedArg('--placement-address', daprDefinition.placementAddress ?? `${process.env.DAPR_PLACEMENT_HOST ?? 'localhost'}:50005` /* NOTE: The placement address is actually required for daprd. */)
+                                .withNamedArg('--placement-address', daprDefinition.placementAddress ?? `${process.env.DAPR_PLACEMENT_HOST ?? 'localhost'}:${environmentProvider.isWindows ? 6050 : 50005}` /* NOTE: The placement address is actually required for daprd. */)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
                                 .withNamedArg('--protocol', daprDefinition.protocol)
                                 .withNamedArg('--sentry-address', daprDefinition.sentryAddress)
