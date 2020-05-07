@@ -11,7 +11,7 @@ export async function scaffoldRedisComponent(scaffolder: Scaffolder, templateSca
     //       so use 'redis' rather than 'localhost'. 
     await scaffolder.scaffoldFile(
         path.join(folderPath, fileName),
-        () => templateScaffolder.scaffoldTemplate(name, { redisHost: redisHost ?? (process.env.DAPR_NETWORK ? 'redis' : 'localhost') }),
+        () => templateScaffolder.scaffoldTemplate(name, { redisHost: redisHost ?? process.env.DAPR_REDIS_HOST ?? (process.env.DAPR_NETWORK ? 'redis' : 'localhost') }),
         () => Promise.resolve({ 'type': 'skip' }));
 }
 
