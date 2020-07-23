@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import DaprCommandTaskProvider from './tasks/daprCommandTaskProvider';
 import DaprdCommandTaskProvider from './tasks/daprdCommandTaskProvider';
 import DaprdDownTaskProvider from './tasks/daprdDownTaskProvider';
-import { AzureUserInput, createAzExtOutputChannel, createTelemetryReporter, registerUIExtensionVariables, IActionContext } from 'vscode-azureextensionui';
+import { AzureUserInput, createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from 'vscode-azureextensionui';
 import ext from './ext';
 import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
 import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
@@ -39,7 +39,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 	ext.context = context;
 	ext.ignoreBundle = true;
 	ext.outputChannel = registerDisposable(createAzExtOutputChannel('Dapr', 'dapr'));
-	ext.reporter = createTelemetryReporter(context);
 	ext.ui = new AzureUserInput(context.globalState);
 
 	registerUIExtensionVariables(ext);
