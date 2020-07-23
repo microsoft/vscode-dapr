@@ -59,7 +59,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--alsologtostderr', daprDefinition.alsoLogToStdErr, { assignValue: true })
                                 .withNamedArg('--app-id', daprDefinition.appId)
                                 .withNamedArg('--app-port', daprDefinition.appPort)
-                                .withNamedArg('--components-path', daprDefinition.componentsPath)
+                                .withNamedArg('--components-path', daprDefinition.componentsPath ?? './components')
                                 .withNamedArg('--config', daprDefinition.config)
                                 .withNamedArg('--control-plane-address', daprDefinition.controlPlaneAddress)
                                 .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
