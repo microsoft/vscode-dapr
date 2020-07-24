@@ -26,6 +26,10 @@ function getRuntimeVersion(versionOutput: string): string | undefined {
     return result?.groups?.['version'];
 }
 
+interface DockerProcessContainer {
+    Image?: string;
+}
+
 export default class LocalDaprInstallationManager implements DaprInstallationManager {
     private readonly version: AsyncLazy<DaprVersion>;
     private readonly initialized: AsyncLazy<boolean>;
@@ -51,7 +55,7 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
 
                 if (psResult.code === 0) {
                     const lines = psResult.stdout.split('\n');
-                    const containers = lines.map(line => JSON.parse(line));
+                    const containers = lines.map(line => <DockerProcessContainer>JSON.parse(line));
                     const daprContainers = containers.filter(container => container.Image === 'daprio/dapr');
 
                     if (daprContainers.length >= 0) {

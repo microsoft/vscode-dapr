@@ -71,6 +71,7 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
         this.timer = Timer.Interval(
             2000,
             () => {
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 this.refreshApplications();
             });
     }

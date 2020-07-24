@@ -42,9 +42,9 @@ export default class AxiosHttpClient implements HttpClient {
         const tokenListener = token ? token.onCancellationRequested(() => cancelTokenSource.cancel()) : undefined;
 
         try {
-            const response = await axios.get(url, createConfig(options?.allowRedirects, cancelTokenSource.token));
+            const response = await axios.get<unknown>(url, createConfig(options?.allowRedirects, cancelTokenSource.token));
 
-            return { data: response.data, headers: response.headers, status: response.status };
+            return { data: response.data, headers: <{[key: string]: string}>response.headers, status: response.status };
         } finally {
             if (tokenListener) {
                 tokenListener.dispose();
@@ -63,12 +63,12 @@ export default class AxiosHttpClient implements HttpClient {
         };
 
         try {
-            const response = await axios.post(
+            const response = await axios.post<unknown>(
                 url,
                 options?.json ? JSON.stringify(data) : data,
                 config);
 
-            return { data: response.data, headers: response.headers, status: response.status };
+            return { data: response.data, headers: <{[key: string]: string}>response.headers, status: response.status };
         } finally {
             if (tokenListener) {
                 tokenListener.dispose();

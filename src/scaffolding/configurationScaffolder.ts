@@ -14,12 +14,12 @@ export type ConfigurationContentFactory = (name: string) => DebugConfiguration;
 export function getWorkspaceConfigurations(folder: vscode.WorkspaceFolder): DebugConfiguration[] {
     const workspaceConfigurations = vscode.workspace.getConfiguration('launch', folder.uri);
     
-    return workspaceConfigurations.configurations ?? [];
+    return (<DebugConfiguration[]>workspaceConfigurations.configurations) ?? [];
 }
 
 export default async function scaffoldConfiguration(name: string, folder: vscode.WorkspaceFolder, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
     const workspaceConfiguration = vscode.workspace.getConfiguration('launch', folder.uri);
-    const workspaceConfigurations: DebugConfiguration[] = workspaceConfiguration.configurations ?? [];
+    const workspaceConfigurations: DebugConfiguration[] = (<DebugConfiguration[]>workspaceConfiguration.configurations) ?? [];
 
     let configurationIndex: number | undefined;
 

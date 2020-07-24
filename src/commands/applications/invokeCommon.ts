@@ -49,7 +49,7 @@ export async function getPayload(context: ITelemetryContext, ui: UserInput, work
 
     const payloadString = await ui.showInputBox({ prompt: localize('commands.invokeCommon.payloadPrompt', 'Enter a JSON payload for the method (or leave empty, if no payload is needed)'), value: previousPayloadString });
 
-    const payload = (payloadString && JSON.parse(payloadString)) || undefined;
+    const payload = (payloadString && <unknown>JSON.parse(payloadString)) || undefined;
 
     await workspaceState.update(payLoadStateKey, payloadString);
 
