@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as process from 'process';
 import { AsyncLazy } from '../util/lazy';
 import { Process } from '../util/process';
 
@@ -51,14 +52,15 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
 
         this.initialized = new AsyncLazy<boolean>(
             async () => {
-                const psResult = await Process.exec('docker ps --format "{{json .}}"');
+                const network = process.env.DAPR_NETWORK || 'bridge';
+                const psResult = await Process.exec(`docker ps --filter network=${network} --format "{{json .}}"`);
 
                 if (psResult.code === 0) {
                     const lines = psResult.stdout.split('\n');
                     const containers = lines.map(line => <DockerProcessContainer>JSON.parse(line));
                     const daprContainers = containers.filter(container => container.Image === 'daprio/dapr');
 
-                    if (daprContainers.length >= 0) {
+                    if (daprContainers.length >= 1) {
                         return true;
                     }
                 }
