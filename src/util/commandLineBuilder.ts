@@ -103,6 +103,8 @@ export default class CommandLineBuilder {
                     this.withArg(name);
                     this.withArg(
                         {
+                            // No combination of configuration seems to satisfy this rule.
+                            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                             value: `${key}=${values[key]}`,
                             quoting: vscode.ShellQuoting.Strong // The prior behavior was to quote
                         }
@@ -117,7 +119,7 @@ export default class CommandLineBuilder {
         return this;
     }
 
-    public withArrayArgs<T extends {}>(name: string, values: T[] | undefined, formatter?: (value: T) => string | vscode.ShellQuotedString): CommandLineBuilder {
+    public withArrayArgs<T extends { toString(): string }>(name: string, values: T[] | undefined, formatter?: (value: T) => string | vscode.ShellQuotedString): CommandLineBuilder {
         formatter = formatter || ((value: T): string => value.toString());
 
         if (values !== undefined) {

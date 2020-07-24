@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
-import { getWorkspaceConfigurations } from '../scaffolding/configurationScaffolder';
+import { getWorkspaceConfigurations, DebugConfiguration } from '../scaffolding/configurationScaffolder';
 import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
 import { localize } from '../util/localize';
 import { UserInput, WizardStep } from '../services/userInput';
@@ -44,7 +44,7 @@ async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder
 interface ScaffoldWizardContext {
     appId: string;
     appPort: number;
-    configuration: vscode.DebugConfiguration;
+    configuration: DebugConfiguration;
     folder: vscode.WorkspaceFolder;
 }
 
@@ -55,7 +55,7 @@ const JavaPort = 8080;
 const NetCorePort = 5000;
 const NodePort = 3000;
 
-function getDefaultPort(configuration: vscode.DebugConfiguration | undefined): number {
+function getDefaultPort(configuration: DebugConfiguration | undefined): number {
     switch (configuration?.type) {
         case 'coreclr':
             return NetCorePort;

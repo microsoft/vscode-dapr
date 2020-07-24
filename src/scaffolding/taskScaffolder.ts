@@ -10,12 +10,12 @@ export type TaskContentFactory = (label: string) => TaskDefinition;
 export function getWorkspaceTasks(folder: vscode.WorkspaceFolder): TaskDefinition[] {
     const workspaceConfigurations = vscode.workspace.getConfiguration('tasks', folder.uri);
     
-    return workspaceConfigurations.tasks ?? [];
+    return (<TaskDefinition[]>workspaceConfigurations.tasks) ?? [];
 }
 
 export default async function scaffoldTask(label: string, folder: vscode.WorkspaceFolder, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
     const workspaceConfigurations = vscode.workspace.getConfiguration('tasks', folder.uri);
-    const workspaceTasks: TaskDefinition[] = workspaceConfigurations.tasks ?? [];
+    const workspaceTasks: TaskDefinition[] = (<TaskDefinition[]>workspaceConfigurations.tasks) ?? [];
 
     let taskIndex: number | undefined;
 

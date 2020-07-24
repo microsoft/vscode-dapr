@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 // import * as myExtension from '../extension';
 
 suite('Extension Test Suite', () => {
+	// eslint-disable-next-line @typescript-eslint/no-floating-promises
 	vscode.window.showInformationMessage('Start all tests.');
 
 	test('Sample test', () => {

@@ -89,7 +89,7 @@ export class Process extends vscode.Disposable {
                 if (process.stderr) {
                     process.stderr.on(
                         'data',
-                        data => {
+                        (data: string | Buffer) => {
                             this.onStdErrEmitter.fire(data.toString());
                         });
                 }
@@ -97,7 +97,7 @@ export class Process extends vscode.Disposable {
                 if (process.stdout) {
                     process.stdout.on(
                         'data',
-                        data => {
+                        (data: string | Buffer) => {
                             this.onStdOutEmitter.fire(data.toString());
                         });
                 }
