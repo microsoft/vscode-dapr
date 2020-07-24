@@ -56,15 +56,17 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
                 const psResult = await Process.exec(`docker ps --filter network=${network} --format "{{.ID}}"`);
 
                 if (psResult.code === 0) {
-                    const containerIds = psResult.stdout.split('\n').join(' ');
+                    const containerIds = psResult.stdout.split('\n').filter(id => id.length > 0);
 
-                    const inspectResult = await Process.exec(`docker inspect ${containerIds} --format "{{.Config.Image}}"`);
-
-                    if (inspectResult.code === 0) {
-                        const containerImages = inspectResult.stdout.split('\n');
-
-                        if (containerImages.find(image => image === 'daprio/dapr')) {
-                            return true;
+                    if (containerIds.length > 0) {
+                        const inspectResult = await Process.exec(`docker inspect ${containerIds.join(' ')} --format "{{.Config.Image}}"`);
+                        
+                        if (inspectResult.code === 0) {
+                            const containerImages = inspectResult.stdout.split('\n');
+                            
+                            if (containerImages.find(image => image === 'daprio/dapr')) {
+                                return true;
+                            }
                         }
                     }
                 }
