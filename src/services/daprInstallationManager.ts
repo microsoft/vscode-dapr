@@ -53,15 +53,19 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
         this.initialized = new AsyncLazy<boolean>(
             async () => {
                 const network = process.env.DAPR_NETWORK || 'bridge';
-                const psResult = await Process.exec(`docker ps --filter network=${network} --format "{{json .}}"`);
+                const psResult = await Process.exec(`docker ps --filter network=${network} --format "{{.ID}}"`);
 
                 if (psResult.code === 0) {
-                    const lines = psResult.stdout.split('\n');
-                    const containers = lines.map(line => <DockerProcessContainer>JSON.parse(line));
-                    const daprContainers = containers.filter(container => container.Image === 'daprio/dapr');
+                    const containerIds = psResult.stdout.split('\n').join(' ');
 
-                    if (daprContainers.length >= 1) {
-                        return true;
+                    const inspectResult = await Process.exec(`docker inspect ${containerIds} --format "{{.Config.Image}}"`);
+
+                    if (inspectResult.code === 0) {
+                        const containerImages = inspectResult.stdout.split('\n');
+
+                        if (containerImages.find(image => image === 'daprio/dapr')) {
+                            return true;
+                        }
                     }
                 }
 
