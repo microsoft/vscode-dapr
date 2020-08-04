@@ -3,10 +3,12 @@
 
 import * as cp from 'child_process';
 import * as vscode from 'vscode';
+import * as nls from 'vscode-nls';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { Process } from '../util/process';
-import { localize } from '../util/localize';
 import { TaskDefinition } from './taskDefinition';
+
+const localize = nls.loadMessageBundle();
 
 export type CommandTaskSpawnCallback = (command: string, options?: cp.SpawnOptions) => Promise<void>;
 export type CommandTaskProviderCallback = (definition: TaskDefinition, callback: CommandTaskSpawnCallback, token?: vscode.CancellationToken) => Promise<void>;

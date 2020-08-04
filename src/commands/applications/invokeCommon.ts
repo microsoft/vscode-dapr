@@ -2,11 +2,13 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
+import * as nls from 'vscode-nls';
 import { DaprApplication, DaprApplicationProvider } from "../../services/daprApplicationProvider";
 import { UserInput, WizardStep } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
-import { localize } from '../../util/localize';
 import { IActionContext, ITelemetryContext } from 'vscode-azureextensionui';
+
+const localize = nls.loadMessageBundle();
 
 const invokeGetMethodStateKey = 'vscode-docker.state.invokeGet.method';
 const invokePostMethodStateKey = 'vscode-docker.state.invokePost.method';

@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as nls from 'vscode-nls';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { TaskDefinition } from './taskDefinition';
-import { localize } from '../util/localize';
 import { TelemetryProvider } from '../services/telemetryProvider';
 import { DaprApplicationProvider } from '../services/daprApplicationProvider';
+
+const localize = nls.loadMessageBundle();
 
 export interface DaprdDownTaskDefinition extends TaskDefinition {
     appId?: string;

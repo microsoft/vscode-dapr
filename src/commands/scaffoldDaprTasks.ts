@@ -4,17 +4,19 @@
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as nls from 'vscode-nls';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
 import { getWorkspaceConfigurations, DebugConfiguration } from '../scaffolding/configurationScaffolder';
 import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
-import { localize } from '../util/localize';
 import { UserInput, WizardStep } from '../services/userInput';
 import { IActionContext, TelemetryProperties } from 'vscode-azureextensionui';
 import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
 import { Scaffolder } from '../scaffolding/scaffolder';
 import { ConflictHandler, ConflictUniquenessPredicate } from '../scaffolding/conflicts';
 import { names, range } from '../util/generators';
+
+const localize = nls.loadMessageBundle();
 
 interface ScaffoldTelemetryProperties extends TelemetryProperties {
     configurationType: string;

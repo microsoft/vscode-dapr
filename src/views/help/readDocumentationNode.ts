@@ -2,8 +2,10 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
+import * as nls from 'vscode-nls';
 import TreeNode from '../treeNode';
-import { localize } from '../../util/localize';
+
+const localize = nls.loadMessageBundle();
 
 export default class ReadDocumentationNode implements TreeNode {
     getTreeItem(): Promise<vscode.TreeItem> {
