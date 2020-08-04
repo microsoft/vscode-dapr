@@ -29,21 +29,6 @@ import HandlebarsTemplateScaffolder from './scaffolding/templateScaffolder';
 import LocalScaffolder from './scaffolding/scaffolder';
 import NodeEnvironmentProvider from './services/environmentProvider';
 
-import * as nls from 'vscode-nls';
-
-// TODO: Is the file message format what we want?
-const options: nls.Options = { 
-    messageFormat: nls.MessageFormat.file
-};
-
-// TODO: Should we use VSCODE_NLS_CONFIG?
-if (process.env.VSCODE_DAPR_LOCALE) {
-    options.locale = process.env.VSCODE_DAPR_LOCALE;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const localize = nls.config(options)();
-
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
 		context.subscriptions.push(disposable);
