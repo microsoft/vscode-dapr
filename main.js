@@ -10,7 +10,7 @@ const nls = require('vscode-nls');
 
 // TODO: Is the file message format what we want?
 const options = { 
-    messageFormat: nls.MessageFormat.file
+    messageFormat: nls.MessageFormat.bundle
 };
 
 // TODO: Should we use VSCODE_NLS_CONFIG?
