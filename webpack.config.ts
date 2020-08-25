@@ -41,6 +41,9 @@ export const config: webpack.Configuration = {
             
         ]
     },
+    node: {
+        __filename: true
+    },
     optimization: {
         minimizer: [
             new TerserPlugin({

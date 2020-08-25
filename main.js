@@ -5,10 +5,9 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 
-
 const nls = require('vscode-nls');
+const path = require('path');
 
-// TODO: Is the file message format what we want?
 const options = { 
     messageFormat: nls.MessageFormat.bundle
 };
@@ -21,11 +20,17 @@ if (process.env.VSCODE_DAPR_LOCALE) {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const localize = nls.config(options)();
 
-const ignoreBundle = !/^(false|0)?$/i.test(process.env.VSCODE_DAPR_IGNORE_BUNDLE || '');
-const extensionPath = ignoreBundle ? "./out/extension" : "./dist/extension";
-const extension = require(extensionPath);
-
 function activate(ctx) {
+    const ignoreBundle = !/^(false|0)?$/i.test(process.env.VSCODE_DAPR_IGNORE_BUNDLE || '');
+    const extensionFolderName = ignoreBundle ? "out" : "dist"
+    const extensionPath = `./${extensionFolderName}/extension`;
+
+    global.vscodeDapr = {
+        localizationPath: path.join(ctx.extensionPath, extensionFolderName)
+    };
+
+    const extension = require(extensionPath);
+
     return extension.activate(ctx);
 }
 
