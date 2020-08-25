@@ -34,7 +34,7 @@ export function getLocalizationPathForFile(fileName: string): string {
         const relativePath = path.relative(sourceFolder, fileName);
 
         return path.join(vscodeDapr.localizationRootPath, relativePath);
+    } else {
+        return fileName;
     }
-
-    throw new Error('global.vscodeGapr.localizationRootPath must be set before importing extension modules.');
 }

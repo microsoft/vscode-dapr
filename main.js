@@ -22,12 +22,14 @@ const localize = nls.config(options)();
 
 function activate(ctx) {
     const ignoreBundle = !/^(false|0)?$/i.test(process.env.VSCODE_DAPR_IGNORE_BUNDLE || '');
-    const extensionFolderName = ignoreBundle ? "out" : "dist"
+    const extensionFolderName = ignoreBundle ? 'out' : 'dist'
     const extensionPath = `./${extensionFolderName}/extension`;
 
-    global.vscodeDapr = {
-        localizationRootPath: path.join(ctx.extensionPath, extensionFolderName)
-    };
+    if (!ignoreBundle) {
+        global.vscodeDapr = {
+            localizationRootPath: path.join(ctx.extensionPath, extensionFolderName)
+        };
+    }
 
     const extension = require(extensionPath);
 
