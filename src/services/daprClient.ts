@@ -6,8 +6,9 @@ import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { DaprApplication } from "./daprApplicationProvider";
 import { HttpClient, HttpResponse } from './httpClient';
+import { getLocalizationPathForFile } from '../util/localization';
 
-const localize = nls.loadMessageBundle();
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface DaprClient {
     invokeGet(application: DaprApplication, method: string, token?: vscode.CancellationToken): Promise<unknown>;

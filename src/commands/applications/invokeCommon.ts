@@ -7,8 +7,9 @@ import { DaprApplication, DaprApplicationProvider } from "../../services/daprApp
 import { UserInput, WizardStep } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
 import { IActionContext, ITelemetryContext } from 'vscode-azureextensionui';
+import { getLocalizationPathForFile } from '../../util/localization';
 
-const localize = nls.loadMessageBundle();
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 const invokeGetMethodStateKey = 'vscode-docker.state.invokeGet.method';
 const invokePostMethodStateKey = 'vscode-docker.state.invokePost.method';

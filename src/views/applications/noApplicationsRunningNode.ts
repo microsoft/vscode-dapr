@@ -5,8 +5,9 @@ import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import TreeNode from '../treeNode';
 import { DaprInstallationManager } from '../../services/daprInstallationManager';
+import { getLocalizationPathForFile } from '../../util/localization';
 
-const localize = nls.loadMessageBundle();
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export default class NoApplicationsRunningNode implements TreeNode {
     constructor(private readonly installationManager: DaprInstallationManager) {

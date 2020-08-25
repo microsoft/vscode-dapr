@@ -26,7 +26,7 @@ function activate(ctx) {
     const extensionPath = `./${extensionFolderName}/extension`;
 
     global.vscodeDapr = {
-        localizationPath: path.join(ctx.extensionPath, extensionFolderName)
+        localizationRootPath: path.join(ctx.extensionPath, extensionFolderName)
     };
 
     const extension = require(extensionPath);

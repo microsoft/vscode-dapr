@@ -6,8 +6,7 @@ import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import * as localization from './localization';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-const localize = nls.loadMessageBundle(localization.getPathForFile(__filename));
+const localize = nls.loadMessageBundle(localization.getLocalizationPathForFile(__filename));
 
 const DEFAULT_BUFFER_SIZE = 10 * 1024; // The default Node.js `exec` buffer size is 1 MB, our actual usage is far less
 

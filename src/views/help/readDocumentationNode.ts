@@ -4,8 +4,9 @@
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import TreeNode from '../treeNode';
+import { getLocalizationPathForFile } from '../../util/localization';
 
-const localize = nls.loadMessageBundle();
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export default class ReadDocumentationNode implements TreeNode {
     getTreeItem(): Promise<vscode.TreeItem> {

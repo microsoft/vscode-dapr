@@ -15,8 +15,9 @@ import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
 import { Scaffolder } from '../scaffolding/scaffolder';
 import { ConflictHandler, ConflictUniquenessPredicate } from '../scaffolding/conflicts';
 import { names, range } from '../util/generators';
+import { getLocalizationPathForFile } from '../util/localization';
 
-const localize = nls.loadMessageBundle();
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 interface ScaffoldTelemetryProperties extends TelemetryProperties {
     configurationType: string;

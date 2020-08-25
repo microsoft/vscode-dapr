@@ -7,8 +7,9 @@ import * as nls from 'vscode-nls';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { Process } from '../util/process';
 import { TaskDefinition } from './taskDefinition';
+import { getLocalizationPathForFile } from '../util/localization';
 
-const localize = nls.loadMessageBundle();
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export type CommandTaskSpawnCallback = (command: string, options?: cp.SpawnOptions) => Promise<void>;
 export type CommandTaskProviderCallback = (definition: TaskDefinition, callback: CommandTaskSpawnCallback, token?: vscode.CancellationToken) => Promise<void>;

@@ -6,8 +6,9 @@ import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
 import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
 import { DaprApplicationProvider } from '../services/daprApplicationProvider';
+import { getLocalizationPathForFile } from '../util/localization';
 
-const localize = nls.loadMessageBundle();
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface DaprdDownTaskDefinition extends TaskDefinition {
     appId?: string;
