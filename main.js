@@ -26,7 +26,7 @@ function getExtension(extensionPath) {
     if (!actualExtension) {
         const ignoreBundle = !/^(false|0)?$/i.test(process.env.VSCODE_DAPR_IGNORE_BUNDLE || '');
         const extensionFolderName = ignoreBundle ? 'out' : 'dist'
-        const extensionPath = `./${extensionFolderName}/extension`;
+        const extensionFileName = `./${extensionFolderName}/extension`;
     
         if (!ignoreBundle) {
             global.vscodeDapr = {
@@ -34,7 +34,7 @@ function getExtension(extensionPath) {
             };
         }
     
-        actualExtension = require(extensionPath);
+        actualExtension = require(extensionFileName);
     }
 
     return actualExtension;
