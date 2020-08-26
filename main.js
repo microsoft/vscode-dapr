@@ -20,24 +20,32 @@ if (process.env.VSCODE_DAPR_LOCALE) {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const localize = nls.config(options)();
 
-function activate(ctx) {
-    const ignoreBundle = !/^(false|0)?$/i.test(process.env.VSCODE_DAPR_IGNORE_BUNDLE || '');
-    const extensionFolderName = ignoreBundle ? 'out' : 'dist'
-    const extensionPath = `./${extensionFolderName}/extension`;
+var actualExtension;
 
-    if (!ignoreBundle) {
-        global.vscodeDapr = {
-            localizationRootPath: path.join(ctx.extensionPath, extensionFolderName)
-        };
+function getExtension(extensionPath) {
+    if (!actualExtension) {
+        const ignoreBundle = !/^(false|0)?$/i.test(process.env.VSCODE_DAPR_IGNORE_BUNDLE || '');
+        const extensionFolderName = ignoreBundle ? 'out' : 'dist'
+        const extensionPath = `./${extensionFolderName}/extension`;
+    
+        if (!ignoreBundle) {
+            global.vscodeDapr = {
+                localizationRootPath: path.join(extensionPath, extensionFolderName)
+            };
+        }
+    
+        actualExtension = require(extensionPath);
     }
 
-    const extension = require(extensionPath);
+    return actualExtension;
+}
 
-    return extension.activate(ctx);
+function activate(ctx) {
+    getExtension(ctx.extensionPath).activate(ctx);
 }
 
 function deactivate(ctx) {
-    return extension.deactivate(ctx);
+    getExtension(ctx.extensionPath).deactivate(ctx);
 }
 
 exports.activate = activate;
