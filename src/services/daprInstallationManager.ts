@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as process from 'process';
 import { AsyncLazy } from '../util/lazy';
 import { Process } from '../util/process';
 
@@ -30,6 +31,9 @@ interface DockerProcessContainer {
     Image?: string;
 }
 
+const daprImageName = 'daprio/dapr';
+const daprTaggedImagePrefix = `${daprImageName}:`;
+
 export default class LocalDaprInstallationManager implements DaprInstallationManager {
     private readonly version: AsyncLazy<DaprVersion>;
     private readonly initialized: AsyncLazy<boolean>;
@@ -51,15 +55,22 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
 
         this.initialized = new AsyncLazy<boolean>(
             async () => {
-                const psResult = await Process.exec('docker ps --format "{{json .}}"');
+                const network = process.env.DAPR_NETWORK || 'bridge';
+                const psResult = await Process.exec(`docker ps --filter network=${network} --format "{{.ID}}"`);
 
                 if (psResult.code === 0) {
-                    const lines = psResult.stdout.split('\n');
-                    const containers = lines.map(line => <DockerProcessContainer>JSON.parse(line));
-                    const daprContainers = containers.filter(container => container.Image === 'daprio/dapr');
+                    const containerIds = psResult.stdout.split('\n').filter(id => id.length > 0);
 
-                    if (daprContainers.length >= 0) {
-                        return true;
+                    if (containerIds.length > 0) {
+                        const inspectResult = await Process.exec(`docker inspect ${containerIds.join(' ')} --format "{{.Config.Image}}"`);
+                        
+                        if (inspectResult.code === 0) {
+                            const containerImages = inspectResult.stdout.split('\n');
+                            
+                            if (containerImages.find(image => image === daprImageName || image.startsWith(daprTaggedImagePrefix))) {
+                                return true;
+                            }
+                        }
                     }
                 }
 
