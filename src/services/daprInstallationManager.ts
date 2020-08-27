@@ -31,6 +31,9 @@ interface DockerProcessContainer {
     Image?: string;
 }
 
+const daprImageName = 'daprio/dapr';
+const daprTaggedImagePrefix = `${daprImageName}:`;
+
 export default class LocalDaprInstallationManager implements DaprInstallationManager {
     private readonly version: AsyncLazy<DaprVersion>;
     private readonly initialized: AsyncLazy<boolean>;
@@ -64,7 +67,7 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
                         if (inspectResult.code === 0) {
                             const containerImages = inspectResult.stdout.split('\n');
                             
-                            if (containerImages.find(image => image === 'daprio/dapr')) {
+                            if (containerImages.find(image => image === daprImageName || image.startsWith(daprTaggedImagePrefix))) {
                                 return true;
                             }
                         }
