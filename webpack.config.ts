@@ -8,6 +8,7 @@
 import * as path from 'path';
 import * as TerserPlugin from 'terser-webpack-plugin';
 import * as webpack from 'webpack';
+import { NLSBundlePlugin } from 'vscode-nls-dev/lib/webpack-bundler';
 
 export const config: webpack.Configuration = {
     devtool: 'source-map',
@@ -24,19 +25,24 @@ export const config: webpack.Configuration = {
             {
                 exclude: /node_modules/,
                 test: /\.ts$/,
-                use: [{
+                use: [
+                    {
+                    // vscode-nls-dev loader:
+                    // * rewrite nls-calls
+                    loader: 'vscode-nls-dev/lib/webpack-loader',
+                    options: {
+                        base: path.resolve(__dirname, 'src')
+                    }
+                },
+                {
                     loader: 'ts-loader'
                 }]
             },
-            {
-                // vscode-nls-dev loader:
-                // * rewrite nls-calls
-                loader: 'vscode-nls-dev/lib/webpack-loader',
-                options: {
-                    base: path.join(__dirname, 'src')
-                }
-            }
+            
         ]
+    },
+    node: {
+        __filename: true
     },
     optimization: {
         minimizer: [
@@ -59,6 +65,7 @@ export const config: webpack.Configuration = {
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
+        new NLSBundlePlugin('vscode-dapr'),
         // Fix warning:
         //   > WARNING in ./node_modules/ms-rest/lib/serviceClient.js 441:19-43
         //   > Critical dependency: the request of a dependency is an expression

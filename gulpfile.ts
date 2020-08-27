@@ -72,6 +72,8 @@ function compileTask(): NodeJS.ReadWriteStream {
         .pipe(tsProject()).js
         .pipe(wrapThroughStream(nls.rewriteLocalizeCalls()))
         .pipe(wrapThroughStream(nls.createAdditionalLanguageFiles(languages, 'i18n', outDir)))
+        .pipe(wrapThroughStream(nls.bundleMetaDataFiles('vscode-dapr', outDir)))
+        .pipe(wrapThroughStream(nls.bundleLanguageFiles()))
         .pipe(sourcemaps.write('.', { includeContent: false, sourceRoot: './' }))
         .pipe(gulp.dest(outDir));
 }

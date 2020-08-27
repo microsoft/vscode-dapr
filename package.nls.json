@@ -1,5 +1,4 @@
 {
-    "vscode-dapr.description": "Makes it easy to run, debug, and interact with Dapr-enabled applications.",
     "vscode-dapr.applications.invoke-get.title": "Invoke (GET) Application Method",
     "vscode-dapr.applications.invoke-post.title": "Invoke (POST) Application Method",
     "vscode-dapr.applications.publish-message.title": "Publish Message to Application",

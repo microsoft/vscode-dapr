@@ -85,3 +85,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			return Promise.resolve();
 	});
 }
+
+export function deactivate(): Promise<void> {
+	return Promise.resolve();
+}
