@@ -50,7 +50,22 @@ export async function getPayload(context: ITelemetryContext, ui: UserInput, work
 
     context.properties.cancelStep = 'payload';
 
-    const payloadString = await ui.showInputBox({ prompt: localize('commands.invokeCommon.payloadPrompt', 'Enter a JSON payload for the method (or leave empty, if no payload is needed)'), value: previousPayloadString });
+    const payloadString = await ui.showInputBox(
+        { 
+            prompt: localize('commands.invokeCommon.payloadPrompt', 'Enter a JSON payload for the method (or leave empty, if no payload is needed)'),
+            value: previousPayloadString,
+            validateInput: value => {
+                try {
+                    if (value) {
+                        JSON.parse(value);
+                    }
+
+                    return undefined;
+                } catch (err) {
+                    return (<Error>err).message;
+                }
+            }
+        });
 
     const payload = (payloadString && <unknown>JSON.parse(payloadString)) || undefined;
 
