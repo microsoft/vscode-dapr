@@ -38,7 +38,16 @@ export async function getMethod(context: ITelemetryContext, ui: UserInput, works
 
     context.properties.cancelStep = 'method';
 
-    const method = await ui.showInputBox({ prompt: localize('commands.invokeCommon.methodPrompt', 'Enter the application method to invoke'), value: previousMethod });
+    const method = await ui.showInputBox(
+        {
+            prompt: localize('commands.invokeCommon.methodPrompt', 'Enter the application method to invoke'),
+            validateInput: value => {
+                return value === ''
+                    ? localize('commands.invokeCommon.invalidMethod', 'An application method must be a non-empty string.')
+                    : undefined;
+            },
+            value: previousMethod
+        });
 
     await workspaceState.update(methodStateKey, method);
 
@@ -53,7 +62,6 @@ export async function getPayload(context: ITelemetryContext, ui: UserInput, work
     const payloadString = await ui.showInputBox(
         { 
             prompt: localize('commands.invokeCommon.payloadPrompt', 'Enter a JSON payload for the method (or leave empty, if no payload is needed)'),
-            value: previousPayloadString,
             validateInput: value => {
                 try {
                     if (value) {
@@ -64,7 +72,8 @@ export async function getPayload(context: ITelemetryContext, ui: UserInput, work
                 } catch (err) {
                     return (<Error>err).message;
                 }
-            }
+            },
+            value: previousPayloadString
         });
 
     const payload = (payloadString && <unknown>JSON.parse(payloadString)) || undefined;
