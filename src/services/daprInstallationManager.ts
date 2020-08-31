@@ -27,10 +27,6 @@ function getRuntimeVersion(versionOutput: string): string | undefined {
     return result?.groups?.['version'];
 }
 
-interface DockerProcessContainer {
-    Image?: string;
-}
-
 const daprImageName = 'daprio/dapr';
 const daprTaggedImagePrefix = `${daprImageName}:`;
 
