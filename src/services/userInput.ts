@@ -35,6 +35,9 @@ interface WizardContext<T> extends IActionContext {
 class WizardPromptStep<T> extends AzureWizardPromptStep<WizardContext<T>> {
     constructor(private readonly step: WizardStep<T>) {
         super();
+
+        // Workaround for [vscode-azuretools#789](https://github.com/microsoft/vscode-azuretools/issues/789)
+        this.supportsDuplicateSteps = true;
     }
 
     async prompt(wizardContext: WizardContext<T>): Promise<void> {
