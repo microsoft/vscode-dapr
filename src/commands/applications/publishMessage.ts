@@ -13,8 +13,30 @@ import { getLocalizationPathForFile } from '../../util/localization';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
+const publishMessagePubSubNameStateKey = 'vscode-docker.state.publishMessage.pubSubName';
 const publishMessageTopicStateKey = 'vscode-docker.state.publishMessage.topic';
 const publishMessagePayloadStateKey = 'vscode-docker.state.publishMessage.payload';
+
+export async function getPubSubName(context: ITelemetryContext, ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
+    const previousMethod = workspaceState.get<string>(publishMessagePubSubNameStateKey);
+
+    context.properties.cancelStep = 'pubSubName';
+
+    const topic = await ui.showInputBox(
+        {
+            prompt: localize('commands.publishMessage.pubSubNamePrompt', 'Enter the publish/subscribe component name used to publish'),
+            value: previousMethod,
+            validateInput: value => {
+                return value === ''
+                    ? localize('commands.publishMessage.invalidPubSubName', 'A component name must be a non-empty string.')
+                    : undefined;
+            }
+        });
+
+    await workspaceState.update(publishMessagePubSubNameStateKey, topic);
+
+    return topic;
+}
 
 export async function getTopic(context: ITelemetryContext, ui: UserInput, workspaceState: vscode.Memento): Promise<string> {
     const previousMethod = workspaceState.get<string>(publishMessageTopicStateKey);
@@ -39,6 +61,7 @@ export async function getTopic(context: ITelemetryContext, ui: UserInput, worksp
 
 interface PublishWizardContext {
     application: DaprApplication;
+    pubSubName: string;
     topic: string;
     payload?: unknown;
 }
@@ -51,6 +74,14 @@ export async function publishMessageCore(context: IActionContext, daprApplicatio
             return {
                 ...wizardContext,
                 application: await getApplication(context.telemetry, daprApplicationProvider, ui, application)
+            }
+        };
+
+    const pubSubNameStep: WizardStep<PublishWizardContext> =
+        async wizardContext => {
+            return {
+                ...wizardContext,
+                pubSubName: await getPubSubName(context.telemetry, ui, workspaceState)
             }
         };
 
@@ -75,14 +106,14 @@ export async function publishMessageCore(context: IActionContext, daprApplicatio
             initialContext: { application },
             title: localize('commands.publishMessage.wizardTitle', 'Publish Dapr Message')
         },
-        !application ? applicationStep : undefined, topicStep, payloadStep);
+        !application ? applicationStep : undefined, pubSubNameStep, topicStep, payloadStep);
 
     await ui.withProgress(
         localize('commands.publishMessage.publishProgressTitle', 'Publishing Dapr message'),
         async (_, token) => {
             outputChannel.appendLine(localize('commands.publishMessage.publishMessage', 'Publishing Dapr message \'{0}\' to application \'{1}\' with payload \'{2}\'...', result.topic, result.application.appId, JSON.stringify(result.payload)));
 
-            await daprClient.publishMessage(result.application, result.topic, result.payload, token);
+            await daprClient.publishMessage(result.application, result.pubSubName, result.topic, result.payload, token);
     
             outputChannel.appendLine(localize('commands.publishMessage.publishSucceededMessage', 'Message published'));
 
