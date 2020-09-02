@@ -1,5 +1,26 @@
 # Change Log
 
+## v0.3.0 - 02 September 2020
+
+A collection of accumulated fixes and minor enhancements.
+
+### Fixed
+
+* Pop up an error "Request failed with status code 404" when publishing message [#117](https://github.com/microsoft/vscode-dapr/issues/117)
+* The default value of the port is "app" when invoking "Dapr: Scaffold Dapr Tasks" command [#109](https://github.com/microsoft/vscode-dapr/issues/109)
+* It shows "Failed to load message bundle..." after expanding "APPLICATIONS" [#104](https://github.com/microsoft/vscode-dapr/issues/104)
+* daprd no longer defaults to a components path [#98](https://github.com/microsoft/vscode-dapr/issues/98)
+* daprd task problem matcher does not support non-web apps [#89](https://github.com/microsoft/vscode-dapr/issues/89)
+* dapr scaffold dapr tasks not working in workspace view [#88](https://github.com/microsoft/vscode-dapr/issues/88)
+* Use DAPR_PLACEMENT_HOST for default placement address [#85](https://github.com/microsoft/vscode-dapr/issues/85)
+* Use DAPR_REDIS_HOST for scaffolding instead of DAPR_NETWORK [#84](https://github.com/microsoft/vscode-dapr/issues/84)
+* error establishing client to placement service [#82](https://github.com/microsoft/vscode-dapr/issues/82)
+* Dapr runtime not detected in Dev Container [#80](https://github.com/microsoft/vscode-dapr/issues/80)
+
+### Added
+
+* There is no validation in the JSON payload input box [#112](https://github.com/microsoft/vscode-dapr/issues/112)
+
 ## v0.2.1 - 19 March 2020
 
 Minor fixes.
