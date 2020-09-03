@@ -1,11 +1,12 @@
 # Change Log
 
-## v0.3.0 - 02 September 2020
+## v0.3.0 - 03 September 2020
 
 A collection of accumulated fixes and minor enhancements.
 
 ### Fixed
 
+* Pop up an error when invoking (POST) application method with an empty payload [#121](https://github.com/microsoft/vscode-dapr/issues/121)
 * Pop up an error "Request failed with status code 404" when publishing message [#117](https://github.com/microsoft/vscode-dapr/issues/117)
 * The default value of the port is "app" when invoking "Dapr: Scaffold Dapr Tasks" command [#109](https://github.com/microsoft/vscode-dapr/issues/109)
 * It shows "Failed to load message bundle..." after expanding "APPLICATIONS" [#104](https://github.com/microsoft/vscode-dapr/issues/104)
