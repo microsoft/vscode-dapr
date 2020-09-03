@@ -58,14 +58,16 @@ export default class AxiosHttpClient implements HttpClient {
 
         const config = createConfig(options?.allowRedirects, cancelTokenSource.token);
 
-        config.headers = {
-            'content-type': options?.json ? 'application/json' : undefined
-        };
+        if (data !== undefined) {
+            config.headers = {
+                'content-type': options?.json ? 'application/json' : undefined
+            };
+        }
 
         try {
             const response = await axios.post<unknown>(
                 url,
-                options?.json ? JSON.stringify(data) : data,
+                (data !== undefined && options?.json) ? JSON.stringify(data) : data,
                 config);
 
             return { data: response.data, headers: <{[key: string]: string}>response.headers, status: response.status };

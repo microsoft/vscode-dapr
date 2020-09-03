@@ -76,7 +76,7 @@ export async function getPayload(context: ITelemetryContext, ui: UserInput, work
             value: previousPayloadString
         });
 
-    const payload = (payloadString && <unknown>JSON.parse(payloadString)) || undefined;
+    const payload = payloadString ? <unknown>JSON.parse(payloadString) : undefined;
 
     await workspaceState.update(payLoadStateKey, payloadString);
 
