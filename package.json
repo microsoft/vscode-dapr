@@ -3,7 +3,7 @@
 	"displayName": "Dapr",
 	"description": "Makes it easy to run, debug, and interact with Dapr-enabled applications.",
 	"icon": "assets/images/extensionIcon.png",
-	"version": "0.3.0",
+	"version": "0.3.1-alpha",
 	"preview": true,
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",
@@ -459,15 +459,15 @@
 		"@types/gulp-sourcemaps": "0.0.32",
 		"@types/handlebars": "^4.1.0",
 		"@types/mocha": "^8.0.3",
-		"@types/node": "^12.12.54",
+		"@types/node": "^12.12.57",
 		"@types/ps-list": "^6.2.1",
 		"@types/terser-webpack-plugin": "^4.1.0",
 		"@types/vscode": "^1.48.0",
-		"@types/webpack": "^4.41.21",
-		"@typescript-eslint/eslint-plugin": "^4.0.1",
-		"@typescript-eslint/parser": "^4.0.1",
+		"@types/webpack": "^4.41.22",
+		"@typescript-eslint/eslint-plugin": "^4.1.0",
+		"@typescript-eslint/parser": "^4.1.0",
 		"del": "^5.1.0",
-		"eslint": "^7.7.0",
+		"eslint": "^7.8.1",
 		"glob": "^7.1.5",
 		"gulp": "^4.0.2",
 		"gulp-eslint": "^6.0.0",
@@ -490,6 +490,6 @@
 		"handlebars": "^4.7.6",
 		"ps-list": "^7.2.0",
 		"vscode-azureextensionui": "^0.35.0",
-		"vscode-nls": "^4.1.2"
+		"vscode-nls": "^5.0.0"
 	}
 }
