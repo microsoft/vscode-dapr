@@ -92,14 +92,14 @@ function compilePackedTaskFactory(mode: 'production' | 'development'): () => Pro
                             return reject(err);
                         }
 
-                        const info = stats.toJson();
+                        const info = stats?.toJson();
 
-                        if (stats.hasErrors()) {
+                        if (stats?.hasErrors()) {
                             return reject(new Error(info.errors.join('\n')));
                         }
 
-                        if (stats.hasWarnings()) {
-                            info.warnings.forEach(warning => console.warn(warning));
+                        if (stats?.hasWarnings()) {
+                            info.warnings.forEach((warning: unknown) => console.warn(warning));
                         }
 
                         return resolve();
