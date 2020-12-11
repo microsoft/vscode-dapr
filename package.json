@@ -247,17 +247,32 @@
 						"description": "%vscode-dapr.tasks.daprd.properties.allowedOrigins.description%",
 						"default": "*"
 					},
-					"alsoLogToStdError": {
-						"type": "boolean",
-						"description": "%vscode-dapr.tasks.daprd.properties.alsoLogToStdError.description%"
-					},
 					"appId": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.appId.description%"
 					},
+					"appMaxConcurrency": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.daprd.properties.appMaxConcurrency.description%",
+						"default": -1
+					},
 					"appPort": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.appPort.description%"
+					},
+					"appProtocol": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.daprd.properties.appProtocol.description%",
+						"enum": [
+							"grpc",
+							"http"
+						],
+						"default": "http"
+					},
+					"appSsl": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.appSsl.description%",
+						"default": true
 					},
 					"args": {
 						"type": "array",
@@ -279,11 +294,6 @@
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.controlPlaneAddress.description%"
 					},
-					"enableProfiling": {
-						"type": "boolean",
-						"description": "%vscode-dapr.tasks.daprd.properties.enableProfiling.description%",
-						"default": false
-					},
 					"enableMetrics": {
 						"type": "boolean",
 						"description": "%vscode-dapr.tasks.daprd.properties.enableMetrics.description%",
@@ -292,6 +302,11 @@
 					"enableMtls": {
 						"type": "boolean",
 						"description": "%vscode-dapr.tasks.daprd.properties.enableMtls.description%",
+						"default": false
+					},
+					"enableProfiling": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableProfiling.description%",
 						"default": false
 					},
 					"grpcPort": {
@@ -303,6 +318,15 @@
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.httpPort.description%",
 						"default": 3500
+					},
+					"internalGrpcPort": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.daprd.properties.internalGrpcPort.description%",
+						"default": 50001
+					},
+					"kubeConfig": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.daprd.properties.kubeConfig.description%"
 					},
 					"logAsJson": {
 						"type": "boolean",
@@ -322,24 +346,6 @@
 						],
 						"default": "info"
 					},
-					"logBacktraceAt": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.daprd.properties.logBacktraceAt.description%"
-					},
-					"logDir": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.daprd.properties.logDir.description%"
-					},
-					"logToStdErr": {
-						"type": "boolean",
-						"description": "%vscode-dapr.tasks.daprd.properties.logToStdErr.description%",
-						"default": false
-					},
-					"maxConcurrency": {
-						"type": "integer",
-						"description": "%vscode-dapr.tasks.daprd.properties.maxConcurrency.description%",
-						"default": -1
-					},
 					"metricsPort": {
 						"type": "number",
 						"description": "%vscode-dapr.tasks.daprd.properties.metricsPort.description%",
@@ -354,55 +360,18 @@
 						],
 						"default": "standalone"
 					},
-					"placementAddress": {
+					"placementHostAddress": {
 						"type": "string",
-						"description": "%vscode-dapr.tasks.daprd.properties.placementAddress.description%"
+						"description": "%vscode-dapr.tasks.daprd.properties.placementHostAddress.description%"
 					},
 					"profilePort": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.profilePort.description%",
 						"default": 7777
 					},
-					"protocol": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.daprd.properties.protocol.description%",
-						"enum": [
-							"grpc",
-							"http"
-						],
-						"default": "http"
-					},
 					"sentryAddress": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.sentryAddress.description%"
-					},
-					"stdErrThreshold": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.daprd.properties.stdErrThreshold.description%",
-						"enum": [
-							"debug",
-							"info",
-							"warning",
-							"error",
-							"fatal",
-							"panic"
-						]
-					},
-					"vLogLevel": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.daprd.properties.vLogLevel.description%",
-						"enum": [
-							"debug",
-							"info",
-							"warning",
-							"error",
-							"fatal",
-							"panic"
-						]
-					},
-					"vLogFilters": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.daprd.properties.vLogFilters.description%"
 					}
 				}
 			},

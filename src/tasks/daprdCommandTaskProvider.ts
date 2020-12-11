@@ -29,7 +29,6 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     kubeConfig?: string;
     logAsJson?: boolean;
     logLevel?: DaprdLogLevel;
-    logBacktraceAt?: number;
     metricsPort?: number;
     mode?: 'standalone' | 'kubernetes';
     placementHostAddress?: string;
