@@ -146,10 +146,28 @@
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.appId.description%"
 					},
+					"appMaxConcurrency": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.dapr.properties.appMaxConcurrency.description%",
+						"default": -1
+					},
 					"appPort": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.dapr.properties.appPort.description%",
 						"default": -1
+					},
+					"appProtocol": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.appProtocol.description%",
+						"enum": [
+							"http",
+							"grpc"
+						],
+						"default": "http"
+					},
+					"appSsl": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.dapr.properties.appSsl.description%"
 					},
 					"args": {
 						"type": "array",
@@ -164,6 +182,10 @@
 						"additionalItems": {
 							"type": "string"
 						}
+					},
+					"componentsPath": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.componentsPath.description%"
 					},
 					"config": {
 						"type": "string",
@@ -205,34 +227,15 @@
 						],
 						"default": "info"
 					},
-					"maxConcurrency": {
-						"type": "integer",
-						"description": "%vscode-dapr.tasks.dapr.properties.maxConcurrency.description%",
-						"default": -1
-					},
-					"placementHost": {
+					"placementHostAddress": {
 						"type": "string",
-						"description": "%vscode-dapr.tasks.dapr.properties.placementHost.description%",
+						"description": "%vscode-dapr.tasks.dapr.properties.placementHostAddress.description%",
 						"default": "localhost"
 					},
 					"profilePort": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.dapr.properties.profilePort.description%",
 						"default": -1
-					},
-					"protocol": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.dapr.properties.protocol.description%",
-						"enum": [
-							"http",
-							"grpc"
-						],
-						"default": "http"
-					},
-					"redisHost": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.dapr.properties.redisHost.description%",
-						"default": "localhost"
 					}
 				},
 				"required": [
