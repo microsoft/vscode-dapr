@@ -21,7 +21,6 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     config?: string;
     controlPlaneAddress?: string;
     enableProfiling?: boolean;
-    enableMetrics?: boolean;
     enableMtls?: boolean;
     grpcPort?: number;
     httpPort?: number;
@@ -63,7 +62,6 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
                                 .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
                                 .withNamedArg('--dapr-internal-grpc-port', daprDefinition.internalGrpcPort)
-                                .withNamedArg('--enable-metrics', daprDefinition.enableMetrics, { assignValue: true })
                                 .withNamedArg('--enable-mtls', daprDefinition.enableMtls, { assignValue: true })
                                 .withNamedArg('--enable-profiling', daprDefinition.enableProfiling, { assignValue: true })
                                 .withNamedArg('--kubeconfig', daprDefinition.kubeConfig)

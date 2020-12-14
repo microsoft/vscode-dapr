@@ -294,11 +294,6 @@
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.controlPlaneAddress.description%"
 					},
-					"enableMetrics": {
-						"type": "boolean",
-						"description": "%vscode-dapr.tasks.daprd.properties.enableMetrics.description%",
-						"default": true
-					},
 					"enableMtls": {
 						"type": "boolean",
 						"description": "%vscode-dapr.tasks.daprd.properties.enableMtls.description%",
