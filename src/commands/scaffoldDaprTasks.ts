@@ -286,8 +286,6 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                 return { 'type': 'rename', name };
             }
         });
-
-    await scaffoldDaprComponents(scaffolder, templateScaffolder);
 }
 
 const createScaffoldDaprTasksCommand = (scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, scaffolder, templateScaffolder, ui);
