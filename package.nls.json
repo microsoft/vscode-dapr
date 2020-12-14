@@ -7,6 +7,7 @@
     "vscode-dapr.help.getStarted.title": "Get Started",
     "vscode-dapr.help.reportIssue.title": "Report Issue",
     "vscode-dapr.help.reviewIssues.title": "Review Issues",
+    "vscode-dapr.tasks.scaffoldDaprComponents.title": "Scaffold Dapr Components",
     "vscode-dapr.tasks.scaffoldDaprTasks.title": "Scaffold Dapr Tasks",
     "vscode-dapr.views.applications.name": "Applications",
     "vscode-dapr.views.help.name": "Help and Feedback",

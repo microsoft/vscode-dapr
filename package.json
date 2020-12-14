@@ -35,6 +35,7 @@
 		"onCommand:vscode-dapr.help.readDocumentation",
 		"onCommand:vscode-dapr.help.reportIssue",
 		"onCommand:vscode-dapr.help.reviewIssues",
+		"onCommand:vscode-dapr.tasks.scaffoldDaprComponents",
 		"onCommand:vscode-dapr.tasks.scaffoldDaprTasks",
 		"onCommand:workbench.action.tasks.runTask",
 		"onView:vscode-dapr.views.applications"
@@ -86,6 +87,11 @@
 			{
 				"command": "vscode-dapr.help.reviewIssues",
 				"title": "%vscode-dapr.help.reviewIssues.title%",
+				"category": "Dapr"
+			},
+			{
+				"command": "vscode-dapr.tasks.scaffoldDaprComponents",
+				"title": "%vscode-dapr.tasks.scaffoldDaprComponents.title%",
 				"category": "Dapr"
 			},
 			{
