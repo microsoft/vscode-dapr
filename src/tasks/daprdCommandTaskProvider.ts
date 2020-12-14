@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as os from 'os';
+import * as path from 'path';
 import CommandLineBuilder from '../util/commandLineBuilder';
 import CommandTaskProvider from './commandTaskProvider';
 import { TaskDefinition } from './taskDefinition';
@@ -56,7 +58,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--app-port', daprDefinition.appPort)
                                 .withNamedArg('--app-protocol', daprDefinition.appProtocol)
                                 .withNamedArg('--app-ssl', daprDefinition.appSsl, { assignValue: true })
-                                .withNamedArg('--components-path', daprDefinition.componentsPath ?? './components')
+                                .withNamedArg('--components-path', daprDefinition.componentsPath ?? path.join(os.homedir(), '.dapr', 'components'))
                                 .withNamedArg('--config', daprDefinition.config)
                                 .withNamedArg('--control-plane-address', daprDefinition.controlPlaneAddress)
                                 .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
