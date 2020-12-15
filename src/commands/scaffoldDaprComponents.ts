@@ -9,11 +9,11 @@ import { scaffoldStateStoreComponent, scaffoldPubSubComponent, scaffoldZipkinCom
 import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
 import { Scaffolder } from '../scaffolding/scaffolder';
 import { getLocalizationPathForFile } from '../util/localization';
+import { ConflictHandler } from '../scaffolding/conflicts';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder): Promise<void> {
-    // TODO: Verify open workspace/folder.
     const rootWorkspaceFolderPath = (vscode.workspace.workspaceFolders ?? [])[0]?.uri?.fsPath;
 
     if (!rootWorkspaceFolderPath) {
@@ -24,14 +24,17 @@ async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder
 
     await fse.ensureDir(componentsPath);
 
-    const components = await fse.readdir(componentsPath);
+    // NOTE: As this command is now secondary (scaffolding now done for the user as part of `dapr init`),
+    //       we'll simply skip upon finding conflicts; there's likely little need to overwrite existing
+    //       components.
+    const onConflict: ConflictHandler = () => Promise.resolve({ 'type': 'skip' });
 
-    // Only scaffold the components if none exist...
-    if (components.length === 0) {
-        await scaffoldStateStoreComponent(scaffolder, templateScaffolder, componentsPath);
-        await scaffoldPubSubComponent(scaffolder, templateScaffolder, componentsPath);
-        await scaffoldZipkinComponent(scaffolder, templateScaffolder, componentsPath);
-    }
+    await scaffoldStateStoreComponent(scaffolder, templateScaffolder, componentsPath, onConflict);
+    await scaffoldPubSubComponent(scaffolder, templateScaffolder, componentsPath, onConflict);
+    await scaffoldZipkinComponent(scaffolder, templateScaffolder, componentsPath, onConflict);
+
+    // TODO: Consider UX to prompt the user to update existing tasks' componentsPath property.
+    //       (It's not clear the expected usage use of this feature warrants the work.)
 }
 
 const createScaffoldDaprComponentsCommand = (scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder) => (): Promise<void> => scaffoldDaprComponents(scaffolder, templateScaffolder);
