@@ -5,7 +5,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
-import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
+import { scaffoldStateStoreComponent, scaffoldPubSubComponent, scaffoldZipkinComponent } from "../scaffolding/daprComponentScaffolder";
 import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
 import { Scaffolder } from '../scaffolding/scaffolder';
 import { getLocalizationPathForFile } from '../util/localization';
@@ -30,6 +30,7 @@ async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder
     if (components.length === 0) {
         await scaffoldStateStoreComponent(scaffolder, templateScaffolder, componentsPath);
         await scaffoldPubSubComponent(scaffolder, templateScaffolder, componentsPath);
+        await scaffoldZipkinComponent(scaffolder, templateScaffolder, componentsPath);
     }
 }
 
