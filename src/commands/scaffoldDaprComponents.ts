@@ -17,7 +17,7 @@ async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder
     const rootWorkspaceFolderPath = (vscode.workspace.workspaceFolders ?? [])[0]?.uri?.fsPath;
 
     if (!rootWorkspaceFolderPath) {
-        throw new Error(localize('commands.scaffoldDaprTasks.noWorkspaceError', 'Open a folder or workspace.'));
+        throw new Error(localize('commands.scaffoldDaprTasks.noWorkspaceError', 'To scaffold Dapr component files, first open a folder or workspace.'));
     }
 
     const componentsPath = path.join(rootWorkspaceFolderPath, 'components');
