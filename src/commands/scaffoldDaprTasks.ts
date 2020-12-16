@@ -1,14 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as fse from 'fs-extra';
-import * as path from 'path';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
 import { getWorkspaceConfigurations, DebugConfiguration } from '../scaffolding/configurationScaffolder';
-import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
 import { UserInput, WizardStep } from '../services/userInput';
 import { IActionContext, TelemetryProperties } from 'vscode-azureextensionui';
 import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
@@ -21,27 +18,6 @@ const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 interface ScaffoldTelemetryProperties extends TelemetryProperties {
     configurationType: string;
-}
-
-async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder): Promise<void> {
-    // TODO: Verify open workspace/folder.
-    const rootWorkspaceFolderPath = (vscode.workspace.workspaceFolders ?? [])[0]?.uri?.fsPath;
-
-    if (!rootWorkspaceFolderPath) {
-        throw new Error(localize('commands.scaffoldDaprTasks.noWorkspaceError', 'Open a folder or workspace.'));
-    }
-
-    const componentsPath = path.join(rootWorkspaceFolderPath, 'components');
-
-    await fse.ensureDir(componentsPath);
-
-    const components = await fse.readdir(componentsPath);
-
-    // Only scaffold the components if none exist...
-    if (components.length === 0) {
-        await scaffoldStateStoreComponent(scaffolder, templateScaffolder, componentsPath);
-        await scaffoldPubSubComponent(scaffolder, templateScaffolder, componentsPath);
-    }
 }
 
 interface ScaffoldWizardContext {
@@ -286,8 +262,6 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                 return { 'type': 'rename', name };
             }
         });
-
-    await scaffoldDaprComponents(scaffolder, templateScaffolder);
 }
 
 const createScaffoldDaprTasksCommand = (scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, scaffolder, templateScaffolder, ui);
