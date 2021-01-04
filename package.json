@@ -216,10 +216,6 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.httpPort.description%",
 						"default": -1
 					},
-					"image": {
-						"type": "string",
-						"description": "%vscode-dapr.tasks.dapr.properties.image.description%"
-					},
 					"logLevel": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.logLevel.description%",

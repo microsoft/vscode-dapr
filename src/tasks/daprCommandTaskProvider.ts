@@ -20,7 +20,6 @@ export interface DaprTaskDefinition extends TaskDefinition {
     enableProfiling?: boolean;
     grpcPort?: number;
     httpPort?: number;
-    image?: string;
     logLevel?: 'debug' | 'info' | 'warning' | 'error' | 'fatal' | 'panic';
     placementHostAddress?: string;
     profilePort?: number;
@@ -49,7 +48,6 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
                                 .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
                                 .withNamedArg('--enable-profiling', daprDefinition.enableProfiling, { assignValue: true })
-                                .withNamedArg('--image', daprDefinition.image)
                                 .withNamedArg('--log-level', daprDefinition.logLevel)
                                 .withNamedArg('--placement-host-address', daprDefinition.placementHostAddress)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)

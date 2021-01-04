@@ -25,7 +25,6 @@
     "vscode-dapr.tasks.dapr.properties.enableProfiling.description": "Whether to enable pprof profiling via an HTTP endpoint.",
     "vscode-dapr.tasks.dapr.properties.grpcPort.description": "The gRPC port for Dapr to listen on.",
     "vscode-dapr.tasks.dapr.properties.httpPort.description": "The HTTP port for Dapr to listen on.",
-    "vscode-dapr.tasks.dapr.properties.image.description": "The image to build the code in (<repository>/<image>).",
     "vscode-dapr.tasks.dapr.properties.logLevel.description": "Sets the log verbosity.",
     "vscode-dapr.tasks.dapr.properties.placementHostAddress.description": "The host on which the placement service resides.",
     "vscode-dapr.tasks.dapr.properties.profilePort.description": "The port for the profile server to listen on.",
