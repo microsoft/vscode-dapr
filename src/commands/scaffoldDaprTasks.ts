@@ -44,6 +44,7 @@ function getDefaultPort(configuration: DebugConfiguration | undefined): number {
 
         case 'node':
         case 'node2':
+        case 'pwa-node':
             return NodePort;
 
         case 'python':
