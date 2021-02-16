@@ -95,11 +95,11 @@ function compilePackedTaskFactory(mode: 'production' | 'development'): () => Pro
                         const info = stats?.toJson();
 
                         if (stats?.hasErrors()) {
-                            return reject(new Error(info.errors.join('\n')));
+                            return reject(new Error(info!.errors!.join('\n')));
                         }
 
                         if (stats?.hasWarnings()) {
-                            info.warnings.forEach((warning: unknown) => console.warn(warning));
+                            info!.warnings!.forEach((warning: unknown) => console.warn(warning));
                         }
 
                         return resolve();

@@ -3,6 +3,7 @@
 
 import * as vscode from 'vscode';
 import { IAzureUserInput, IAzureQuickPickOptions, IActionContext, AzureWizardPromptStep, AzureWizard } from 'vscode-azureextensionui';
+import ext from '../ext';
 
 interface WizardOptions<T> {
     hideStepCount?: boolean;
@@ -88,7 +89,9 @@ export class AggregateUserInput implements UserInput {
             telemetry: {
                 measurements: {},
                 properties: {}
-            }
+            },
+            ui: ext.ui,
+            valuesToMask: []
         };
 
         const wizard = new AzureWizard(
