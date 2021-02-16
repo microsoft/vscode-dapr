@@ -16,19 +16,19 @@ Local development with Dapr requires a running instance of Docker; follow the [D
 
 Follow the [Dapr guide](https://dapr.io/#download) to install the Dapr CLI for your platform and initialize the Dapr runtime.
 
-> This extension requires Dapr version 0.10.0 or later.
+> This extension requires Dapr version 1.0.0 or later.
 
 ### Visual Studio Code
 
 Follow the [VS Code guide](https://code.visualstudio.com/) for installing VS Code for your platform.
 
-> This extension requires Visual Studio Code version 1.48 or later.
+> This extension requires Visual Studio Code version 1.53 or later.
 
 ## Feature Overview
 
 ### Scaffold Dapr task, launch, and component assets
 
-While extensions for Visual Studio Code make it easy to debug applications for a variety of platforms (like .NET Core, Node.js, Python, etc.), coordinating the debugger with the Dapr runtime can be tricky. The Dapr extension helps scaffold VS Code tasks, augments debug launch configurations, and generates the Dapr component assets needed to debug your application within the Dapr environment.
+While extensions for Visual Studio Code make it easy to debug applications for a variety of platforms (like .NET Core, Node.js, Python, etc.), coordinating the debugger with the Dapr runtime can be tricky. The Dapr extension helps scaffold VS Code tasks, augments debug launch configurations, and (optionally) generates the Dapr component assets needed to debug your application within the Dapr environment.
 
 ![Scaffold Dapr Tasks](assets/readme/scaffoldDaprTasks.png)
 
