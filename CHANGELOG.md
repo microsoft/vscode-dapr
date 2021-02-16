@@ -1,5 +1,13 @@
 # Change Log
 
+## v0.4.0 - 16 February 2021
+
+Updates related to the Dapr 1.0.0 release.
+
+### Fixed
+
+* Match deprecation of `daprd` `--placement-address` property [#129](https://github.com/microsoft/vscode-dapr/issues/129)
+
 ## v0.3.0 - 03 September 2020
 
 A collection of accumulated fixes and minor enhancements.
