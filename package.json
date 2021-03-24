@@ -100,6 +100,15 @@
 				"category": "Dapr"
 			}
 		],
+		"configuration": {
+			"title": "Dapr",
+			"properties": {
+				"vscode-dapr.configuration.daprdPath": {
+					"type": "string",
+					"description": "%vscode-dapr.configuration.daprdPath.description%"
+				}
+			}
+		},
 		"menus": {
 			"view/item/context": [
 				{
@@ -404,7 +413,7 @@
 			"activitybar": [
 				{
 					"id": "dapr-explorer",
-					"title": "Dapr",
+					"title": "%vscode-dapr.view-containers.dapr-explorer.title%",
 					"icon": "assets/images/dapr.svg"
 				}
 			]
