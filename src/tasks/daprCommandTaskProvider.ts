@@ -27,7 +27,7 @@ export interface DaprTaskDefinition extends TaskDefinition {
 }
 
 export default class DaprCommandTaskProvider extends CommandTaskProvider {
-    constructor(telemetryProvider: TelemetryProvider) {
+    constructor(daprPathProvider: () => string, telemetryProvider: TelemetryProvider) {
         super(
             (definition, callback) => {
                 return telemetryProvider.callWithTelemetry(
@@ -37,7 +37,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                         
                         const command =
                             CommandLineBuilder
-                                .create('dapr', 'run')
+                                .create(daprPathProvider(), 'run')
                                 .withNamedArg('--app-id', daprDefinition.appId)
                                 .withNamedArg('--app-max-concurrency', daprDefinition.appMaxConcurrency)
                                 .withNamedArg('--app-port', daprDefinition.appPort)

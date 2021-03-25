@@ -73,7 +73,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			
 			const settingsProvider = new VsCodeSettingsProvider();
 
-			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(telemetryProvider)));
+			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(() => settingsProvider.daprdPath, telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(() => settingsProvider.daprdPath, new NodeEnvironmentProvider(), telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider(daprApplicationProvider, telemetryProvider)));
 			
