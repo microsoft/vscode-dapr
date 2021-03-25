@@ -40,6 +40,7 @@ export interface DaprdTaskDefinition extends TaskDefinition {
 
 export default class DaprdCommandTaskProvider extends CommandTaskProvider {
     constructor(
+        daprdPathProvider: () => string,
         environmentProvider: EnvironmentProvider,
         telemetryProvider: TelemetryProvider) {
         super(
@@ -51,7 +52,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                         
                         const command =
                             CommandLineBuilder
-                                .create('daprd')
+                                .create(daprdPathProvider())
                                 .withNamedArg('--allowed-origins', daprDefinition.allowedOrigins)
                                 .withNamedArg('--app-id', daprDefinition.appId)
                                 .withNamedArg('--app-max-concurrency', daprDefinition.appMaxConcurrency)
