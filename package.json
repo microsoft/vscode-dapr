@@ -100,6 +100,19 @@
 				"category": "Dapr"
 			}
 		],
+		"configuration": {
+			"title": "Dapr",
+			"properties": {
+				"dapr.paths.daprPath": {
+					"type": "string",
+					"description": "%vscode-dapr.configuration.paths.daprPath.description%"
+				},
+				"dapr.paths.daprdPath": {
+					"type": "string",
+					"description": "%vscode-dapr.configuration.paths.daprdPath.description%"
+				}
+			}
+		},
 		"menus": {
 			"view/item/context": [
 				{
@@ -404,7 +417,7 @@
 			"activitybar": [
 				{
 					"id": "dapr-explorer",
-					"title": "Dapr",
+					"title": "%vscode-dapr.view-containers.dapr-explorer.title%",
 					"icon": "assets/images/dapr.svg"
 				}
 			]
