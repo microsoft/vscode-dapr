@@ -103,13 +103,13 @@
 		"configuration": {
 			"title": "Dapr",
 			"properties": {
-				"vscode-dapr.configuration.daprPath": {
+				"dapr.paths.daprPath": {
 					"type": "string",
-					"description": "%vscode-dapr.configuration.daprPath.description%"
+					"description": "%vscode-dapr.configuration.paths.daprPath.description%"
 				},
-				"vscode-dapr.configuration.daprdPath": {
+				"dapr.paths.daprdPath": {
 					"type": "string",
-					"description": "%vscode-dapr.configuration.daprdPath.description%"
+					"description": "%vscode-dapr.configuration.paths.daprdPath.description%"
 				}
 			}
 		},

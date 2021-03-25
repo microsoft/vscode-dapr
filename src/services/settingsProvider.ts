@@ -15,7 +15,7 @@ export default class VsCodeSettingsProvider implements SettingsProvider {
     }
 
     private getConfigurationValue(name: string): string | undefined {
-        const configuration = vscode.workspace.getConfiguration('vscode-dapr.configuration');
+        const configuration = vscode.workspace.getConfiguration('dapr.paths');
 
         return configuration.get(name);
     }
