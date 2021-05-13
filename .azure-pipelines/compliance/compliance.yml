@@ -23,4 +23,5 @@ steps:
   displayName: 'Post Analysis'
   inputs:
     AllTools: true
+    ToolLogsNotFoundAction: Standard
   condition: in(variables['Build.Reason'], 'Manual', 'Schedule')
