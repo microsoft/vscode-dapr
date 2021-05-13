@@ -3,6 +3,7 @@ jobs:
   pool:
     vmImage: windows-latest
   steps:
+  - template: compliance/compliance.yml
   - template: common/setup.yml
   - template: common/governance.yml   # Force governance before test to avoid false-positives.
   - template: common/build.yml
