@@ -7,6 +7,7 @@ import * as nls from 'vscode-nls';
 import { DaprApplication } from "./daprApplicationProvider";
 import { HttpClient, HttpResponse } from './httpClient';
 import { getLocalizationPathForFile } from '../util/localization';
+import { Process } from '../util/process'; 
 
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
@@ -64,22 +65,15 @@ export default class HttpDaprClient implements DaprClient {
     }
 
     async stopApp(application: DaprApplication): Promise<void> {
-        const exec = require('child_process').exec;
-        const cmd = `dapr stop --app-id ${application.appId}`;
+        // could shutdown via http -- todo: file as request, control plane for sidecar
+        // make use of wrappers around child process
+        const temp = await Process.exec(`dapr stop --app-id ${application.appId}`);
         
-        exec(cmd, (error: { message: any; }, stdout: any, stderr: any) => {
-            if (error) {
-                console.log(`error: ${error.message}`);
-                vscode.window.showInformationMessage(error.message);
-                return;
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`);
-                vscode.window.showInformationMessage(stderr);
-                return;
-            }
-            vscode.window.showInformationMessage(stdout);
-            console.log(`stdout: ${stdout}`);
-        });
+        if(temp.code == 0) {
+            vscode.window.showInformationMessage(temp.stdout);
+        } else {
+            vscode.window.showInformationMessage(temp.stderr);
+
+        }
     }
 }
