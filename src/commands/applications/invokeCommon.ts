@@ -8,6 +8,7 @@ import { UserInput, WizardStep } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
 import { IActionContext, ITelemetryContext } from 'vscode-azureextensionui';
 import { getLocalizationPathForFile } from '../../util/localization';
+import DaprApplicationTreeDataProvider from '../../views/applications/daprApplicationTreeDataProvider';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -140,4 +141,8 @@ export async function invoke(context: IActionContext, daprApplicationProvider: D
 
             outputChannel.show();
         });
+}
+
+export async function stop(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, ui: UserInput, application: DaprApplication | undefined): Promise<void> {
+    await daprClient.stopApp(await getApplication(context.telemetry, daprApplicationProvider, ui, application))
 }

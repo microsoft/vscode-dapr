@@ -8,12 +8,14 @@ import { DaprApplication } from "./daprApplicationProvider";
 import { HttpClient, HttpResponse } from './httpClient';
 import { getLocalizationPathForFile } from '../util/localization';
 
+
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface DaprClient {
     invokeGet(application: DaprApplication, method: string, token?: vscode.CancellationToken): Promise<unknown>;
     invokePost(application: DaprApplication, method: string, payload?: unknown, token?: vscode.CancellationToken): Promise<unknown>;
     publishMessage(application: DaprApplication, pubSubName: string, topic: string, payload?: unknown, token?: vscode.CancellationToken): Promise<void>;
+    stopApp(application: DaprApplication): Promise<unknown>;
 }
 
 function manageResponse(response: HttpResponse): unknown {
@@ -59,5 +61,25 @@ export default class HttpDaprClient implements DaprClient {
         const url = `http://localhost:${application.httpPort}/v1.0/publish/${pubSubName}/${topic}`;
 
         await this.httpClient.post(url, payload, { json: true }, token);
+    }
+
+    async stopApp(application: DaprApplication): Promise<void> {
+        const exec = require('child_process').exec;
+        const cmd = `dapr stop --app-id ${application.appId}`;
+        
+        exec(cmd, (error: { message: any; }, stdout: any, stderr: any) => {
+            if (error) {
+                console.log(`error: ${error.message}`);
+                vscode.window.showInformationMessage(error.message);
+                return;
+            }
+            if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                vscode.window.showInformationMessage(stderr);
+                return;
+            }
+            vscode.window.showInformationMessage(stdout);
+            console.log(`stdout: ${stdout}`);
+        });
     }
 }

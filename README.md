@@ -52,6 +52,12 @@ You can also use the extension to directly publish events to running application
 
 ![Publish Message](assets/readme/publishMessage.png)
 
+### Stop Dapr applications
+
+The Dapr extension allows you to directly stop locally-running applications without using the command line.
+
+![Stop Application](assets/readme/stopApp.png)
+
 ## Telemetry
 
 ### Data Collection

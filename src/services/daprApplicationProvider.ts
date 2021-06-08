@@ -99,7 +99,7 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
     }
 
     private async onRefresh(): Promise<void> {
-        const processes = await this.processProvider.listProcesses('daprd');
+        const processes = await this.processProvider.listProcesses('dapr');
         
         this.applications = processes
             .map(process => toApplication(process.cmd, process.pid))
