@@ -8,7 +8,6 @@ import { UserInput, WizardStep } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
 import { IActionContext, ITelemetryContext } from 'vscode-azureextensionui';
 import { getLocalizationPathForFile } from '../../util/localization';
-import DaprApplicationTreeDataProvider from '../../views/applications/daprApplicationTreeDataProvider';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 

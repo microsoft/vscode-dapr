@@ -68,10 +68,9 @@ export default class HttpDaprClient implements DaprClient {
         const temp = await Process.exec(`dapr stop --app-id ${application.appId}`);
         
         if(temp.code == 0) {
-            vscode.window.showInformationMessage(temp.stdout);
+            void vscode.window.showInformationMessage(temp.stdout);
         } else {
-            vscode.window.showInformationMessage(temp.stderr);
-
+            void vscode.window.showInformationMessage(temp.stderr);
         }
     }
 }
