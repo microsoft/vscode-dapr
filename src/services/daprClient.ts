@@ -65,8 +65,6 @@ export default class HttpDaprClient implements DaprClient {
     }
 
     async stopApp(application: DaprApplication): Promise<void> {
-        // could shutdown via http -- todo: file as request, control plane for sidecar
-        // make use of wrappers around child process
         const temp = await Process.exec(`dapr stop --app-id ${application.appId}`);
         
         if(temp.code == 0) {
