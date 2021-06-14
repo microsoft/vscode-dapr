@@ -252,10 +252,7 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.profilePort.description%",
 						"default": -1
 					}
-				},
-				"required": [
-					"command"
-				]
+				}
 			},
 			{
 				"type": "daprd",
@@ -386,7 +383,10 @@
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.sentryAddress.description%"
 					}
-				}
+				},
+				"required": [
+					"appId"
+				]
 			},
 			{
 				"type": "daprd-down",
