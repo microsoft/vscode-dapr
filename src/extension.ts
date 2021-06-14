@@ -24,6 +24,7 @@ import createReportIssueCommand from './commands/help/reportIssue';
 import createReviewIssuesCommand from './commands/help/reviewIssues';
 import createGetStartedCommand from './commands/help/getStarted';
 import createPlatformProcessProvider from './services/processProvider';
+import createOpenDaprDashboardCommand from './commands/openDaprDashboard';
 import LocalDaprInstallationManager from './services/daprInstallationManager';
 import HandlebarsTemplateScaffolder from './scaffolding/templateScaffolder';
 import LocalScaffolder from './scaffolding/scaffolder';
@@ -70,7 +71,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reviewIssues', createReviewIssuesCommand(ui));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprComponents', createScaffoldDaprComponentsCommand(scaffolder, templateScaffolder));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
-			
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand());
 			const settingsProvider = new VsCodeSettingsProvider();
 
 			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(() => settingsProvider.daprPath, telemetryProvider)));
