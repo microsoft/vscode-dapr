@@ -9,6 +9,7 @@
 
     "vscode-dapr.help.readDocumentation.title": "Read Documentation",
     "vscode-dapr.help.getStarted.title": "Get Started",
+    "vscode-dapr.help.installDapr.title": "Install Dapr",
     "vscode-dapr.help.reportIssue.title": "Report Issue",
     "vscode-dapr.help.reviewIssues.title": "Review Issues",
     "vscode-dapr.tasks.scaffoldDaprComponents.title": "Scaffold Dapr Components",
