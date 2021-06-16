@@ -92,7 +92,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			registerDisposable(
 				vscode.window.registerTreeDataProvider(
 					'vscode-dapr.views.applications',
-					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider, daprInstallationManager))));
+					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider, daprInstallationManager, ui))));
 
 			registerDisposable(
 				vscode.window.registerTreeDataProvider(

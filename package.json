@@ -423,7 +423,24 @@
 					"icon": "assets/images/dapr.svg"
 				}
 			]
-		}
+		},
+		"viewsWelcome": [
+			{
+				"view": "vscode-dapr.views.applications",
+				"contents": "%vscode-dapr.views.applications.contents.notInitialized%",
+				"when": "vscode-dapr.views.applications.state == 'notInitialized'"
+			},
+			{
+				"view": "vscode-dapr.views.applications",
+				"contents": "%vscode-dapr.views.applications.contents.notInstalled%",
+				"when": "vscode-dapr.views.applications.state == 'notInstalled'"
+			},
+			{
+				"view": "vscode-dapr.views.applications",
+				"contents": "%vscode-dapr.views.applications.contents.notRunning%",
+				"when": "vscode-dapr.views.applications.state == 'notRunning'"
+			}
+		]
 	},
 	"scripts": {
 		"clean": "gulp clean",

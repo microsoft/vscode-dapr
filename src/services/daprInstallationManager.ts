@@ -51,7 +51,7 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
                 context.buttons = [
                     {
                         callback: async () => {
-                            await this.ui.executeCommand('vscode-dapr.commands.help.installDapr')
+                            await this.ui.executeCommand('vscode-dapr.help.installDapr')
                         },
                         title: localize('services.daprInstallationManager.installLatestTitle', 'Install Latest Dapr')
                     }
@@ -60,7 +60,7 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
                 context.suppressReportIssue = true;
             }
 
-            throw new Error(localize('services.daprInstallationManager.versionNotInstalled', 'A compatible version of Dapr has not been found. You may need to install a more recent version.'));
+            throw new Error(localize('services.daprInstallationManager.versionNotInstalled', 'A compatible version of the Dapr CLI has not been found. You may need to install a more recent version.'));
         }
     }
 
@@ -76,7 +76,7 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
                 context.buttons = [
                     {
                         callback: async () => {
-                            await this.ui.executeCommand('vscode-dapr.commands.help.installDapr')
+                            await this.ui.executeCommand('vscode-dapr.help.installDapr')
                         },
                         title: localize('services.daprInstallationManager.installLatestTitle', 'Install Latest Dapr')
                     }
