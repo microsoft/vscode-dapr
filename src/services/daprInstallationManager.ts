@@ -1,98 +1,159 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as process from 'process';
-import { AsyncLazy } from '../util/lazy';
-import { Process } from '../util/process';
+import * as semver from 'semver';
+import { DaprCliClient } from './daprCliClient';
+import * as nls from 'vscode-nls';
+import { getLocalizationPathForFile } from '../util/localization';
+import { IErrorHandlingContext } from 'vscode-azureextensionui';
+import { UserInput } from './userInput';
 
-export interface DaprVersion {
-    cli: string | undefined;
-    runtime: string | undefined;
-}
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface DaprInstallationManager {
-    getVersion(): Promise<DaprVersion | undefined>;
+    ensureInstalled(context?: IErrorHandlingContext): Promise<void>;
+    ensureInstalledVersion(cliVersion: string, context?: IErrorHandlingContext): Promise<void>;
+
+    ensureInitialized(context?: IErrorHandlingContext): Promise<void>;
+    ensureInitializedVersion(cliVersion: string, runtimeVersion: string, context?: IErrorHandlingContext): Promise<void>;
+
+    isInstalled(): Promise<boolean>;
+    isVersionInstalled(cliVersion: string): Promise<boolean>;
+
     isInitialized(): Promise<boolean>;
+    isVersionInitialized(cliVersion: string, runtimeVersion: string): Promise<boolean>;
 }
 
-function getCliVersion(versionOutput: string): string | undefined {
-    const result = /^CLI version: (?<version>\d+.\d+.\d+)\s*/gm.exec(versionOutput);
-
-    return result?.groups?.['version'];
+function isSemverSatisfied(version: string, range: string): boolean {
+    return semver.satisfies(version, range, { includePrerelease: true });
 }
-
-function getRuntimeVersion(versionOutput: string): string | undefined {
-    const result = /^Runtime version: (?<version>\d+.\d+.\d+)\s*/gm.exec(versionOutput);
-
-    return result?.groups?.['version'];
-}
-
-const daprImageName = 'daprio/dapr';
-const daprTaggedImagePrefix = `${daprImageName}:`;
 
 export default class LocalDaprInstallationManager implements DaprInstallationManager {
-    private readonly version: AsyncLazy<DaprVersion>;
-    private readonly initialized: AsyncLazy<boolean>;
+    private readonly satisfiedCliVersions = new Set<string>();
+    private readonly satisfiedRuntimeVersions = new Set<string>();
 
-    constructor() {
-        this.version = new AsyncLazy<DaprVersion>(
-            async () => {
-                const versionResult = await Process.exec('dapr --version');
-
-                if (versionResult.code === 0) {
-                    return {
-                        cli: getCliVersion(versionResult.stdout),
-                        runtime: getRuntimeVersion(versionResult.stdout)
-                    };
-                }
-
-                return undefined;
-            });
-
-        this.initialized = new AsyncLazy<boolean>(
-            async () => {
-                const network = process.env.DAPR_NETWORK || 'bridge';
-                const psResult = await Process.exec(`docker ps --filter network=${network} --format "{{.ID}}"`);
-
-                if (psResult.code === 0) {
-                    const containerIds = psResult.stdout.split('\n').filter(id => id.length > 0);
-
-                    if (containerIds.length > 0) {
-                        const inspectResult = await Process.exec(`docker inspect ${containerIds.join(' ')} --format "{{.Config.Image}}"`);
-                        
-                        if (inspectResult.code === 0) {
-                            const containerImages = inspectResult.stdout.split('\n');
-                            
-                            if (containerImages.find(image => image === daprImageName || image.startsWith(daprTaggedImagePrefix))) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-
-                return undefined;
-            });
+    constructor(
+        private readonly expectedCliVersion: string,
+        private readonly expectedRuntimeVersion: string,
+        private readonly daprCliClient: DaprCliClient,
+        private readonly ui: UserInput) {
     }
 
-    async getVersion(): Promise<DaprVersion | undefined> {
-        try {
-            return await this.version.getValue();
-        } catch {
-            // No-op errors.
+    ensureInstalled(context?: IErrorHandlingContext): Promise<void> {
+        return this.ensureInstalledVersion(this.expectedCliVersion, context);
+    }
+
+    async ensureInstalledVersion(cliVersion: string, context?: IErrorHandlingContext): Promise<void> {
+        const isVersionInstalled = await this.isVersionInstalled(cliVersion);
+
+        if (!isVersionInstalled) {
+            if (context) {
+                context.buttons = [
+                    {
+                        callback: async () => {
+                            await this.ui.executeCommand('vscode-dapr.commands.help.installDapr')
+                        },
+                        title: localize('services.daprInstallationManager.installLatestTitle', 'Install Latest Dapr')
+                    }
+                ];
+
+                context.suppressReportIssue = true;
+            }
+
+            throw new Error(localize('services.daprInstallationManager.versionNotInstalled', 'A compatible version of Dapr has not been found. You may need to install a more recent version.'));
+        }
+    }
+
+    ensureInitialized(context?: IErrorHandlingContext): Promise<void> {
+        return this.ensureInitializedVersion(this.expectedCliVersion, this.expectedRuntimeVersion, context);
+    }
+
+    async ensureInitializedVersion(cliVersion: string, runtimeVersion: string, context?: IErrorHandlingContext): Promise<void> {
+        const isVersionInstalled = await this.isVersionInitialized(cliVersion, runtimeVersion);
+
+        if (!isVersionInstalled) {
+            if (context) {
+                context.buttons = [
+                    {
+                        callback: async () => {
+                            await this.ui.executeCommand('vscode-dapr.commands.help.installDapr')
+                        },
+                        title: localize('services.daprInstallationManager.installLatestTitle', 'Install Latest Dapr')
+                    }
+                ];
+
+                context.suppressReportIssue = true;
+            }
+
+            throw new Error(localize('services.daprInstallationManager.versionNotInitialized', 'A compatible version of Dapr has not been initialized. You may need to install a more recent version.'));
+        }
+    }
+
+    isInstalled(): Promise<boolean> {
+        return this.isVersionInstalled(this.expectedCliVersion);
+    }
+
+    async isVersionInstalled(cliVersion: string): Promise<boolean> {      
+        if (this.satisfiedCliVersions.has(cliVersion)) {
+            return true;
         }
 
-        return undefined;
-    }
-
-    async isInitialized(): Promise<boolean> {
         try {
-            if (await this.initialized.getValue()) {
+            const version = await this.daprCliClient.version();
+            
+            if (version.cli !== undefined && isSemverSatisfied(version.cli, cliVersion)) {
+                this.satisfiedCliVersions.add(cliVersion);
+
                 return true;
             }
-        } catch {
-            // No-op errors.
+        }
+        catch {
+            // No-op.
+        }
+        
+        return false;
+    }
+
+    isInitialized(): Promise<boolean> {
+        return this.isVersionInitialized(this.expectedCliVersion, this.expectedRuntimeVersion);
+    }
+
+    async isVersionInitialized(cliVersion: string, runtimeVersion: string): Promise<boolean> {      
+        if (this.satisfiedCliVersions.has(cliVersion) && 
+            this.satisfiedRuntimeVersions.has(runtimeVersion)) {
+            return true;
         }
 
+        try {
+            const version = await this.daprCliClient.version();
+
+            let cliVersionSatisfied = false;
+
+            if (version.cli === 'edge'
+                || (version.cli !== undefined && isSemverSatisfied(version.cli, cliVersion))) {
+                this.satisfiedCliVersions.add(cliVersion);
+
+                cliVersionSatisfied = true;
+            }
+
+            let runtimeVersionSatisfied = false;
+
+            if (version.runtime !== undefined
+                && version.runtime !== 'n/a'
+                && isSemverSatisfied(version.runtime, runtimeVersion)) {
+                this.satisfiedRuntimeVersions.add(runtimeVersion);
+
+                runtimeVersionSatisfied = true;
+            }
+
+            if (cliVersionSatisfied && runtimeVersionSatisfied) {
+                return true;
+            }
+        }
+        catch {
+            // No-op.
+        }
+        
         return false;
     }
 }

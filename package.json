@@ -13,7 +13,9 @@
 		"ui"
 	],
 	"engines": {
-		"vscode": "^1.54.0"
+		"dapr-cli": ">=1.0",
+		"dapr-runtime": ">=1.0",
+		"vscode": "^1.57.0"
 	},
 	"categories": [
 		"Debuggers",
@@ -443,8 +445,9 @@
 		"@types/mocha": "^8.2.2",
 		"@types/node": "^12.20.1",
 		"@types/ps-list": "^6.2.1",
+		"@types/semver": "^7.3.6",
 		"@types/terser-webpack-plugin": "^5.0.2",
-		"@types/vscode": "^1.54.0",
+		"@types/vscode": "^1.57.0",
 		"@types/webpack": "^4.41.26",
 		"@typescript-eslint/eslint-plugin": "^4.19.0",
 		"@typescript-eslint/parser": "^4.19.0",
@@ -471,6 +474,7 @@
 		"fs-extra": "^9.1.0",
 		"handlebars": "^4.7.7",
 		"ps-list": "^7.2.0",
+		"semver": "^5.7.1",
 		"vscode-azureextensionui": "^0.40.0",
 		"vscode-nls": "^5.0.0"
 	}
