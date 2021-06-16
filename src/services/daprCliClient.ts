@@ -18,11 +18,11 @@ export interface DaprCliClient {
 }
 
 export default class LocalDaprCliClient implements DaprCliClient {
-    constructor(private readonly daprPathProvider: () => Promise<string>) {
+    constructor(private readonly daprPathProvider: () => string) {
     }
 
     async version(): Promise<DaprVersion> {
-        const daprPath = await this.daprPathProvider();
+        const daprPath = this.daprPathProvider();
         const command =
             CommandLineBuilder
                 .create(daprPath, '--version')
