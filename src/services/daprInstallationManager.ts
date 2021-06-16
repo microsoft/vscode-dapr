@@ -28,6 +28,12 @@ function isSemverSatisfied(version: string, range: string): boolean {
     return semver.satisfies(version, range, { includePrerelease: true });
 }
 
+const localCliBuildVersion = 'edge';
+
+function isCliSemverSatisfied(version: string | undefined, range: string): boolean {
+    return version === localCliBuildVersion || (version !== undefined && isSemverSatisfied(version, range));
+}
+
 export default class LocalDaprInstallationManager implements DaprInstallationManager {
     private readonly satisfiedCliVersions = new Set<string>();
     private readonly satisfiedRuntimeVersions = new Set<string>();
@@ -47,18 +53,7 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
         const isVersionInstalled = await this.isVersionInstalled(cliVersion);
 
         if (!isVersionInstalled) {
-            if (context) {
-                context.buttons = [
-                    {
-                        callback: async () => {
-                            await this.ui.executeCommand('vscode-dapr.help.installDapr')
-                        },
-                        title: localize('services.daprInstallationManager.installLatestTitle', 'Install Latest Dapr')
-                    }
-                ];
-
-                context.suppressReportIssue = true;
-            }
+            this.setErrorHandlingContext(context);
 
             throw new Error(localize('services.daprInstallationManager.versionNotInstalled', 'A compatible version of the Dapr CLI has not been found. You may need to install a more recent version.'));
         }
@@ -72,18 +67,7 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
         const isVersionInstalled = await this.isVersionInitialized(cliVersion, runtimeVersion);
 
         if (!isVersionInstalled) {
-            if (context) {
-                context.buttons = [
-                    {
-                        callback: async () => {
-                            await this.ui.executeCommand('vscode-dapr.help.installDapr')
-                        },
-                        title: localize('services.daprInstallationManager.installLatestTitle', 'Install Latest Dapr')
-                    }
-                ];
-
-                context.suppressReportIssue = true;
-            }
+            this.setErrorHandlingContext(context);
 
             throw new Error(localize('services.daprInstallationManager.versionNotInitialized', 'A compatible version of Dapr has not been initialized. You may need to install a more recent version.'));
         }
@@ -101,7 +85,7 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
         try {
             const version = await this.daprCliClient.version();
             
-            if (version.cli !== undefined && isSemverSatisfied(version.cli, cliVersion)) {
+            if (isCliSemverSatisfied(version.cli, cliVersion)) {
                 this.satisfiedCliVersions.add(cliVersion);
 
                 return true;
@@ -129,8 +113,7 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
 
             let cliVersionSatisfied = false;
 
-            if (version.cli === 'edge'
-                || (version.cli !== undefined && isSemverSatisfied(version.cli, cliVersion))) {
+            if (isCliSemverSatisfied(version.cli, cliVersion)) {
                 this.satisfiedCliVersions.add(cliVersion);
 
                 cliVersionSatisfied = true;
@@ -155,5 +138,20 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
         }
         
         return false;
+    }
+
+    private setErrorHandlingContext(context: IErrorHandlingContext | undefined): void {
+        if (context) {
+            context.buttons = [
+                {
+                    callback: async () => {
+                        await this.ui.executeCommand('vscode-dapr.help.installDapr')
+                    },
+                    title: localize('services.daprInstallationManager.installLatestTitle', 'Install Latest Dapr')
+                }
+            ];
+
+            context.suppressReportIssue = true;
+        }
     }
 }
