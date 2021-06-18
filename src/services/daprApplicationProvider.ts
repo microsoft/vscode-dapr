@@ -1,17 +1,15 @@
-
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import psList = require('ps-list');
 import * as vscode from 'vscode';
 import Timer from '../util/timer';
+import psList = require('ps-list');
 import { ProcessProvider } from './processProvider';
 
 export interface DaprApplication {
     appId: string;
     httpPort: number;
     pid: number;
-    appPort: number;
 }
 
 export interface DaprApplicationProvider {
@@ -42,23 +40,6 @@ function getHttpPort(cmd: string): number {
     }
 }
 
-
-function getAppPort(cmd: string): number {
-    const portRegEx = /--app-port "?(?<port>\d+)"?/g;
-        
-    const portMatch = portRegEx.exec(cmd);
-    
-    const portString = portMatch?.groups?.['port'];
-    
-    if (portString !== undefined) {
-        return parseInt(portString, 10);
-    } else {
-        return NaN;
-    }
-}
-
-
-
 function toApplication(cmd: string | undefined, pid: number): DaprApplication | undefined {
     if (cmd) {
         const appId = getAppId(cmd);
@@ -67,8 +48,7 @@ function toApplication(cmd: string | undefined, pid: number): DaprApplication | 
             return {
                 appId,
                 httpPort: getHttpPort(cmd),
-                pid,
-                appPort: getAppPort(cmd),
+                pid
             };
         }
     }
