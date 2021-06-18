@@ -1,6 +1,8 @@
+
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import psList = require('ps-list');
 import * as vscode from 'vscode';
 import Timer from '../util/timer';
 import { ProcessProvider } from './processProvider';
@@ -9,6 +11,7 @@ export interface DaprApplication {
     appId: string;
     httpPort: number;
     pid: number;
+    appPort: number;
 }
 
 export interface DaprApplicationProvider {
@@ -39,6 +42,23 @@ function getHttpPort(cmd: string): number {
     }
 }
 
+
+function getAppPort(cmd: string): number {
+    const portRegEx = /--app-port "?(?<port>\d+)"?/g;
+        
+    const portMatch = portRegEx.exec(cmd);
+    
+    const portString = portMatch?.groups?.['port'];
+    
+    if (portString !== undefined) {
+        return parseInt(portString, 10);
+    } else {
+        return NaN;
+    }
+}
+
+
+
 function toApplication(cmd: string | undefined, pid: number): DaprApplication | undefined {
     if (cmd) {
         const appId = getAppId(cmd);
@@ -47,7 +67,8 @@ function toApplication(cmd: string | undefined, pid: number): DaprApplication | 
             return {
                 appId,
                 httpPort: getHttpPort(cmd),
-                pid
+                pid,
+                appPort: getAppPort(cmd),
             };
         }
     }
@@ -99,12 +120,23 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
     }
 
     private async onRefresh(): Promise<void> {
-        const processes = await this.processProvider.listProcesses('daprd');
-        
-        this.applications = processes
-            .map(process => toApplication(process.cmd, process.pid))
+        const obj = await psList();
+        this.applications = obj
+            .map((process: psList.ProcessDescriptor) => process as ProcessInfo)
+            .filter((process: ProcessInfo) => (process.cmd != undefined && process.cmd.indexOf("daprd") != -1))
+            .map((process: ProcessInfo) => toApplication(process.cmd, process.pid))
             .filter((application): application is DaprApplication => application !== undefined);
         
         this.onDidChangeEmitter.fire();
     }
+}
+
+export interface ProcessInfo {
+    "pid": number, 
+    "ppid": number, 
+    "uid": number, 
+    "cpu": number,
+    "memory": number, 
+    "name": string,
+    "cmd": string
 }
