@@ -34,13 +34,20 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
         return element.getTreeItem();
     }
 
-    async getChildren(): Promise<TreeNode[]> {
-        const applications = await this.applicationProvider.getApplications();
-
-        if (applications.length > 0) {
-            return applications.map(application => new DaprApplicationNode(application));
+    async getChildren(element?: TreeNode): Promise<TreeNode[]> {
+        if (element) {
+            return element.getChildren?.() ?? [];
         } else {
-            return [ new NoApplicationsRunningNode(this.installationManager) ];
+            const applications = await this.applicationProvider.getApplications();
+            const appNodeList = applications.map(application => new DaprApplicationNode(application));
+ 
+
+            if (appNodeList.length > 0) {
+                return appNodeList;
+            } else {
+                return [ new NoApplicationsRunningNode(this.installationManager) ];
+            }
         }
+
     }
 }

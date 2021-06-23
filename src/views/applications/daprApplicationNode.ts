@@ -4,18 +4,23 @@
 import * as vscode from 'vscode';
 import TreeNode from "../treeNode";
 import { DaprApplication } from '../../services/daprApplicationProvider';
+import DaprComponentsNode from "./daprComponentsNode";
 
 export default class DaprApplicationNode implements TreeNode {
     constructor(public readonly application: DaprApplication) {
     }
 
     getTreeItem(): Promise<vscode.TreeItem> {
-        const item = new vscode.TreeItem(this.application.appId);
+        const item = new vscode.TreeItem(this.application.appId, vscode.TreeItemCollapsibleState.Collapsed);
 
         item.contextValue = 'application';
 
         item.iconPath = new vscode.ThemeIcon('globe');
 
         return Promise.resolve(item);
+    }
+
+    getChildren(): TreeNode[] {
+        return [new DaprComponentsNode('Components', this.application)];
     }
 }
