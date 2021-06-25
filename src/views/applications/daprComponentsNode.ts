@@ -6,14 +6,14 @@ import * as nls from 'vscode-nls';
 import TreeNode from "../treeNode";
 import { DaprApplication } from '../../services/daprApplicationProvider';
 import DaprMetadataNode from './daprMetadataNode';
-import { DaprClient, DaprMetadata } from '../../services/daprClient';
+import { DaprClient } from '../../services/daprClient';
 import { getLocalizationPathForFile } from '../../util/localization';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 
 export default class DaprComponentsNode implements TreeNode {
-    constructor(public readonly application: DaprApplication, public readonly daprClient: DaprClient) {
+    constructor(private readonly application: DaprApplication, private readonly daprClient: DaprClient, private readonly token?: vscode.CancellationToken | undefined) {
     }
 
     getTreeItem(): Promise<vscode.TreeItem> {
@@ -30,18 +30,12 @@ export default class DaprComponentsNode implements TreeNode {
 
     async getChildren(): Promise<TreeNode[]> {
         const label = localize('views.applications.daprComponentsNode.noComponents', 'There are no components in use.');
-        const responseData = await this.getMetadata(this.application);
+        const responseData = await this.daprClient.getMetadata(this.application, this.token);
         const components = responseData.components;
         if(components.length > 0) {
             return components.map(comp => new DaprMetadataNode(comp.name, 'database'));
         }
         return [new DaprMetadataNode(label, 'warning')];
     }
-
-    private async getMetadata(application: DaprApplication, token?: vscode.CancellationToken | undefined): Promise<DaprMetadata>  {
-        //const daprClient = new HttpDaprClient(new AxiosHttpClient());
-        return await this.daprClient.getMetadata(application, token);
-    }
-    
 }
 
