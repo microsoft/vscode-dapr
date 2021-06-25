@@ -100,11 +100,10 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
     }
 
     private async onRefresh(): Promise<void> {
-        const obj = await psList();
-        this.applications = obj
-            .map((process: psList.ProcessDescriptor) => process as ProcessInfo)
-            .filter((process: ProcessInfo) => (process.cmd != undefined && process.cmd.indexOf("daprd") != -1))
-            .map((process: ProcessInfo) => toApplication(process.cmd, process.pid))
+        const processes = await this.processProvider.listProcesses('daprd');
+        
+        this.applications = processes
+            .map(process => toApplication(process.cmd, process.pid))
             .filter((application): application is DaprApplication => application !== undefined);
         
         this.onDidChangeEmitter.fire();

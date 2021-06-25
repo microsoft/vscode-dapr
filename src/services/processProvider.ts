@@ -18,12 +18,17 @@ export interface ProcessProvider {
 export class UnixProcessProvider implements ProcessProvider {
     async listProcesses(name: string): Promise<ProcessInfo[]> {
         const processes = await psList();
-
         return processes
-            .filter(process => process.name === name)
+            .filter(process => process.name === name || this.hasDaprdPath(process))
             .map(process => ({ name: process.name, cmd: process.cmd ?? '', pid: process.pid }));
     }
+
+    hasDaprdPath(process: psList.ProcessDescriptor): boolean {
+        const cmdPath = process.cmd?.split(" ")[0];
+        return cmdPath?.split("/")?.pop()?.toString() === "daprd";
+    }
 }
+
 
 function getWmicValue(line: string): string {
     const index = line.indexOf('=');
