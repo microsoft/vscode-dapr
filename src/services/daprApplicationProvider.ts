@@ -3,7 +3,6 @@
 
 import * as vscode from 'vscode';
 import Timer from '../util/timer';
-import psList = require('ps-list');
 import { ProcessProvider } from './processProvider';
 
 export interface DaprApplication {
@@ -108,14 +107,4 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
         
         this.onDidChangeEmitter.fire();
     }
-}
-
-export interface ProcessInfo {
-    "pid": number, 
-    "ppid": number, 
-    "uid": number, 
-    "cpu": number,
-    "memory": number, 
-    "name": string,
-    "cmd": string
 }
