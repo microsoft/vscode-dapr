@@ -7,6 +7,7 @@ import TreeNode from '../treeNode';
 import DaprApplicationNode from './daprApplicationNode';
 import NoApplicationsRunningNode from './noApplicationsRunningNode';
 import { DaprInstallationManager } from '../../services/daprInstallationManager';
+import { DaprClient } from '../../services/daprClient';
 
 export default class DaprApplicationTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<TreeNode | null | undefined>();
@@ -14,7 +15,8 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
 
     constructor(
         private readonly applicationProvider: DaprApplicationProvider,
-        private readonly installationManager: DaprInstallationManager) {
+        private readonly installationManager: DaprInstallationManager,
+        private readonly daprClient: DaprClient) {
         super(() => {
             this.applicationProviderListener.dispose();
             this.onDidChangeTreeDataEmitter.dispose();
@@ -39,7 +41,7 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
             return element.getChildren?.() ?? [];
         } else {
             const applications = await this.applicationProvider.getApplications();
-            const appNodeList = applications.map(application => new DaprApplicationNode(application));
+            const appNodeList = applications.map(application => new DaprApplicationNode(application, this.daprClient));
  
 
             if (appNodeList.length > 0) {
