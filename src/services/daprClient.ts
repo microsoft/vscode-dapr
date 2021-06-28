@@ -7,7 +7,6 @@ import * as nls from 'vscode-nls';
 import { DaprApplication } from "./daprApplicationProvider";
 import { HttpClient, HttpResponse } from './httpClient';
 import { getLocalizationPathForFile } from '../util/localization';
-import { Process } from '../util/process'; 
 
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
@@ -16,7 +15,7 @@ export interface DaprClient {
     invokeGet(application: DaprApplication, method: string, token?: vscode.CancellationToken): Promise<unknown>;
     invokePost(application: DaprApplication, method: string, payload?: unknown, token?: vscode.CancellationToken): Promise<unknown>;
     publishMessage(application: DaprApplication, pubSubName: string, topic: string, payload?: unknown, token?: vscode.CancellationToken): Promise<void>;
-    stopApp(application: DaprApplication): Promise<unknown>;
+    stopApp(application: DaprApplication): void;
 }
 
 function manageResponse(response: HttpResponse): unknown {
@@ -64,13 +63,7 @@ export default class HttpDaprClient implements DaprClient {
         await this.httpClient.post(url, payload, { json: true }, token);
     }
 
-    async stopApp(application: DaprApplication): Promise<void> {
-        const cmdResponse = await Process.exec(`dapr stop --app-id ${application.appId}`);
-        
-        if(cmdResponse.code == 0) {
-            void vscode.window.showInformationMessage(cmdResponse.stdout);
-        } else {
-            void vscode.window.showInformationMessage(cmdResponse.stderr);
-        }
+    stopApp(application: DaprApplication): void {
+        process.kill(application.pid, 'SIGKILL')
     }
 }
