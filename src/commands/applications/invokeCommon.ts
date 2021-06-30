@@ -143,10 +143,11 @@ export async function invoke(context: IActionContext, daprApplicationProvider: D
 }
 
 export async function stop(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, ui: UserInput, application: DaprApplication | undefined): Promise<void> {
+    const selectedApplication = await getApplication(context.telemetry, daprApplicationProvider, ui, application)
     try {
-        daprClient.stopApp(await getApplication(context.telemetry, daprApplicationProvider, ui, application))
+        daprClient.stopApp(selectedApplication)
     } catch(error) {
-        await ui.showWarningMessage(localize('commands.invokeCommon.stopAppError', 'Failed to stop the selected application'),
+        await ui.showWarningMessage(localize('commands.invokeCommon.stopAppError', 'Failed to stop application \'{0}\'', selectedApplication.appId),
         { modal: true });
     }
 }
