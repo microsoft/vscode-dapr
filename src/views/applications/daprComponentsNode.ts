@@ -13,7 +13,7 @@ const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 
 export default class DaprComponentsNode implements TreeNode {
-    constructor(private readonly application: DaprApplication, private readonly daprClient: DaprClient, private readonly token?: vscode.CancellationToken | undefined) {
+    constructor(private readonly application: DaprApplication, private readonly daprClient: DaprClient) {
     }
 
     getTreeItem(): Promise<vscode.TreeItem> {
@@ -30,7 +30,7 @@ export default class DaprComponentsNode implements TreeNode {
 
     async getChildren(): Promise<TreeNode[]> {
         const label = localize('views.applications.daprComponentsNode.noComponents', 'There are no components in use.');
-        const responseData = await this.daprClient.getMetadata(this.application, this.token);
+        const responseData = await this.daprClient.getMetadata(this.application);
         const components = responseData.components;
         if(components.length > 0) {
             return components.map(comp => new DaprMetadataNode(comp.name, 'database'));
