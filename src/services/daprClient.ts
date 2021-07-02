@@ -71,7 +71,12 @@ export default class HttpDaprClient implements DaprClient {
             //       As a partial mitigation, use `taskkill` to kill the entire process tree.
             void Process.exec(`taskkill /pid ${application.pid} /t /f`);
         } else {
-            process.kill(application.pid, 'SIGKILL')
+            if(application.ppid != undefined) {
+                process.kill(application.ppid, 'SIGTERM')
+            } else {
+                process.kill(application.pid, 'SIGTERM')
+            }
+            
         }
     }
 }

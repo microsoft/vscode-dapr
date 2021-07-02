@@ -9,6 +9,7 @@ export interface ProcessInfo {
     cmd: string;
     name: string;
     pid: number;
+    ppid: number | undefined;
 }
 
 export interface ProcessProvider {
@@ -18,11 +19,25 @@ export interface ProcessProvider {
 export class UnixProcessProvider implements ProcessProvider {
     async listProcesses(name: string): Promise<ProcessInfo[]> {
         const processes = await psList();
-
-        return processes
-            .filter(process => process.name === name)
-            .map(process => ({ name: process.name, cmd: process.cmd ?? '', pid: process.pid }));
+        const temp = processes
+            .filter(process => process.name === name || this.hasDaprdPath(process))
+            .map(process => ({ name: process.name, cmd: process.cmd ?? '', pid: process.pid , ppid: this.getDaprPpid(process)}));
+        return temp;
     }
+    
+    hasDaprdPath(process: psList.ProcessDescriptor): boolean {
+        const cmdPath = process.cmd?.split(" ")[0];
+        return cmdPath?.indexOf("/") != -1 //check that contains daprd filepath and not daprd cmd
+            && cmdPath?.split("/")?.pop()?.toString() === "daprd";
+    }
+
+    getDaprPpid(process: psList.ProcessDescriptor): number | undefined {
+        if(this.hasDaprdPath(process)) {
+            return process.ppid
+        } 
+        return undefined;
+    }
+
 }
 
 function getWmicValue(line: string): string {
@@ -50,8 +65,9 @@ export class WindowsProcessProvider implements ProcessProvider {
             const cmd = getWmicValue(lines[(i * 5) + 2]);
             const name = getWmicValue(lines[(i * 5) + 3]);
             const pid = parseInt(getWmicValue(lines[(i * 5) + 4]), 10);
+            const ppid = undefined; 
 
-            processes.push({ cmd, name, pid });
+            processes.push({ cmd, name, pid, ppid});
         }
 
         return processes;
