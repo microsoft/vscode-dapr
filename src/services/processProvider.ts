@@ -3,6 +3,7 @@
 
 import * as psList from 'ps-list';
 import * as os from 'os';
+import * as which from 'which'
 import { Process } from '../util/process';
 
 export interface ProcessInfo {
@@ -24,8 +25,9 @@ export class UnixProcessProvider implements ProcessProvider {
     }
 
     hasDaprdPath(process: psList.ProcessDescriptor): boolean {
-        const cmdPath = process.cmd?.split(" ")[0];
-        return cmdPath?.split("/")?.pop()?.toString() === "daprd";
+        const daprdPath = which.sync('daprd', {nothrow: true});
+        const executable = daprdPath !== null ? daprdPath : which.sync('daprd.exe', {nothrow: true});
+        return executable !== null ? (process.cmd?.indexOf(executable) !== -1) : false;
     }
 }
 

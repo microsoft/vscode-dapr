@@ -446,6 +446,7 @@
 		"@types/terser-webpack-plugin": "^5.0.2",
 		"@types/vscode": "^1.54.0",
 		"@types/webpack": "^4.41.26",
+		"@types/which": "^2.0.1",
 		"@typescript-eslint/eslint-plugin": "^4.19.0",
 		"@typescript-eslint/parser": "^4.19.0",
 		"del": "^6.0.0",
