@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
 import * as psList from 'ps-list';
 import * as os from 'os';
+import * as which from 'which';
 import { Process } from '../util/process';
 
 export interface ProcessInfo {
@@ -24,11 +26,11 @@ export class UnixProcessProvider implements ProcessProvider {
             .map(process => ({ name: process.name, cmd: process.cmd ?? '', pid: process.pid , ppid: this.getDaprPpid(process)}));
         return temp;
     }
-    
+
     hasDaprdPath(process: psList.ProcessDescriptor): boolean {
-        const cmdPath = process.cmd?.split(" ")[0];
-        return cmdPath?.indexOf("/") != -1 //check that contains daprd filepath and not daprd cmd
-            && cmdPath?.split("/")?.pop()?.toString() === "daprd";
+        const daprdPath = which.sync('daprd', {nothrow: true});
+        const executable = daprdPath !== null ? daprdPath : which.sync('daprd.exe', {nothrow: true});
+        return executable !== null ? (process.cmd?.indexOf(executable) !== -1) : false;
     }
 
     getDaprPpid(process: psList.ProcessDescriptor): number | undefined {
@@ -48,7 +50,7 @@ function getWmicValue(line: string): string {
 
 export class WindowsProcessProvider implements ProcessProvider {
     async listProcesses(name: string): Promise<ProcessInfo[]> {
-        const list = await Process.exec(`wmic process where "name='${name}.exe'" get commandline,name,processid /format:list`);
+        const list = await Process.exec(`wmic process where "name='${name}.exe'" get commandline,name,parentprocessid,processid /format:list`);
         
         // Lines in the output are delimited by "<CR><CR><LF>".
         const lines = list.stdout.split('\r\r\n');
@@ -64,8 +66,9 @@ export class WindowsProcessProvider implements ProcessProvider {
 
             const cmd = getWmicValue(lines[(i * 5) + 2]);
             const name = getWmicValue(lines[(i * 5) + 3]);
-            const pid = parseInt(getWmicValue(lines[(i * 5) + 4]), 10);
-            const ppid = undefined; 
+            const ppid = parseInt(getWmicValue(lines[(i*5) + 4]), 10); 
+            const pid = parseInt(getWmicValue(lines[(i * 5) + 5]), 10);
+            
 
             processes.push({ cmd, name, pid, ppid});
         }

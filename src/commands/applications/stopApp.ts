@@ -8,10 +8,10 @@ import { DaprClient } from '../../services/daprClient';
 import { stop } from './invokeCommon';
 import { IActionContext } from 'vscode-azureextensionui';
 
-export async function stopApp(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, ui: UserInput, node: DaprApplicationNode | undefined): Promise<void> {
-    return stop(context, daprApplicationProvider, daprClient, ui, node?.application);
+export async function stopApp(daprClient: DaprClient, ui: UserInput, node: DaprApplicationNode | undefined): Promise<void> {  
+    return await daprClient.stopApp(node?.application, ui);
 }
 
-const createStopCommand = (daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, ui: UserInput) => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => stopApp(context, daprApplicationProvider, daprClient, ui, node);
+const createStopCommand = (daprClient: DaprClient, ui: UserInput) => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => stopApp(daprClient, ui, node);
 
 export default createStopCommand;
