@@ -5,6 +5,8 @@ import CommandLineBuilder from '../util/commandLineBuilder';
 import CommandTaskProvider from './commandTaskProvider';
 import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
+import { IActionContext } from 'vscode-azureextensionui';
+import { DaprInstallationManager } from '../services/daprInstallationManager';
 
 export interface DaprTaskDefinition extends TaskDefinition {
     appId?: string;
@@ -27,12 +29,14 @@ export interface DaprTaskDefinition extends TaskDefinition {
 }
 
 export default class DaprCommandTaskProvider extends CommandTaskProvider {
-    constructor(daprPathProvider: () => string, telemetryProvider: TelemetryProvider) {
+    constructor(daprInstallationManager: DaprInstallationManager, daprPathProvider: () => string, telemetryProvider: TelemetryProvider) {
         super(
             (definition, callback) => {
                 return telemetryProvider.callWithTelemetry(
                     'vscode-dapr.tasks.dapr',
-                    () => {
+                    async (context: IActionContext) => {
+                        await daprInstallationManager.ensureInitialized(context.errorHandling);
+
                         const daprDefinition = definition as DaprTaskDefinition;
                         
                         const command =
