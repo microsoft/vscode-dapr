@@ -7,6 +7,7 @@ import TreeNode from '../treeNode';
 import DaprApplicationNode from './daprApplicationNode';
 import { DaprInstallationManager } from '../../services/daprInstallationManager';
 import { UserInput } from '../../services/userInput';
+import { DaprClient } from '../../services/daprClient';
 
 export default class DaprApplicationTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<TreeNode | null | undefined>();
@@ -14,6 +15,7 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
 
     constructor(
         private readonly applicationProvider: DaprApplicationProvider,
+        private readonly daprClient: DaprClient,
         private readonly installationManager: DaprInstallationManager,
         private readonly ui: UserInput) {
         super(() => {
@@ -35,11 +37,9 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
         return element.getTreeItem();
     }
 
-    async getChildren(): Promise<TreeNode[]> {
-        const applications = await this.applicationProvider.getApplications();
-
-        if (applications.length > 0) {
-            return applications.map(application => new DaprApplicationNode(application));
+    async getChildren(element?: TreeNode): Promise<TreeNode[]> {
+        if (element) {
+            return element.getChildren?.() ?? [];
         } else {
             const isInitialized = await this.installationManager.isInitialized();
 
@@ -55,6 +55,13 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
                 }
             }
     
+            const applications = await this.applicationProvider.getApplications();
+            const appNodeList = applications.map(application => new DaprApplicationNode(application, this.daprClient));
+
+            if (appNodeList.length > 0) {
+                return appNodeList;
+            }
+
             // NOTE: Returning zero children indicates to VS Code that is should display a "welcome view".
             //       The one chosen for display depends on the context set above.
 
