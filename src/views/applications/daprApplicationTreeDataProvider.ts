@@ -58,14 +58,10 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
             const applications = await this.applicationProvider.getApplications();
             const appNodeList = applications.map(application => new DaprApplicationNode(application, this.daprClient));
 
-            if (appNodeList.length > 0) {
-                return appNodeList;
-            }
-
             // NOTE: Returning zero children indicates to VS Code that is should display a "welcome view".
             //       The one chosen for display depends on the context set above.
 
-            return [];
+            return appNodeList;
         }
     }
 }
