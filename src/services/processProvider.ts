@@ -4,6 +4,7 @@
 import * as psList from 'ps-list';
 import * as os from 'os';
 import * as which from 'which'
+import * as fs from 'fs'
 import { Process } from '../util/process';
 
 export interface ProcessInfo {
@@ -13,21 +14,38 @@ export interface ProcessInfo {
 }
 
 export interface ProcessProvider {
-    listProcesses(name: string): Promise<ProcessInfo[]>;
+    listProcesses(name: string, daprdPath: string): Promise<ProcessInfo[]>;
 }
 
 export class UnixProcessProvider implements ProcessProvider {
-    async listProcesses(name: string): Promise<ProcessInfo[]> {
+    async listProcesses(name: string, daprdPath: string): Promise<ProcessInfo[]> {
         const processes = await psList();
         return processes
-            .filter(process => process.name === name || this.hasDaprdPath(process))
+            .filter(process => process.name === name || this.hasDaprdPath(process, daprdPath))
             .map(process => ({ name: process.name, cmd: process.cmd ?? '', pid: process.pid }));
     }
 
-    hasDaprdPath(process: psList.ProcessDescriptor): boolean {
-        const daprdPath = which.sync('daprd', {nothrow: true});
-        const executable = daprdPath !== null ? daprdPath : which.sync('daprd.exe', {nothrow: true});
-        return executable !== null ? (process.cmd?.indexOf(executable) !== -1) : false;
+    hasDaprdPath(process: psList.ProcessDescriptor, daprdPath: string): boolean | undefined {
+        const daprd = which.sync('daprd', {nothrow: true});
+        if(daprd !== null) { //check if daprd is in PATH env
+            return process.cmd?.startsWith(daprd); 
+        } else if (daprd === null && daprdPath !== "daprd") { //if not in PATH, check if config path provided
+            return process.cmd?.startsWith(daprdPath)
+        } else { //if not in PATH and no config path, check if filepath is daprd executable
+            const daprdEndPoint = "/daprd ";
+            const endpoint = process.cmd?.indexOf(daprdEndPoint);
+            if(endpoint !== undefined && endpoint !== -1) {
+                const executable = process.cmd?.substring(0, endpoint + daprdEndPoint.length - 1)
+                if(executable !== undefined) {
+                    try {
+                        fs.accessSync(executable, fs.constants.X_OK);
+                        return process.cmd?.startsWith(executable);
+                    } catch(ex) {
+                        return;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -39,7 +57,7 @@ function getWmicValue(line: string): string {
 }
 
 export class WindowsProcessProvider implements ProcessProvider {
-    async listProcesses(name: string): Promise<ProcessInfo[]> {
+    async listProcesses(name: string, _daprdPath: string): Promise<ProcessInfo[]> {
         const list = await Process.exec(`wmic process where "name='${name}.exe'" get commandline,name,processid /format:list`);
         
         // Lines in the output are delimited by "<CR><CR><LF>".

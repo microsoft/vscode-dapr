@@ -52,7 +52,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 		(actionContext: IActionContext) => {
 			actionContext.telemetry.properties.isActivationEvent = 'true';
 			
-			const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider(createPlatformProcessProvider()));
+			const settingsProvider = new VsCodeSettingsProvider();
+			const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider(createPlatformProcessProvider(), settingsProvider));
 			const daprClient = new HttpDaprClient(new AxiosHttpClient());
 			const ui = new AggregateUserInput(ext.ui);
 
@@ -71,8 +72,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprComponents', createScaffoldDaprComponentsCommand(scaffolder, templateScaffolder));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
 			
-			const settingsProvider = new VsCodeSettingsProvider();
-
 			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(() => settingsProvider.daprPath, telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(() => settingsProvider.daprdPath, new NodeEnvironmentProvider(), telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider(daprApplicationProvider, telemetryProvider)));
