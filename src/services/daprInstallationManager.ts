@@ -64,9 +64,9 @@ export default class LocalDaprInstallationManager implements DaprInstallationMan
     }
 
     async ensureInitializedVersion(cliVersion: string, runtimeVersion: string, context?: IErrorHandlingContext): Promise<void> {
-        const isVersionInstalled = await this.isVersionInitialized(cliVersion, runtimeVersion);
+        const isVersionInitialized = await this.isVersionInitialized(cliVersion, runtimeVersion);
 
-        if (!isVersionInstalled) {
+        if (!isVersionInitialized) {
             this.setErrorHandlingContext(context);
 
             throw new Error(localize('services.daprInstallationManager.versionNotInitialized', 'A compatible version of Dapr has not been initialized. You may need to install a more recent version.'));
