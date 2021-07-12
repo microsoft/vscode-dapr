@@ -9,7 +9,6 @@ import { DaprApplication } from "./daprApplicationProvider";
 import { HttpClient, HttpResponse } from './httpClient';
 import { getLocalizationPathForFile } from '../util/localization';
 import { Process } from '../util/process';
-import { UserInput } from './userInput';
 
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
@@ -18,7 +17,7 @@ export interface DaprClient {
     invokeGet(application: DaprApplication, method: string, token?: vscode.CancellationToken): Promise<unknown>;
     invokePost(application: DaprApplication, method: string, payload?: unknown, token?: vscode.CancellationToken): Promise<unknown>;
     publishMessage(application: DaprApplication, pubSubName: string, topic: string, payload?: unknown, token?: vscode.CancellationToken): Promise<void>;
-    stopApp(application: DaprApplication | undefined, ui: UserInput): Promise<void>;
+    stopApp(application: DaprApplication | undefined): void;
     getMetadata(application: DaprApplication, token?: vscode.CancellationToken): Promise<DaprMetadata>;
 }
 
@@ -67,20 +66,15 @@ export default class HttpDaprClient implements DaprClient {
         await this.httpClient.post(url, payload, { json: true }, token);
     }
 
-    async stopApp(application: DaprApplication | undefined, ui: UserInput): Promise<void> {
+    stopApp(application: DaprApplication | undefined): void {
         const processId = application?.ppid !== undefined ? application.ppid : application?.pid;
-        try {
-            if (os.platform() === 'win32') {
-                // NOTE: Windows does not support SIGTERM/SIGINT/SIGBREAK, so there can be no graceful process shutdown.
-                //       As a partial mitigation, use `taskkill` to kill the entire process tree.
-                processId !== undefined ? void Process.exec(`taskkill /pid ${processId} /t /f`) : null;
-            } else {
-                processId !== undefined ? process.kill(processId, 'SIGTERM') : null;
-            } 
-        } catch(error) {
-            await ui.showWarningMessage(localize('commands.invokeCommon.stopAppError', 'Failed to stop application \'{0}\'', application?.appId),
-        { modal: true });
-        }
+        if (os.platform() === 'win32') {
+            // NOTE: Windows does not support SIGTERM/SIGINT/SIGBREAK, so there can be no graceful process shutdown.
+            //       As a partial mitigation, use `taskkill` to kill the entire process tree.
+            processId !== undefined ? void Process.exec(`taskkill /pid ${processId} /t /f`) : null;
+        } else {
+            processId !== undefined ? process.kill(processId, 'SIGTERM') : null;
+        } 
     }
     
     async getMetadata(application: DaprApplication, token?: vscode.CancellationToken | undefined): Promise<DaprMetadata>  {
