@@ -4,11 +4,9 @@
 import * as url from 'url';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
-import * as os from 'os';
 import { DaprApplication } from "./daprApplicationProvider";
 import { HttpClient, HttpResponse } from './httpClient';
 import { getLocalizationPathForFile } from '../util/localization';
-import { Process } from '../util/process';
 
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
@@ -17,7 +15,6 @@ export interface DaprClient {
     invokeGet(application: DaprApplication, method: string, token?: vscode.CancellationToken): Promise<unknown>;
     invokePost(application: DaprApplication, method: string, payload?: unknown, token?: vscode.CancellationToken): Promise<unknown>;
     publishMessage(application: DaprApplication, pubSubName: string, topic: string, payload?: unknown, token?: vscode.CancellationToken): Promise<void>;
-    stopApp(application: DaprApplication | undefined): void;
     getMetadata(application: DaprApplication, token?: vscode.CancellationToken): Promise<DaprMetadata>;
 }
 
@@ -64,17 +61,6 @@ export default class HttpDaprClient implements DaprClient {
         const url = `http://localhost:${application.httpPort}/v1.0/publish/${pubSubName}/${topic}`;
 
         await this.httpClient.post(url, payload, { json: true }, token);
-    }
-
-    stopApp(application: DaprApplication | undefined): void {
-        const processId = application?.ppid !== undefined ? application.ppid : application?.pid;
-        if (os.platform() === 'win32') {
-            // NOTE: Windows does not support SIGTERM/SIGINT/SIGBREAK, so there can be no graceful process shutdown.
-            //       As a partial mitigation, use `taskkill` to kill the entire process tree.
-            processId !== undefined ? void Process.exec(`taskkill /pid ${processId} /t /f`) : null;
-        } else {
-            processId !== undefined ? process.kill(processId, 'SIGTERM') : null;
-        } 
     }
     
     async getMetadata(application: DaprApplication, token?: vscode.CancellationToken | undefined): Promise<DaprMetadata>  {
