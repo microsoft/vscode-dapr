@@ -104,7 +104,7 @@
 				"command": "vscode-dapr.tasks.openDaprDashboard",
 				"title": "%vscode-dapr.tasks.openDaprDashboard.title%",
 				"category": "Dapr",
-				"icon": "$(default-view-icon)"
+				"icon": "$(dashboard)"
 			}
 		],
 		"configuration": {

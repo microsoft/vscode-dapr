@@ -1,35 +1,47 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-floating-promises */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 import * as vscode from 'vscode';
 import portfinder = require('portfinder');
+import { spawn } from 'child_process';
+import createPlatformProcessProvider from '../services/processProvider';
 
 
+function getPortFromCommand(command: string): string {
+    if (command.includes('--port')){
+        command = command.split('--port')[1].toString().trim().split(" ")[0]
+    }
+    if (command.includes('-p') ){
+        command = command.split('-p')[1].toString().trim().split(" ")[0]
+    }
+    return command;
+}
+class ProcessBasedDaprDashboardProvider {
+    private processPlatform = createPlatformProcessProvider();
+    port:string | undefined;
 
-function ensureTerminalDoesNotExist(): boolean {
-    const terminals = <vscode.Terminal[]>(<any>vscode.window).terminals;
-    for (const terminal of terminals) {
-        if (terminal.name === 'Dapr Dashboard Terminal') {
-            vscode.window.showInformationMessage('Dapr Dashboard Terminal Already Exists');
-            return false;
+    async checkForDaprDashboard(): Promise<void> {
+        const dashboardProcesses = await this.processPlatform.listProcesses('dashboard');
+        if (dashboardProcesses.length > 0) {
+            this.port = getPortFromCommand(dashboardProcesses[0].cmd)
         }
     }
-	return true;
 }
-
 export async function openDaprDashboard(): Promise<void> {
-    if (ensureTerminalDoesNotExist()){
-        const terminal = vscode.window.createTerminal(`Dapr Dashboard Terminal`);
-        await portfinder.getPortPromise()
+    const daprDashboardProvider = new ProcessBasedDaprDashboardProvider();
+
+    await daprDashboardProvider.checkForDaprDashboard();
+
+    if (daprDashboardProvider.port == undefined){
+        portfinder.getPortPromise()
         .then((port) => {
-            const portUsed: number = port;
-            terminal.sendText(`dapr dashboard -p ${portUsed}`);
-            vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(`http://localhost:${portUsed}`));
-        })
+            spawn('dapr', ['dashboard', '-p', `${port}`]);
+            daprDashboardProvider.port = port.toString();
+        }) 
         .catch((err) => {
-            return Promise.reject(err);
-        });
-    }
+            console.log(err);
+        });    } 
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    await vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${daprDashboardProvider.port}`));
 }
 
 const createOpenDaprDashboardCommand = () => (): Promise<void> => openDaprDashboard();
