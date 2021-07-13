@@ -16,6 +16,7 @@ export interface WizardStep<T> {
 }
 
 export interface UserInput {
+    executeCommand(command: string, ...rest: unknown[]): Promise<void>;
     openExternal(url: string): Promise<boolean>;
     showInputBox(options: vscode.InputBoxOptions): Promise<string>;
     showIssueReporter(): Promise<void>;
@@ -52,6 +53,10 @@ class WizardPromptStep<T> extends AzureWizardPromptStep<WizardContext<T>> {
 
 export class AggregateUserInput implements UserInput {
     constructor(private readonly ui: IAzureUserInput) {
+    }
+
+    async executeCommand(command: string, ...rest: unknown[]): Promise<void> {
+        await vscode.commands.executeCommand(command, ...rest);
     }
 
     async openExternal(url: string): Promise<boolean> {

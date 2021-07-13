@@ -8,6 +8,8 @@ import CommandTaskProvider from './commandTaskProvider';
 import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
 import { EnvironmentProvider } from '../services/environmentProvider';
+import { IActionContext } from 'vscode-azureextensionui';
+import { DaprInstallationManager } from '../services/daprInstallationManager';
 
 type DaprdLogLevel = 'debug' | 'info' | 'warning' | 'error' | 'fatal' | 'panic';
 
@@ -40,6 +42,7 @@ export interface DaprdTaskDefinition extends TaskDefinition {
 
 export default class DaprdCommandTaskProvider extends CommandTaskProvider {
     constructor(
+        daprInstallationManager: DaprInstallationManager,
         daprdPathProvider: () => string,
         environmentProvider: EnvironmentProvider,
         telemetryProvider: TelemetryProvider) {
@@ -47,7 +50,9 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
             (definition, callback) => {
                 return telemetryProvider.callWithTelemetry(
                     'vscode-dapr.tasks.daprd',
-                    () => {
+                    async (context: IActionContext) => {
+                        await daprInstallationManager.ensureInitialized(context.errorHandling);
+
                         const daprDefinition = definition as DaprdTaskDefinition;
                         
                         const command =
@@ -78,7 +83,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withArgs(daprDefinition.args)
                                 .build();
 
-                        return callback(command, { cwd: definition.cwd });
+                        await callback(command, { cwd: definition.cwd });
                     });
             },
             /* isBackgroundTask: */ true,
