@@ -30,6 +30,12 @@ import LocalScaffolder from './scaffolding/scaffolder';
 import NodeEnvironmentProvider from './services/environmentProvider';
 import createScaffoldDaprComponentsCommand from './commands/scaffoldDaprComponents';
 import VsCodeSettingsProvider from './services/settingsProvider';
+import LocalDaprCliClient from './services/daprCliClient';
+import createInstallDaprCommand from './commands/help/installDapr';
+
+interface ExtensionPackage {
+	engines: { [key: string]: string };
+}
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -67,19 +73,27 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.readDocumentation', createReadDocumentationCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.getStarted', createGetStartedCommand(ui));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.installDapr', createInstallDaprCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reportIssue', createReportIssueCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reviewIssues', createReviewIssuesCommand(ui));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprComponents', createScaffoldDaprComponentsCommand(scaffolder, templateScaffolder));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
 			
-			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(() => settingsProvider.daprPath, telemetryProvider)));
-			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(() => settingsProvider.daprdPath, new NodeEnvironmentProvider(), telemetryProvider)));
+			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;
+			const daprInstallationManager = new LocalDaprInstallationManager(
+				extensionPackage.engines['dapr-cli'],
+				extensionPackage.engines['dapr-runtime'],
+				new LocalDaprCliClient(() => settingsProvider.daprPath),
+				ui);
+
+			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(daprInstallationManager, () => settingsProvider.daprPath, telemetryProvider)));
+			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(daprInstallationManager, () => settingsProvider.daprdPath, new NodeEnvironmentProvider(), telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider(daprApplicationProvider, telemetryProvider)));
 			
 			registerDisposable(
 				vscode.window.registerTreeDataProvider(
 					'vscode-dapr.views.applications',
-					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider, new LocalDaprInstallationManager(), daprClient))));
+					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider, daprClient, daprInstallationManager, ui))));
 
 			registerDisposable(
 				vscode.window.registerTreeDataProvider(
