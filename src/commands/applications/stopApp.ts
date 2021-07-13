@@ -3,7 +3,6 @@
 
 import DaprApplicationNode from "../../views/applications/daprApplicationNode";
 import { UserInput } from '../../services/userInput';
-import { DaprClient } from '../../services/daprClient';
 import { IActionContext } from 'vscode-azureextensionui';
 import { getLocalizationPathForFile } from '../../util/localization';
 import * as nls from 'vscode-nls';
