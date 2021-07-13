@@ -57,7 +57,7 @@ function getWmicValue(line: string): string {
 }
 
 export class WindowsProcessProvider implements ProcessProvider {
-    async listProcesses(name: string, _daprdPath: string): Promise<ProcessInfo[]> {
+    async listProcesses(name: string): Promise<ProcessInfo[]> {
         const list = await Process.exec(`wmic process where "name='${name}.exe'" get commandline,name,processid /format:list`);
         
         // Lines in the output are delimited by "<CR><CR><LF>".
