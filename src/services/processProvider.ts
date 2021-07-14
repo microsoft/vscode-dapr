@@ -23,17 +23,17 @@ export class UnixProcessProvider implements ProcessProvider {
     }
 
     hasDaprdPath(process: psList.ProcessDescriptor, daprdPath: string): boolean | undefined {
-        if (daprdPath !== "daprd") { //check if config path provided
+        if (daprdPath !== 'daprd') { //check if config path provided
             return process.cmd?.startsWith(daprdPath.concat(" "))
         } else { //if no config path, check if filepath is executable
-            const daprdEndPoint = "/daprd ";
+            const daprdEndPoint = '/daprd ';
             const endpoint = process.cmd?.indexOf(daprdEndPoint);
             if(endpoint !== undefined && endpoint !== -1) {
                 const executable = process.cmd?.substring(0, endpoint + daprdEndPoint.length - 1)
                 if(executable !== undefined) {
                     try {
                         fs.accessSync(executable, fs.constants.X_OK);
-                        return process.cmd?.startsWith(executable.concat(" "));
+                        return true;
                     } catch(ex) {
                         return false;
                     }
