@@ -32,6 +32,8 @@ import createScaffoldDaprComponentsCommand from './commands/scaffoldDaprComponen
 import VsCodeSettingsProvider from './services/settingsProvider';
 import LocalDaprCliClient from './services/daprCliClient';
 import createInstallDaprCommand from './commands/help/installDapr';
+import AppDetailsTreeDataProvider from './views/details/appDetailsTreeDataProvider';
+import createGetAppDetailsCommand from './commands/applications/getAppDetails';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -65,11 +67,14 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const scaffolder = new LocalScaffolder();
 			const templatesPath = path.join(context.extensionPath, 'assets', 'templates');
 			const templateScaffolder = new HandlebarsTemplateScaffolder(templatesPath);
+			const appDetailsTreeDataProvider = new AppDetailsTreeDataProvider(daprApplicationProvider)
+
 
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.applications.publish-all-message', createPublishAllMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.views.appDetails', createGetAppDetailsCommand(appDetailsTreeDataProvider));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.readDocumentation', createReadDocumentationCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.getStarted', createGetStartedCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.installDapr', createInstallDaprCommand(ui));
@@ -94,6 +99,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				vscode.window.registerTreeDataProvider(
 					'vscode-dapr.views.applications',
 					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider, daprClient, daprInstallationManager, ui))));
+
+			registerDisposable(
+				vscode.window.registerTreeDataProvider(
+					'vscode-dapr.views.appDetails',
+					registerDisposable(appDetailsTreeDataProvider)));
 
 			registerDisposable(
 				vscode.window.registerTreeDataProvider(

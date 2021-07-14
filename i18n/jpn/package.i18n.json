@@ -3,6 +3,7 @@
 	"vscode-dapr.applications.invoke-post.title": "Invoke (POST) application method",
 	"vscode-dapr.applications.publish-message.title": "Publish message to application",
 	"vscode-dapr.applications.publish-all-message.title": "Publish Message to All Applications",
+	"vscode-dapr.views.appDetails.title": "Application Details",
 	"vscode-dapr.help.readDocumentation.title": "Read Documentation",
 	"vscode-dapr.help.getStarted.title": "Get Started",
 	"vscode-dapr.help.reportIssue.title": "Report Issue",

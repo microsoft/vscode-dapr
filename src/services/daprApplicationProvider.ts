@@ -9,6 +9,8 @@ export interface DaprApplication {
     appId: string;
     httpPort: number;
     pid: number;
+    grpcPort: number;
+    appPort: number;
 }
 
 export interface DaprApplicationProvider {
@@ -39,6 +41,34 @@ function getHttpPort(cmd: string): number {
     }
 }
 
+function getGrpcPort(cmd: string): number {
+    const portRegEx = /--dapr-grpc-port "?(?<port>\d+)"?/g;
+        
+    const portMatch = portRegEx.exec(cmd);
+    
+    const portString = portMatch?.groups?.['port'];
+    
+    if (portString !== undefined) {
+        return parseInt(portString, 10);
+    } else {
+        return 50001;
+    }
+}
+
+function getAppPort(cmd: string): number {
+    const portRegEx = /--app-port "?(?<port>\d+)"?/g;
+        
+    const portMatch = portRegEx.exec(cmd);
+    
+    const portString = portMatch?.groups?.['port'];
+    
+    if (portString !== undefined) {
+        return parseInt(portString, 10);
+    } else {
+        return 4500;
+    }
+}
+
 function toApplication(cmd: string | undefined, pid: number): DaprApplication | undefined {
     if (cmd) {
         const appId = getAppId(cmd);
@@ -47,7 +77,9 @@ function toApplication(cmd: string | undefined, pid: number): DaprApplication | 
             return {
                 appId,
                 httpPort: getHttpPort(cmd),
-                pid
+                pid,
+                grpcPort: getGrpcPort(cmd),
+                appPort: getAppPort(cmd)
             };
         }
     }
@@ -99,7 +131,7 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
     }
 
     private async onRefresh(): Promise<void> {
-        const processes = await this.processProvider.listProcesses('daprd');
+        const processes = await this.processProvider.listProcesses('dapr');
         
         this.applications = processes
             .map(process => toApplication(process.cmd, process.pid))

@@ -20,6 +20,7 @@
     "vscode-dapr.views.applications.contents.notInstalled": "A compatible version of the Dapr CLI has not been found. You may need to install a more recent version.\n[Install Latest Dapr](command:vscode-dapr.help.installDapr)",
     "vscode-dapr.views.applications.contents.notRunning": "No Dapr applications are running.",
     "vscode-dapr.views.help.name": "Help and Feedback",
+    "vscode-dapr.views.appDetails.title": "Application Details",
 
     "vscode-dapr.view-containers.dapr-explorer.title": "Dapr",
     
