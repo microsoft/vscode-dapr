@@ -510,7 +510,7 @@
 	},
 	"dependencies": {
 		"@opentelemetry/api": "^1.0.1",
- 		"@opentelemetry/tracing": "^0.23.0",
+		"@opentelemetry/tracing": "^0.23.0",
 		"axios": "^0.21.1",
 		"fs-extra": "^9.1.0",
 		"handlebars": "^4.7.7",

@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
 import * as psList from 'ps-list';
 import * as os from 'os';
-import * as which from 'which';
 import { Process } from '../util/process';
+import * as fs from 'fs'
 
 export interface ProcessInfo {
     cmd: string;
@@ -15,32 +14,47 @@ export interface ProcessInfo {
 }
 
 export interface ProcessProvider {
-    listProcesses(name: string): Promise<ProcessInfo[]>;
+    listProcesses(name: string, daprdPath: string): Promise<ProcessInfo[]>;
 }
 
 export class UnixProcessProvider implements ProcessProvider {
-    async listProcesses(name: string): Promise<ProcessInfo[]> {
+    async listProcesses(name: string, daprdPath: string): Promise<ProcessInfo[]> {
         const processes = await psList();
         const temp = processes
-            .filter(process => process.name === name || this.hasDaprdPath(process))
-            .map(process => ({ name: process.name, cmd: process.cmd ?? '', pid: process.pid , ppid: this.getDaprPpid(process)}));
+            .filter(process => process.name === name || this.hasDaprdPath(process, daprdPath))
+            .map(process => ({ name: process.name, cmd: process.cmd ?? '', pid: process.pid , ppid: this.getDaprPpid(process, daprdPath)}));
         return temp;
     }
 
-    hasDaprdPath(process: psList.ProcessDescriptor): boolean {
-        const daprdPath = which.sync('daprd', {nothrow: true});
-        const executable = daprdPath !== null ? daprdPath : which.sync('daprd.exe', {nothrow: true});
-        return executable !== null ? (process.cmd?.indexOf(executable) !== -1) : false;
+    hasDaprdPath(process: psList.ProcessDescriptor, daprdPath: string): boolean | undefined {
+        if (daprdPath !== 'daprd') { //check if config path provided
+            return process.cmd?.startsWith(daprdPath.concat(" "))
+        } else { //if no config path, check if filepath is executable
+            const daprdEndPoint = '/daprd ';
+            const endpoint = process.cmd?.indexOf(daprdEndPoint);
+            if(endpoint !== undefined && endpoint !== -1) {
+                const executable = process.cmd?.substring(0, endpoint + daprdEndPoint.length - 1)
+                if(executable !== undefined) {
+                    try {
+                        fs.accessSync(executable, fs.constants.X_OK);
+                        return true;
+                    } catch(ex) {
+                        return false;
+                    }
+                }
+            }
+        }
     }
 
-    getDaprPpid(process: psList.ProcessDescriptor): number | undefined {
-        if(this.hasDaprdPath(process)) {
+    getDaprPpid(process: psList.ProcessDescriptor, daprdPath: string): number | undefined {
+        if(this.hasDaprdPath(process, daprdPath)) {
             return process.ppid
         } 
         return undefined;
     }
 
 }
+
 
 function getWmicValue(line: string): string {
     const index = line.indexOf('=');
