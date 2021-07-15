@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import TreeNode from "../treeNode";
 
-export default class DaprAppDetailsNode implements TreeNode {
+export default class DaprDetailsNode implements TreeNode {
     constructor(private readonly metadata: string, private readonly description: string) {
     }
 

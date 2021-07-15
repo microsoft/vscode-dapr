@@ -10,7 +10,7 @@ export interface DaprApplication {
     httpPort: number;
     pid: number;
     grpcPort: number;
-    appPort: number;
+    appPort: number | undefined;
 }
 
 export interface DaprApplicationProvider {
@@ -55,7 +55,7 @@ function getGrpcPort(cmd: string): number {
     }
 }
 
-function getAppPort(cmd: string): number {
+function getAppPort(cmd: string): number | undefined {
     const portRegEx = /--app-port "?(?<port>\d+)"?/g;
         
     const portMatch = portRegEx.exec(cmd);
@@ -65,7 +65,7 @@ function getAppPort(cmd: string): number {
     if (portString !== undefined) {
         return parseInt(portString, 10);
     } else {
-        return 4500;
+        return undefined;
     }
 }
 

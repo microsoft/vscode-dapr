@@ -21,6 +21,8 @@
     "vscode-dapr.views.applications.contents.notRunning": "No Dapr applications are running.",
     "vscode-dapr.views.help.name": "Help and Feedback",
     "vscode-dapr.views.appDetails.title": "Application Details",
+    "vscode-dapr.views.componentDetails.title": "Component Details",
+    "vscode-dapr.views.details.title": "Details",
 
     "vscode-dapr.view-containers.dapr-explorer.title": "Dapr",
     
