@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
 import portfinder = require('portfinder');
 import { spawn } from 'child_process';
 
