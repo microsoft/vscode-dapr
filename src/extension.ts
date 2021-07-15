@@ -61,7 +61,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 		(actionContext: IActionContext) => {
 			actionContext.telemetry.properties.isActivationEvent = 'true';
 			
-			const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider(createPlatformProcessProvider()));
+			const settingsProvider = new VsCodeSettingsProvider();
+			const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider(createPlatformProcessProvider(), settingsProvider));
 			const daprClient = new HttpDaprClient(new AxiosHttpClient());
 			const ui = new AggregateUserInput(ext.ui);
 
@@ -85,7 +86,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprComponents', createScaffoldDaprComponentsCommand(scaffolder, templateScaffolder));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
 			
-			const settingsProvider = new VsCodeSettingsProvider();
 			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;
 			const daprInstallationManager = new LocalDaprInstallationManager(
 				extensionPackage.engines['dapr-cli'],
