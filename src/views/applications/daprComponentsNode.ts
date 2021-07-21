@@ -30,7 +30,6 @@ export default class DaprComponentsNode implements TreeNode {
     }
 
     async getChildren(): Promise<TreeNode[]> {
-        //TO DO: FIX WARNING NODE
         const label = localize('views.applications.daprComponentsNode.noComponents', 'There are no components in use.');
         const responseData = await this.daprClient.getMetadata(this.application);
         const components = responseData.components;
