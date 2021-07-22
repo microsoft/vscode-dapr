@@ -33,6 +33,7 @@
 		"onCommand:vscode-dapr.applications.invoke-post",
 		"onCommand:vscode-dapr.applications.publish-all-message",
 		"onCommand:vscode-dapr.applications.publish-message",
+		"onCommand:vscode-dapr.applications.stop-app",
 		"onCommand:vscode-dapr.help.getStarted",
 		"onCommand:vscode-dapr.help.installDapr",
 		"onCommand:vscode-dapr.help.readDocumentation",
@@ -70,6 +71,11 @@
 			{
 				"command": "vscode-dapr.applications.publish-message",
 				"title": "%vscode-dapr.applications.publish-message.title%",
+				"category": "Dapr"
+			},
+			{
+				"command": "vscode-dapr.applications.stop-app",
+				"title": "%vscode-dapr.applications.stop-app.title%",
 				"category": "Dapr"
 			},
 			{
@@ -125,15 +131,23 @@
 			"view/item/context": [
 				{
 					"command": "vscode-dapr.applications.invoke-get",
-					"when": "view == vscode-dapr.views.applications && viewItem == application"
+					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"group": "invoke"
 				},
 				{
 					"command": "vscode-dapr.applications.invoke-post",
-					"when": "view == vscode-dapr.views.applications && viewItem == application"
+					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"group": "invoke"
 				},
 				{
 					"command": "vscode-dapr.applications.publish-message",
-					"when": "view == vscode-dapr.views.applications && viewItem == application"
+					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"group": "invoke"
+				},
+				{
+					"command": "vscode-dapr.applications.stop-app",
+					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"group": "stop"
 				}
 			],
 			"view/title": [
@@ -472,6 +486,7 @@
 		"@types/terser-webpack-plugin": "^5.0.2",
 		"@types/vscode": "^1.57.0",
 		"@types/webpack": "^4.41.26",
+		"@types/which": "^2.0.1",
 		"@typescript-eslint/eslint-plugin": "^4.19.0",
 		"@typescript-eslint/parser": "^4.19.0",
 		"del": "^6.0.0",

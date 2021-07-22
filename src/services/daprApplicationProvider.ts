@@ -10,6 +10,7 @@ export interface DaprApplication {
     appId: string;
     httpPort: number;
     pid: number;
+    ppid: number | undefined; 
 }
 
 export interface DaprApplicationProvider {
@@ -40,7 +41,7 @@ function getHttpPort(cmd: string): number {
     }
 }
 
-function toApplication(cmd: string | undefined, pid: number): DaprApplication | undefined {
+function toApplication(cmd: string | undefined, pid: number, ppid: number | undefined): DaprApplication | undefined {
     if (cmd) {
         const appId = getAppId(cmd);
 
@@ -48,7 +49,8 @@ function toApplication(cmd: string | undefined, pid: number): DaprApplication | 
             return {
                 appId,
                 httpPort: getHttpPort(cmd),
-                pid
+                pid,
+                ppid
             };
         }
     }
@@ -103,7 +105,7 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
         const processes = await this.processProvider.listProcesses('daprd', this.settingsProvider.daprdPath);
         
         this.applications = processes
-            .map(process => toApplication(process.cmd, process.pid))
+            .map(process => toApplication(process.cmd, process.pid, process.ppid))
             .filter((application): application is DaprApplication => application !== undefined);
         
         this.onDidChangeEmitter.fire();

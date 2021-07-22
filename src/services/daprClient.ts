@@ -8,6 +8,7 @@ import { DaprApplication } from "./daprApplicationProvider";
 import { HttpClient, HttpResponse } from './httpClient';
 import { getLocalizationPathForFile } from '../util/localization';
 
+
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface DaprClient {
@@ -61,7 +62,7 @@ export default class HttpDaprClient implements DaprClient {
 
         await this.httpClient.post(url, payload, { json: true }, token);
     }
-
+    
     async getMetadata(application: DaprApplication, token?: vscode.CancellationToken | undefined): Promise<DaprMetadata>  {
         const originalUrl = `http://localhost:${application.httpPort}/v1.0/metadata`;
 
@@ -70,7 +71,7 @@ export default class HttpDaprClient implements DaprClient {
         return manageResponse(response) as DaprMetadata;
     }
 }
-
+    
 export interface DaprMetadata {
     components: DaprComponentMetadata[];
   }
@@ -80,3 +81,4 @@ export interface DaprMetadata {
       type: string;
       version: string;
   }
+
