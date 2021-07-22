@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 import * as vscode from 'vscode';
-import DaprDashboardProvider from '../services/daprDashboardProvider';
+import ClassBasedDaprDashboardProvider from '../services/daprDashboardProvider';
 
 
-export async function openDaprDashboard( daprDashboardProvider: DaprDashboardProvider): Promise<void> {
+export async function openDaprDashboard( classBasedDaprDashboardProvider: ClassBasedDaprDashboardProvider): Promise<void> {
 
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    await vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${daprDashboardProvider.getPortUsed()}`));
+    await vscode.env.openExternal(await classBasedDaprDashboardProvider.startDashboard());
 }
 
-const createOpenDaprDashboardCommand = ( daprDashboardProvider: DaprDashboardProvider) => (): Promise<void> => openDaprDashboard( daprDashboardProvider);
+const createOpenDaprDashboardCommand = ( classBasedDaprDashboardProvider: ClassBasedDaprDashboardProvider) => (): Promise<void> => openDaprDashboard( classBasedDaprDashboardProvider);
 export default createOpenDaprDashboardCommand;

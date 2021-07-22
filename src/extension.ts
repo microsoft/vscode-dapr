@@ -32,6 +32,7 @@ import NodeEnvironmentProvider from './services/environmentProvider';
 import createScaffoldDaprComponentsCommand from './commands/scaffoldDaprComponents';
 import VsCodeSettingsProvider from './services/settingsProvider';
 import DaprDashboardProvider from './services/daprDashboardProvider';
+import ClassBasedDaprDashboardProvider from './services/daprDashboardProvider';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -74,8 +75,9 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
 			const settingsProvider = new VsCodeSettingsProvider();
 
-			const daprDashboardProvider = new DaprDashboardProvider(settingsProvider.daprPath);
-			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand(daprDashboardProvider));
+			const classBasedDaprDashboardProvider = new ClassBasedDaprDashboardProvider(settingsProvider.daprPath);
+			
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand(classBasedDaprDashboardProvider));
 
 			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(() => settingsProvider.daprPath, telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(() => settingsProvider.daprdPath, new NodeEnvironmentProvider(), telemetryProvider)));

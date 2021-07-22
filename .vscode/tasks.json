@@ -23,6 +23,18 @@
 			"presentation": {
 				"reveal": "never"
 			}
+		},
+		{
+			"appId": "app",
+			"appPort": 80,
+			"label": "daprd-debug",
+			"type": "daprd",
+			"dependsOn": "${defaultBuildTask}"
+		},
+		{
+			"appId": "app",
+			"label": "daprd-down",
+			"type": "daprd-down"
 		}
 	]
 }
