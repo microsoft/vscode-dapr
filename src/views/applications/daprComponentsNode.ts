@@ -5,9 +5,10 @@ import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import TreeNode from "../treeNode";
 import { DaprApplication } from '../../services/daprApplicationProvider';
-import DaprMetadataNode from './daprMetadataNode';
+import DaprComponentMetadataNode from './daprComponentMetadataNode';
 import { DaprClient } from '../../services/daprClient';
 import { getLocalizationPathForFile } from '../../util/localization';
+import DaprDetailsNode from '../details/daprDetailsNode';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -33,9 +34,9 @@ export default class DaprComponentsNode implements TreeNode {
         const responseData = await this.daprClient.getMetadata(this.application);
         const components = responseData.components;
         if(components.length > 0) {
-            return components.map(comp => new DaprMetadataNode(comp.name, 'database'));
+            return components.map(comp => new DaprComponentMetadataNode(comp, 'database'));
         }
-        return [new DaprMetadataNode(label, 'warning')];
+        return [new DaprDetailsNode(label, '')];
     }
 }
 
