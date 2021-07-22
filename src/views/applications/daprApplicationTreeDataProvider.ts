@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 

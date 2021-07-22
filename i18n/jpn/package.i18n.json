@@ -6,6 +6,7 @@
 	"vscode-dapr.views.appDetails.title": "Application Details",
 	"vscode-dapr.views.componentDetails.title": "Component Details",
 	"vscode-dapr.views.details.title": "Details",
+	"vscode-dapr.applications.stop-app.title": "Stop Application",
 	"vscode-dapr.help.readDocumentation.title": "Read Documentation",
 	"vscode-dapr.help.getStarted.title": "Get Started",
 	"vscode-dapr.help.reportIssue.title": "Report Issue",
