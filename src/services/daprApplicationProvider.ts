@@ -4,11 +4,13 @@
 import * as vscode from 'vscode';
 import Timer from '../util/timer';
 import { ProcessProvider } from './processProvider';
+import { SettingsProvider } from './settingsProvider';
 
 export interface DaprApplication {
     appId: string;
     httpPort: number;
     pid: number;
+    ppid: number | undefined; 
 }
 
 export interface DaprApplicationProvider {
@@ -39,7 +41,7 @@ function getHttpPort(cmd: string): number {
     }
 }
 
-function toApplication(cmd: string | undefined, pid: number): DaprApplication | undefined {
+function toApplication(cmd: string | undefined, pid: number, ppid: number | undefined): DaprApplication | undefined {
     if (cmd) {
         const appId = getAppId(cmd);
 
@@ -47,7 +49,8 @@ function toApplication(cmd: string | undefined, pid: number): DaprApplication | 
             return {
                 appId,
                 httpPort: getHttpPort(cmd),
-                pid
+                pid,
+                ppid
             };
         }
     }
@@ -61,7 +64,7 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
     private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
     private readonly timer: vscode.Disposable;
 
-    constructor(private readonly processProvider: ProcessProvider) {
+    constructor(private readonly processProvider: ProcessProvider, private readonly settingsProvider: SettingsProvider) {
         super(() => {
             this.timer.dispose();
             this.onDidChangeEmitter.dispose();
@@ -99,10 +102,10 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
     }
 
     private async onRefresh(): Promise<void> {
-        const processes = await this.processProvider.listProcesses('daprd');
+        const processes = await this.processProvider.listProcesses('daprd', this.settingsProvider.daprdPath);
         
         this.applications = processes
-            .map(process => toApplication(process.cmd, process.pid))
+            .map(process => toApplication(process.cmd, process.pid, process.ppid))
             .filter((application): application is DaprApplication => application !== undefined);
         
         this.onDidChangeEmitter.fire();

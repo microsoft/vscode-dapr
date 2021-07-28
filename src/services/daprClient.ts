@@ -8,12 +8,14 @@ import { DaprApplication } from "./daprApplicationProvider";
 import { HttpClient, HttpResponse } from './httpClient';
 import { getLocalizationPathForFile } from '../util/localization';
 
+
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface DaprClient {
     invokeGet(application: DaprApplication, method: string, token?: vscode.CancellationToken): Promise<unknown>;
     invokePost(application: DaprApplication, method: string, payload?: unknown, token?: vscode.CancellationToken): Promise<unknown>;
     publishMessage(application: DaprApplication, pubSubName: string, topic: string, payload?: unknown, token?: vscode.CancellationToken): Promise<void>;
+    getMetadata(application: DaprApplication, token?: vscode.CancellationToken): Promise<DaprMetadata>;
 }
 
 function manageResponse(response: HttpResponse): unknown {
@@ -60,4 +62,23 @@ export default class HttpDaprClient implements DaprClient {
 
         await this.httpClient.post(url, payload, { json: true }, token);
     }
+    
+    async getMetadata(application: DaprApplication, token?: vscode.CancellationToken | undefined): Promise<DaprMetadata>  {
+        const originalUrl = `http://localhost:${application.httpPort}/v1.0/metadata`;
+
+        const response = await this.httpClient.get(originalUrl, { allowRedirects: false }, token);
+        
+        return manageResponse(response) as DaprMetadata;
+    }
 }
+    
+export interface DaprMetadata {
+    components: DaprComponentMetadata[];
+  }
+  
+  export interface DaprComponentMetadata {
+      name: string;
+      type: string;
+      version: string;
+  }
+

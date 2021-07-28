@@ -3,18 +3,24 @@
     "vscode-dapr.applications.invoke-post.title": "Invoke (POST) Application Method",
     "vscode-dapr.applications.publish-message.title": "Publish Message to Application",
     "vscode-dapr.applications.publish-all-message.title": "Publish Message to All Applications",
+    "vscode-dapr.applications.stop-app.title": "Stop Application",
 
     "vscode-dapr.configuration.paths.daprPath.description": "The full path to the dapr binary.",
     "vscode-dapr.configuration.paths.daprdPath.description": "The full path to the daprd binary.",
 
     "vscode-dapr.help.readDocumentation.title": "Read Documentation",
     "vscode-dapr.help.getStarted.title": "Get Started",
+    "vscode-dapr.help.installDapr.title": "Install Dapr",
     "vscode-dapr.help.reportIssue.title": "Report Issue",
     "vscode-dapr.help.reviewIssues.title": "Review Issues",
     "vscode-dapr.tasks.scaffoldDaprComponents.title": "Scaffold Dapr Components",
     "vscode-dapr.tasks.scaffoldDaprTasks.title": "Scaffold Dapr Tasks",
     "vscode-dapr.tasks.openDaprDashboard.title": "Open Dapr Dashboard",
+    
     "vscode-dapr.views.applications.name": "Applications",
+    "vscode-dapr.views.applications.contents.notInitialized": "A compatible version of the Dapr runtime has not been found. You may need to install a more recent version.\n[Install Latest Dapr](command:vscode-dapr.help.installDapr)",
+    "vscode-dapr.views.applications.contents.notInstalled": "A compatible version of the Dapr CLI has not been found. You may need to install a more recent version.\n[Install Latest Dapr](command:vscode-dapr.help.installDapr)",
+    "vscode-dapr.views.applications.contents.notRunning": "No Dapr applications are running.",
     "vscode-dapr.views.help.name": "Help and Feedback",
 
     "vscode-dapr.view-containers.dapr-explorer.title": "Dapr",
