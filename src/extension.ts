@@ -77,7 +77,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			const classBasedDaprDashboardProvider = new ClassBasedDaprDashboardProvider(settingsProvider.daprPath);
 			
-			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand(classBasedDaprDashboardProvider));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand(ui, classBasedDaprDashboardProvider));
 
 			registerDisposable(vscode.tasks.registerTaskProvider('dapr', new DaprCommandTaskProvider(() => settingsProvider.daprPath, telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(() => settingsProvider.daprdPath, new NodeEnvironmentProvider(), telemetryProvider)));

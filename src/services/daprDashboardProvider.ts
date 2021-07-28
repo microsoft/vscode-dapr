@@ -1,10 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
-import portfinder = require('portfinder');
+import * as portfinder from 'portfinder'
 import * as vscode from 'vscode';
 import {Process} from '../util/process'
+import * as nls from 'vscode-nls'
+import { getLocalizationPathForFile } from '../util/localization';
+
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
+
+
 export interface DaprDashboardProvider {
-    startDashboard(): Promise<vscode.Uri>;
+    startDashboard(): Promise<string>;
 }
 
 export default class ClassBasedDaprDashboardProvider implements DaprDashboardProvider {
@@ -16,10 +24,11 @@ export default class ClassBasedDaprDashboardProvider implements DaprDashboardPro
     }
 
 
-    async startDashboard(): Promise<vscode.Uri> {
+    async startDashboard(): Promise<string> {
+        console.log('here');
         await this.spawnDashboardInstance();
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        return vscode.Uri.parse(`http://localhost:${this.getPortUsed()}`)
+        return `http://localhost:${this.getPortUsed()}`
     }
 
 
@@ -33,12 +42,11 @@ export default class ClassBasedDaprDashboardProvider implements DaprDashboardPro
 
     async findOpenPort(): Promise<void> {
         await portfinder.getPortPromise()
-        .then((port) => {
+        .then((port: number | undefined) => {
             this.port = port;
         })
-        .catch((err) => {
-            console.log(err);
-            this.port = 50505;
+        .catch(() => {
+           throw new Error(localize('dashboard.findOpenPort.noOpenPort', 'No open port found.'))
         });
     }
 
