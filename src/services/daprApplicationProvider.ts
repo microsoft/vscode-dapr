@@ -10,6 +10,8 @@ export interface DaprApplication {
     appId: string;
     httpPort: number;
     pid: number;
+    grpcPort: number;
+    appPort: number | undefined;
     ppid: number | undefined; 
 }
 
@@ -41,6 +43,34 @@ function getHttpPort(cmd: string): number {
     }
 }
 
+function getGrpcPort(cmd: string): number {
+    const portRegEx = /--dapr-grpc-port "?(?<port>\d+)"?/g;
+        
+    const portMatch = portRegEx.exec(cmd);
+    
+    const portString = portMatch?.groups?.['port'];
+    
+    if (portString !== undefined) {
+        return parseInt(portString, 10);
+    } else {
+        return 50001;
+    }
+}
+
+function getAppPort(cmd: string): number | undefined {
+    const portRegEx = /--app-port "?(?<port>\d+)"?/g;
+        
+    const portMatch = portRegEx.exec(cmd);
+    
+    const portString = portMatch?.groups?.['port'];
+    
+    if (portString !== undefined) {
+        return parseInt(portString, 10);
+    } else {
+        return undefined;
+    }
+}
+
 function toApplication(cmd: string | undefined, pid: number, ppid: number | undefined): DaprApplication | undefined {
     if (cmd) {
         const appId = getAppId(cmd);
@@ -50,6 +80,8 @@ function toApplication(cmd: string | undefined, pid: number, ppid: number | unde
                 appId,
                 httpPort: getHttpPort(cmd),
                 pid,
+                grpcPort: getGrpcPort(cmd),
+                appPort: getAppPort(cmd),
                 ppid
             };
         }

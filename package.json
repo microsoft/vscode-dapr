@@ -39,6 +39,8 @@
 		"onCommand:vscode-dapr.help.readDocumentation",
 		"onCommand:vscode-dapr.help.reportIssue",
 		"onCommand:vscode-dapr.help.reviewIssues",
+		"onCommand:vscode-dapr.views.appDetails",
+		"onCommand:vscode-dapr.views.componentDetails",
 		"onCommand:vscode-dapr.tasks.scaffoldDaprComponents",
 		"onCommand:vscode-dapr.tasks.scaffoldDaprTasks",
 		"onCommand:workbench.action.tasks.runTask",
@@ -72,6 +74,16 @@
 			{
 				"command": "vscode-dapr.applications.publish-message",
 				"title": "%vscode-dapr.applications.publish-message.title%",
+				"category": "Dapr"
+			},
+			{
+				"command": "vscode-dapr.views.appDetails",
+				"title": "%vscode-dapr.views.appDetails.title%",
+				"category": "Dapr"
+			},
+			{
+				"command": "vscode-dapr.views.componentDetails",
+				"title": "%vscode-dapr.views.componentDetails.title%",
 				"category": "Dapr"
 			},
 			{
@@ -442,6 +454,10 @@
 					"name": "%vscode-dapr.views.applications.name%"
 				},
 				{
+					"id": "vscode-dapr.views.details",
+					"name": "%vscode-dapr.views.details.title%"
+				},
+				{
 					"id": "vscode-dapr.views.help",
 					"name": "%vscode-dapr.views.help.name%"
 				}
@@ -498,7 +514,6 @@
 		"@types/terser-webpack-plugin": "^5.0.2",
 		"@types/vscode": "^1.57.0",
 		"@types/webpack": "^4.41.26",
-		"@types/which": "^2.0.1",
 		"@typescript-eslint/eslint-plugin": "^4.19.0",
 		"@typescript-eslint/parser": "^4.19.0",
 		"del": "^6.0.0",
@@ -522,7 +537,7 @@
 	},
 	"dependencies": {
 		"@opentelemetry/api": "^1.0.1",
-		"@opentelemetry/tracing": "^0.23.0",
+ 		"@opentelemetry/tracing": "^0.23.0",
 		"axios": "^0.21.1",
 		"fs-extra": "^9.1.0",
 		"handlebars": "^4.7.7",

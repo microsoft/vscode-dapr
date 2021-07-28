@@ -4,8 +4,8 @@
 import * as vscode from 'vscode';
 import TreeNode from "../treeNode";
 
-export default class DaprMetadataNode implements TreeNode {
-    constructor(private readonly metadata: string, private readonly themeIconId: string) {
+export default class DaprDetailsNode implements TreeNode {
+    constructor(private readonly metadata: string, private readonly description: string) {
     }
 
     getTreeItem(): Promise<vscode.TreeItem> {
@@ -13,7 +13,7 @@ export default class DaprMetadataNode implements TreeNode {
 
         item.contextValue = 'metadata';
 
-        item.iconPath = new vscode.ThemeIcon(this.themeIconId);
+        item.description = this.description;
 
         return Promise.resolve(item);
     }
