@@ -76,7 +76,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const detailsTreeDataProvider = new DetailsTreeDataProvider(daprApplicationProvider)
 
 			const daprCliClient = new LocalDaprCliClient(() => settingsProvider.daprPath)
-			const classBasedDaprDashboardProvider = new ClassBasedDaprDashboardProvider(settingsProvider.daprPath);
+			const classBasedDaprDashboardProvider = new ClassBasedDaprDashboardProvider(() => settingsProvider.daprPath);
 
 
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));

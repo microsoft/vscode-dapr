@@ -6,9 +6,8 @@ import { UserInput } from '../services/userInput';
 
 
 export async function openDaprDashboard(ui: UserInput, classBasedDaprDashboardProvider: ClassBasedDaprDashboardProvider): Promise<void> {
-
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    await ui.openExternal(await classBasedDaprDashboardProvider.startDashboard());
+    await vscode.env.openExternal(vscode.Uri.parse(await classBasedDaprDashboardProvider.startDashboard()));
 }
 
 const createOpenDaprDashboardCommand = (ui: UserInput, classBasedDaprDashboardProvider: ClassBasedDaprDashboardProvider) => (): Promise<void> => openDaprDashboard(ui, classBasedDaprDashboardProvider);
