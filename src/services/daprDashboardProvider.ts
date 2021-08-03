@@ -50,7 +50,7 @@ export default class ClassBasedDaprDashboardProvider implements DaprDashboardPro
             void new Promise((_resolve, reject) => {
                 void Process.exec(`${this.daprPathProvider()} dashboard -p ${portNumber}`)
                 setTimeout(reject, 10 * 1000) //timeout after dashboard command is run
-            }).then(undefined, err => {
+            }).then(() => {
                 console.error('Dashboard process returned'); 
             })
         }

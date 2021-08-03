@@ -31,7 +31,6 @@ import LocalScaffolder from './scaffolding/scaffolder';
 import NodeEnvironmentProvider from './services/environmentProvider';
 import createScaffoldDaprComponentsCommand from './commands/scaffoldDaprComponents';
 import VsCodeSettingsProvider from './services/settingsProvider';
-import DaprDashboardProvider from './services/daprDashboardProvider';
 import ClassBasedDaprDashboardProvider from './services/daprDashboardProvider';
 import createStopCommand from './commands/applications/stopApp';
 import LocalDaprCliClient from './services/daprCliClient';
