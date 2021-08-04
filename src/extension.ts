@@ -31,7 +31,7 @@ import LocalScaffolder from './scaffolding/scaffolder';
 import NodeEnvironmentProvider from './services/environmentProvider';
 import createScaffoldDaprComponentsCommand from './commands/scaffoldDaprComponents';
 import VsCodeSettingsProvider from './services/settingsProvider';
-import ClassBasedDaprDashboardProvider from './services/daprDashboardProvider';
+import ProcessBasedDaprDashboardProvider from './services/daprDashboardProvider';
 import createStopCommand from './commands/applications/stopApp';
 import LocalDaprCliClient from './services/daprCliClient';
 import createInstallDaprCommand from './commands/help/installDapr';
@@ -75,7 +75,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const detailsTreeDataProvider = new DetailsTreeDataProvider(daprApplicationProvider)
 
 			const daprCliClient = new LocalDaprCliClient(() => settingsProvider.daprPath)
-			const classBasedDaprDashboardProvider = new ClassBasedDaprDashboardProvider(() => settingsProvider.daprPath);
+			const daprDashboardProvider = new ProcessBasedDaprDashboardProvider(() => settingsProvider.daprPath);
 
 
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
@@ -92,7 +92,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reviewIssues', createReviewIssuesCommand(ui));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprComponents', createScaffoldDaprComponentsCommand(scaffolder, templateScaffolder));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
-			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand(ui, classBasedDaprDashboardProvider));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand(daprDashboardProvider));
 
 			
 			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;

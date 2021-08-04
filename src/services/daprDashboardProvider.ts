@@ -4,6 +4,7 @@ import * as portfinder from 'portfinder'
 import {Process} from '../util/process'
 import * as nls from 'vscode-nls'
 import { getLocalizationPathForFile } from '../util/localization';
+import * as tcp from 'tcp-port-used'
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -12,53 +13,53 @@ export interface DaprDashboardProvider {
     startDashboard(): Promise<string>;
 }
 
-export default class ClassBasedDaprDashboardProvider implements DaprDashboardProvider {
+export default class ProcessBasedDaprDashboardProvider implements DaprDashboardProvider {
     private port: number | undefined;
-    private process = new Process();
+    private openPort: number | undefined
     constructor(private readonly daprPathProvider: () => string) {
     }
 
 
     async startDashboard(): Promise<string> {
-        await this.spawnDashboardInstance();
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        return `http://localhost:${this.getPortUsed()}`
-    }
+        if(this.port !== undefined) {
+            return `http://localhost:${this.port}`
+        }
+        else {
+            await this.spawnDashboardInstance();
 
+            if(this.openPort !== undefined) {
+                await tcp.waitForStatus(this.openPort, 'localhost', true, 500, 4000).then(() => {
+                    this.port = this.openPort; //store port value if localhost port connection is successful
+                }, (err) => {
+                    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+                    const msg = err + localize('dashboard.startDashboard.statusTimeout', ': unable to connect to localhost port ') + this.openPort?.toString();
+                    throw new Error(msg)
+                });
+            }
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            return `http://localhost:${this.port}`
+        }
+    }
 
     async spawnDashboardInstance(): Promise<void>{
-        if (this.port != undefined) {
-            return;
-        }
-        await this.findOpenPort();
-        this.processSpawn();
+        await this.processSpawn();
     }
 
-    async findOpenPort(): Promise<void> {
-        await portfinder.getPortPromise()
-        .then((port: number | undefined) => {
-            this.port = port;
-        })
-        .catch(() => {
-           throw new Error(localize('dashboard.findOpenPort.noOpenPort', 'No open port found.'))
+    async findOpenPort(): Promise<number> {
+        return await portfinder.getPortPromise().catch(() => {
+            throw new Error(localize('dashboard.findOpenPort.noOpenPort', 'No open port found.'))
         });
     }
 
-    processSpawn() : void{
-        const portNumber = this.getPortUsed();
-        if(portNumber !== undefined) {
-            void new Promise((_resolve, reject) => {
-                void Process.exec(`${this.daprPathProvider()} dashboard -p ${portNumber}`)
-                setTimeout(reject, 10 * 1000) //timeout after dashboard command is run
-            }).then(() => {
-                console.error('Dashboard process returned'); 
-            })
+    async processSpawn() : Promise<void> {
+        this.openPort = await this.findOpenPort();
+        if(this.openPort !== undefined) {
+            void Process.exec(`${this.daprPathProvider()} dashboard -p ${this.openPort}`)
+                .catch(() => {
+                    throw new Error(localize('dashboard.processSpawn.spawnFailure', 'Dashboard process failed to spawn'))
+                })
         }
         return;
-    }
-
-    private getPortUsed(): number | undefined {
-        return this.port;
     }
 
 }
