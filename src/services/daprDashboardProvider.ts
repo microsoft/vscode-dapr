@@ -15,44 +15,40 @@ export interface DaprDashboardProvider {
 
 export default class ProcessBasedDaprDashboardProvider implements DaprDashboardProvider {
     private port: number | undefined;
-    private openPort: number | undefined
+    private startUp: Promise<number> | undefined;
+    
     constructor(private readonly daprPathProvider: () => string) {
     }
 
-
     async startDashboard(): Promise<string> {
-        if(this.port === undefined) {
-            await this.spawnDashboardInstance();
+        let localStartup = this.startUp;
 
-            if(this.openPort !== undefined) {
-                await tcp.waitForStatus(this.openPort, 'localhost', true, 500, 4000).then(() => {
-                    this.port = this.openPort; //store port value if localhost port connection is successful
-                }, (err) => {
-                    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                    const msg = err + localize('dashboard.startDashboard.statusTimeout', ': unable to connect to localhost port ') + this.openPort?.toString();
-                    throw new Error(msg)
+        if (!localStartup) {
+            localStartup = new Promise(
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
+                async (resolve, reject) => {
+                    try {
+                        const openPort = await portfinder.getPortPromise();
+                        void Process.exec(`${this.daprPathProvider()} dashboard -p ${openPort}`)
+                        
+                        const successfulPort = await tcp.waitForStatus(openPort, 'localhost', true, 500, 4000).then(() => {
+                            return openPort; 
+                        });
+                        
+                        resolve(successfulPort);
+                    } catch(error) {
+                        this.startUp = undefined;
+                        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+                        const msg = localize('dashboard.startDashboard.startupError', 'Dashboard instance failed to start. ') + error;
+                        reject(msg);
+                    }
                 });
-            }   
+                
+            this.startUp = localStartup;
         }
-
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        return `http://localhost:${this.port}`;
-    }
-
-    async spawnDashboardInstance(): Promise<void>{
-        this.openPort = await this.findOpenPort();
-        void Process.exec(`${this.daprPathProvider()} dashboard -p ${this.openPort}`)
-            .catch(() => {
-                throw new Error(localize('dashboard.spawnDashboard.spawnFailure', 'Dashboard process failed to spawn'))
-            })
         
-        return;
-    }
-
-    async findOpenPort(): Promise<number> {
-        return await portfinder.getPortPromise().catch(() => {
-            throw new Error(localize('dashboard.findOpenPort.noOpenPort', 'No open port found.'))
-        });
+        this.port = await localStartup;                
+        return `http://localhost:${this.port}`;
     }
 
 }
