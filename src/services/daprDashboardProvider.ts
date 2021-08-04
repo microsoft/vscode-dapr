@@ -21,10 +21,7 @@ export default class ProcessBasedDaprDashboardProvider implements DaprDashboardP
 
 
     async startDashboard(): Promise<string> {
-        if(this.port !== undefined) {
-            return `http://localhost:${this.port}`
-        }
-        else {
+        if(this.port === undefined) {
             await this.spawnDashboardInstance();
 
             if(this.openPort !== undefined) {
@@ -35,31 +32,27 @@ export default class ProcessBasedDaprDashboardProvider implements DaprDashboardP
                     const msg = err + localize('dashboard.startDashboard.statusTimeout', ': unable to connect to localhost port ') + this.openPort?.toString();
                     throw new Error(msg)
                 });
-            }
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            return `http://localhost:${this.port}`
+            }   
         }
+
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        return `http://localhost:${this.port}`;
     }
 
     async spawnDashboardInstance(): Promise<void>{
-        await this.processSpawn();
+        this.openPort = await this.findOpenPort();
+        void Process.exec(`${this.daprPathProvider()} dashboard -p ${this.openPort}`)
+            .catch(() => {
+                throw new Error(localize('dashboard.spawnDashboard.spawnFailure', 'Dashboard process failed to spawn'))
+            })
+        
+        return;
     }
 
     async findOpenPort(): Promise<number> {
         return await portfinder.getPortPromise().catch(() => {
             throw new Error(localize('dashboard.findOpenPort.noOpenPort', 'No open port found.'))
         });
-    }
-
-    async processSpawn() : Promise<void> {
-        this.openPort = await this.findOpenPort();
-        if(this.openPort !== undefined) {
-            void Process.exec(`${this.daprPathProvider()} dashboard -p ${this.openPort}`)
-                .catch(() => {
-                    throw new Error(localize('dashboard.processSpawn.spawnFailure', 'Dashboard process failed to spawn'))
-                })
-        }
-        return;
     }
 
 }
