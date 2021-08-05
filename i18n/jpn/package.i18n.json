@@ -12,6 +12,7 @@
 	"vscode-dapr.help.reportIssue.title": "Report Issue",
 	"vscode-dapr.help.reviewIssues.title": "Review Issues",
 	"vscode-dapr.tasks.scaffoldDaprTasks.title": "Scaffold Dapr Tasks",
+	"vscode-dapr.tasks.openDaprDashboard.title": "Open Dapr Dashboard",
 	"vscode-dapr.views.applications.name": "Applications",
 	"vscode-dapr.views.help.name": "Help and Feedback",
 	"vscode-dapr.tasks.dapr.properties.appId.description": "An ID for your application, used for service discovery.",
