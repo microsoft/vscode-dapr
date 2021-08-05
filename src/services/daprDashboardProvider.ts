@@ -31,15 +31,12 @@ export default class ProcessBasedDaprDashboardProvider implements DaprDashboardP
                         const openPort = await portfinder.getPortPromise();
                         void Process.exec(`${this.daprPathProvider()} dashboard -p ${openPort}`)
                         
-                        const successfulPort = await tcp.waitForStatus(openPort, 'localhost', true, 500, 4000).then(() => {
-                            return openPort; 
-                        });
+                        await tcp.waitForStatus(openPort, 'localhost', true, 500, 4000)
                         
-                        resolve(successfulPort);
+                        resolve(openPort);
                     } catch(error) {
                         this.startUp = undefined;
-                        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-                        const msg = localize('dashboard.startDashboard.startupError', 'Dashboard instance failed to start. ') + error;
+                        const msg = localize('dashboard.startDashboard.startupError', 'Dashboard instance failed to start. \'{0}\' ', error);
                         reject(msg);
                     }
                 });
