@@ -22,7 +22,7 @@ Follow the [Dapr guide](https://dapr.io/#download) to install the Dapr CLI for y
 
 Follow the [VS Code guide](https://code.visualstudio.com/) for installing VS Code for your platform.
 
-> This extension requires Visual Studio Code version 1.53 or later.
+> This extension requires Visual Studio Code version 1.59 or later.
 
 ## Feature Overview
 
