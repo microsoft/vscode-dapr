@@ -1,5 +1,23 @@
 # Change Log
 
+## v0.5.0 - 6 August 2021
+
+Updates to expose additional metadata for Dapr applications and their components.
+
+### Fixed
+
+* UnixProcessProvider Failed to Find Dapr Process CMD on Mac [#169](https://github.com/microsoft/vscode-dapr/issues/169)
+* APPLICATIONS show "The Dapr CLI and runtime do not appear to be installed" [#171](https://github.com/microsoft/vscode-dapr/issues/171)
+* Revise required task properties [#172](https://github.com/microsoft/vscode-dapr/issues/172)
+
+### Added
+
+* Add link to Dapr dashboard from Explorer [#159](https://github.com/microsoft/vscode-dapr/issues/159)
+* Components panel in Explorer that shows active components being used in app [#167](https://github.com/microsoft/vscode-dapr/issues/167)
+* Expose more metadata in the Explorer about the services that make up the application [#161](https://github.com/microsoft/vscode-dapr/issues/161)
+* Allow killing Dapr applications [#81](https://github.com/microsoft/vscode-dapr/issues/81)
+* Allow users to explicitly set path to Dapr binaries [#139](https://github.com/microsoft/vscode-dapr/issues/139)
+
 ## v0.4.0 - 16 February 2021
 
 Updates related to the Dapr 1.0.0 release.
