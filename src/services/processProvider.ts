@@ -72,18 +72,21 @@ export class WindowsProcessProvider implements ProcessProvider {
         const processes: ProcessInfo[] = [];
 
         // Each item in the list is prefixed by two empty lines, then <property>=<value> lines, in alphabetical order.
-        for (let i = 0; i < lines.length / 5; i++) {
+        const linesPerItem = 6;
+
+        for (let i = 0; i < lines.length / linesPerItem; i++) {
+            const itemOffset = i * linesPerItem;
+
             // Stop if the input is truncated (as there is an upper output limit)...
-            if ((i * 5) + 4 >= lines.length) {
+            if (itemOffset + linesPerItem >= lines.length) {
                 break;
             }
 
-            const cmd = getWmicValue(lines[(i * 5) + 2]);
-            const name = getWmicValue(lines[(i * 5) + 3]);
-            const ppid = parseInt(getWmicValue(lines[(i*5) + 4]), 10); 
-            const pid = parseInt(getWmicValue(lines[(i * 5) + 5]), 10);
+            const cmd = getWmicValue(lines[itemOffset + 2]);
+            const name = getWmicValue(lines[itemOffset + 3]);
+            const ppid = parseInt(getWmicValue(lines[itemOffset + 4]), 10); 
+            const pid = parseInt(getWmicValue(lines[itemOffset + 5]), 10);
             
-
             processes.push({ cmd, name, pid, ppid});
         }
 
