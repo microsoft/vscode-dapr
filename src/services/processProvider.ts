@@ -55,39 +55,44 @@ export class UnixProcessProvider implements ProcessProvider {
 
 }
 
-
-function getWmicValue(line: string): string {
-    const index = line.indexOf('=');
-
-    return line.substring(index + 1);
+interface WmiWin32ProcessObject {
+    readonly CommandLine: string | null;
+    readonly Name: string;
+    readonly ParentProcessId: number;
+    readonly ProcessId: number;
 }
 
 export class WindowsProcessProvider implements ProcessProvider {
     async listProcesses(name: string): Promise<ProcessInfo[]> {
-        const list = await Process.exec(`wmic process where "name='${name}.exe'" get commandline,name,parentprocessid,processid /format:list`);
-        
-        // Lines in the output are delimited by "<CR><CR><LF>".
-        const lines = list.stdout.split('\r\r\n');
+        const list = await Process.exec(
+            `Get-WmiObject -Query "select CommandLine, Name, ParentProcessId, ProcessId from win32_process where Name='${name}.exe'" | Select-Object -Property CommandLine, Name, ParentProcessId, ProcessId | ConvertTo-Json`,
+            {
+                shell: 'powershell.exe'
+            });
 
-        const processes: ProcessInfo[] = [];
+        if (list.code === 0 && list.stdout.length) {
+            let output: WmiWin32ProcessObject[];
 
-        // Each item in the list is prefixed by two empty lines, then <property>=<value> lines, in alphabetical order.
-        for (let i = 0; i < lines.length / 5; i++) {
-            // Stop if the input is truncated (as there is an upper output limit)...
-            if ((i * 5) + 4 >= lines.length) {
-                break;
+            try {
+                const json: unknown = JSON.parse(list.stdout);
+
+                // NOTE: ConvertTo-Json returns a single JSON object when given a single object rather than a collection.
+                //       The -AsArray argument isn't available until PowerShell 7.0 and later.
+
+                if (Array.isArray(json)) {
+                    output = <WmiWin32ProcessObject[]>json;
+                } else {
+                    output = [<WmiWin32ProcessObject>json];
+                }
+                
+                return output.map(o => ({ cmd: o.CommandLine ?? '', name: o.Name, pid: o.ProcessId, ppid: o.ParentProcessId }));
             }
-
-            const cmd = getWmicValue(lines[(i * 5) + 2]);
-            const name = getWmicValue(lines[(i * 5) + 3]);
-            const ppid = parseInt(getWmicValue(lines[(i*5) + 4]), 10); 
-            const pid = parseInt(getWmicValue(lines[(i * 5) + 5]), 10);
-            
-
-            processes.push({ cmd, name, pid, ppid});
+            catch {       
+                // NOTE: No-op.                         
+            }
         }
 
-        return processes;
+        return [];
     }
 }
 
