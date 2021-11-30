@@ -58,9 +58,9 @@ export default class AxiosHttpClient implements HttpClient {
 
         const config = createConfig(options?.allowRedirects, cancelTokenSource.token);
 
-        if (data !== undefined) {
+        if (data !== undefined && options?.json) {
             config.headers = {
-                'content-type': options?.json ? 'application/json' : undefined
+                'content-type': 'application/json'
             };
         }
 
