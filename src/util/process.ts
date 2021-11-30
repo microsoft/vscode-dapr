@@ -8,7 +8,7 @@ import * as localization from './localization';
 
 const localize = nls.loadMessageBundle(localization.getLocalizationPathForFile(__filename));
 
-const DEFAULT_BUFFER_SIZE = 10 * 1024; // The default Node.js `exec` buffer size is 1 MB, our actual usage is far less
+const DEFAULT_BUFFER_SIZE = 24 * 1024; // The default Node.js `exec` buffer size is 1 MB, our actual usage is far less
 
 function bufferToString(buffer: Buffer): string {
     // Node.js treats null bytes as part of the length, which makes everything mad
@@ -69,7 +69,7 @@ export class Process extends vscode.Disposable {
 
                 // Without the shell option, it pukes on arguments
                 options = options || {};
-                options.shell = true;
+                options.shell ??= true;
 
                 const process = cp.spawn(command, options);
 
