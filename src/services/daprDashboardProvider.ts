@@ -36,7 +36,7 @@ export default class ProcessBasedDaprDashboardProvider implements DaprDashboardP
                         resolve(openPort);
                     } catch(error) {
                         this.startUp = undefined;
-                        const msg = localize('dashboard.startDashboard.startupError', 'Dashboard instance failed to start. \'{0}\' ', error);
+                        const msg = localize('dashboard.startDashboard.startupError', 'Dashboard instance failed to start. \'{0}\' ', (<Error>error).message);
                         reject(msg);
                     }
                 });
