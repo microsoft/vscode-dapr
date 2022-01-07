@@ -1,5 +1,13 @@
 # Change Log
 
+## v0.6.0 - 7 January 2022
+
+Minor bug fixes and dependency updates.
+
+### Fixed
+
+* Move to PowerShell-based WMI provider [#205](https://github.com/microsoft/vscode-dapr/issues/205)
+
 ## v0.5.0 - 6 August 2021
 
 Updates to expose additional metadata for Dapr applications and their components.

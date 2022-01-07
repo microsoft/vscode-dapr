@@ -35,10 +35,6 @@ function getOutDir(): string {
     return tsProject.options.outDir;
 }
 
-function wrapThroughStream(stream: nls.ThroughStream): NodeJS.ReadWriteStream {
-    return (stream as unknown) as NodeJS.ReadWriteStream;
-}
-
 function cleanTask(): Promise<string[]> {
     return del([getDistDir(), getOutDir(), 'package.nls.*.json', 'vscode-dapr-*.vsix']);
 }
@@ -70,10 +66,10 @@ function compileTask(): NodeJS.ReadWriteStream {
     return tsProject.src()
         .pipe(sourcemaps.init())
         .pipe(tsProject()).js
-        .pipe(wrapThroughStream(nls.rewriteLocalizeCalls()))
-        .pipe(wrapThroughStream(nls.createAdditionalLanguageFiles(languages, 'i18n', outDir)))
-        .pipe(wrapThroughStream(nls.bundleMetaDataFiles('vscode-dapr', outDir)))
-        .pipe(wrapThroughStream(nls.bundleLanguageFiles()))
+        .pipe(nls.rewriteLocalizeCalls())
+        .pipe(nls.createAdditionalLanguageFiles(languages, 'i18n', outDir))
+        .pipe(nls.bundleMetaDataFiles('vscode-dapr', outDir))
+        .pipe(nls.bundleLanguageFiles())
         .pipe(sourcemaps.write('.', { includeContent: false, sourceRoot: './' }))
         .pipe(gulp.dest(outDir));
 }
@@ -110,7 +106,7 @@ function compilePackedTaskFactory(mode: 'production' | 'development'): () => Pro
 
 function addI18nTask() {
     return gulp.src(['package.nls.json'])
-        .pipe(wrapThroughStream(nls.createAdditionalLanguageFiles(languages, 'i18n')))
+        .pipe(nls.createAdditionalLanguageFiles(languages, 'i18n'))
         .pipe(gulp.dest('.'));
 }
 
