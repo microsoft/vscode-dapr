@@ -3,6 +3,7 @@
 
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
+import { URL } from 'url';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
 import { getWorkspaceConfigurations, DebugConfiguration } from '../scaffolding/configurationScaffolder';
@@ -13,6 +14,7 @@ import { Scaffolder } from '../scaffolding/scaffolder';
 import { ConflictHandler, ConflictUniquenessPredicate } from '../scaffolding/conflicts';
 import { names, range } from '../util/generators';
 import { getLocalizationPathForFile } from '../util/localization';
+import { TextDecoder } from 'util';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -34,10 +36,50 @@ const JavaPort = 8080;
 const NetCorePort = 5000;
 const NodePort = 3000;
 
-function getDefaultPort(configuration: DebugConfiguration | undefined): Promise<number> {
+interface DotNetProfile {
+    commandName?: string;
+    applicationUrl?: string;
+}
+
+interface DotNetLaunchSettings {
+    profiles?: { [key: string]: DotNetProfile };
+}
+
+async function getDefaultDotnetPort(folder: vscode.WorkspaceFolder | undefined): Promise<number> {
+    if (folder) {
+        const launchSettingsFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(folder, "**/Properties/launchSettings.json"));
+
+        if (launchSettingsFiles.length > 0) {
+            const launchSettingsBuffer = await vscode.workspace.fs.readFile(launchSettingsFiles[0]);
+            const launchSettingsContents = new TextDecoder('utf-8').decode(launchSettingsBuffer);
+            const launchSettingsJson = JSON.parse(launchSettingsContents) as DotNetLaunchSettings;
+
+            if (launchSettingsJson.profiles) {
+                const projectProfile = Object.values(launchSettingsJson.profiles).find(profile => profile.commandName === 'Project');
+
+                if (projectProfile?.applicationUrl) {
+                    try {
+                        const applicationUrl = new URL(projectProfile.applicationUrl);
+    
+                        if (applicationUrl.port) {
+                            return parseInt(applicationUrl.port, 10);
+                        }
+                    }
+                    catch {
+                        // NOTE: Ignore any errors parsing the URL.
+                    }
+                }
+            }
+        }
+    }
+
+    return NetCorePort;
+}
+
+function getDefaultPort(configuration: DebugConfiguration | undefined, folder: vscode.WorkspaceFolder | undefined): Promise<number> {
     switch (configuration?.type) {
         case 'coreclr':
-            return Promise.resolve(NetCorePort);
+            return getDefaultDotnetPort(folder);
 
         case 'java':
             return Promise.resolve(JavaPort);
@@ -143,7 +185,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
         async wizardContext => {
             telemetryProperties.cancelStep = 'appPort';
 
-            const appPort = wizardContext.appPort ?? await getDefaultPort(wizardContext.configuration);
+            const appPort = wizardContext.appPort ?? await getDefaultPort(wizardContext.configuration, wizardContext.folder);
             
             const appPortString = await ui.showInputBox(
                 {
