@@ -1,11 +1,12 @@
 # Change Log
 
-## v0.6.0 - 7 January 2022
+## v0.6.0 - 10 January 2022
 
 Minor bug fixes and dependency updates.
 
 ### Fixed
 
+* Fail to invoke the application method for a .NET 6 Web API project [#214](https://github.com/microsoft/vscode-dapr/issues/214)
 * Move to PowerShell-based WMI provider [#205](https://github.com/microsoft/vscode-dapr/issues/205)
 
 ## v0.5.0 - 6 August 2021
