@@ -58,15 +58,19 @@ async function getDefaultDotnetPort(folder: vscode.WorkspaceFolder | undefined):
                 const projectProfile = Object.values(launchSettingsJson.profiles).find(profile => profile.commandName === 'Project');
 
                 if (projectProfile?.applicationUrl) {
-                    try {
-                        const applicationUrl = new URL(projectProfile.applicationUrl);
-    
-                        if (applicationUrl.port) {
-                            return parseInt(applicationUrl.port, 10);
+                    const applicationUrls = projectProfile.applicationUrl.split(';');
+
+                    for (const applicationUrl of applicationUrls) {
+                        try {
+                            const url = new URL(applicationUrl);
+                            
+                            if (url.protocol === 'http' && url.port) {
+                                return parseInt(url.port, 10);
+                            }
                         }
-                    }
-                    catch {
-                        // NOTE: Ignore any errors parsing the URL.
+                        catch {
+                            // NOTE: Ignore any errors parsing the URL.
+                        }
                     }
                 }
             }
