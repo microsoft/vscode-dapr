@@ -3,6 +3,7 @@
 
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
+import { URL } from 'url';
 import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
 import { getWorkspaceConfigurations, DebugConfiguration } from '../scaffolding/configurationScaffolder';
@@ -13,6 +14,7 @@ import { Scaffolder } from '../scaffolding/scaffolder';
 import { ConflictHandler, ConflictUniquenessPredicate } from '../scaffolding/conflicts';
 import { names, range } from '../util/generators';
 import { getLocalizationPathForFile } from '../util/localization';
+import { TextDecoder } from 'util';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -34,40 +36,84 @@ const JavaPort = 8080;
 const NetCorePort = 5000;
 const NodePort = 3000;
 
-function getDefaultPort(configuration: DebugConfiguration | undefined): number {
+interface DotNetProfile {
+    commandName?: string;
+    applicationUrl?: string;
+}
+
+interface DotNetLaunchSettings {
+    profiles?: { [key: string]: DotNetProfile };
+}
+
+async function getDefaultDotnetPort(folder: vscode.WorkspaceFolder | undefined): Promise<number> {
+    if (folder) {
+        const launchSettingsFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(folder, "**/Properties/launchSettings.json"));
+
+        for (const launchSettingsFile of launchSettingsFiles) {
+            const launchSettingsBuffer = await vscode.workspace.fs.readFile(launchSettingsFile);
+            const launchSettingsContents = new TextDecoder('utf-8').decode(launchSettingsBuffer);
+            const launchSettingsJson = JSON.parse(launchSettingsContents) as DotNetLaunchSettings;
+
+            if (launchSettingsJson.profiles) {
+                const projectProfile = Object.values(launchSettingsJson.profiles).find(profile => profile.commandName === 'Project');
+
+                if (projectProfile?.applicationUrl) {
+                    const applicationUrls = projectProfile.applicationUrl.split(';');
+
+                    for (const applicationUrl of applicationUrls) {
+                        try {
+                            const url = new URL(applicationUrl);
+                            
+                            if (url.protocol === 'http:' && url.port) {
+                                return parseInt(url.port, 10);
+                            }
+                        }
+                        catch {
+                            // NOTE: Ignore any errors parsing the URL.
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return NetCorePort;
+}
+
+function getDefaultPort(configuration: DebugConfiguration | undefined, folder: vscode.WorkspaceFolder | undefined): Promise<number> {
     switch (configuration?.type) {
         case 'coreclr':
-            return NetCorePort;
+            return getDefaultDotnetPort(folder);
 
         case 'java':
-            return JavaPort;
+            return Promise.resolve(JavaPort);
 
         case 'node':
         case 'node2':
         case 'pwa-node':
-            return NodePort;
+            return Promise.resolve(NodePort);
 
         case 'python':
             // "module": "flask" is a primary indicator of a Flask application...
             if (configuration?.module === 'flask') {
-                return FlaskPort;
+                return Promise.resolve(FlaskPort);
             }
 
             // "django": true is a primary indicator of a Django application...
             if (configuration?.django === true) {
-                return DjangoPort;
+                return Promise.resolve(DjangoPort);
             }
 
             // "jinja": true is a secondary indicator of a Flask application...
             if (configuration?.jinja === true) {
-                return FlaskPort;
+                return Promise.resolve(FlaskPort);
             }
 
             // Django seems to have a slight edge over Flask in popularity, so default to that...
-            return DjangoPort;
+            return Promise.resolve(DjangoPort);
     }
 
-    return DefaultPort;
+    return Promise.resolve(DefaultPort);
 }
 
 async function createUniqueName(prefix: string, isUnique: ConflictUniquenessPredicate): Promise<string> {
@@ -143,7 +189,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
         async wizardContext => {
             telemetryProperties.cancelStep = 'appPort';
 
-            const appPort = wizardContext.appPort ?? getDefaultPort(wizardContext.configuration);
+            const appPort = wizardContext.appPort ?? await getDefaultPort(wizardContext.configuration, wizardContext.folder);
             
             const appPortString = await ui.showInputBox(
                 {
