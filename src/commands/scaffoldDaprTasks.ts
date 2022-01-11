@@ -49,8 +49,8 @@ async function getDefaultDotnetPort(folder: vscode.WorkspaceFolder | undefined):
     if (folder) {
         const launchSettingsFiles = await vscode.workspace.findFiles(new vscode.RelativePattern(folder, "**/Properties/launchSettings.json"));
 
-        if (launchSettingsFiles.length > 0) {
-            const launchSettingsBuffer = await vscode.workspace.fs.readFile(launchSettingsFiles[0]);
+        for (const launchSettingsFile of launchSettingsFiles) {
+            const launchSettingsBuffer = await vscode.workspace.fs.readFile(launchSettingsFile);
             const launchSettingsContents = new TextDecoder('utf-8').decode(launchSettingsBuffer);
             const launchSettingsJson = JSON.parse(launchSettingsContents) as DotNetLaunchSettings;
 
@@ -64,7 +64,7 @@ async function getDefaultDotnetPort(folder: vscode.WorkspaceFolder | undefined):
                         try {
                             const url = new URL(applicationUrl);
                             
-                            if (url.protocol === 'http' && url.port) {
+                            if (url.protocol === 'http:' && url.port) {
                                 return parseInt(url.port, 10);
                             }
                         }
