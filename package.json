@@ -494,7 +494,7 @@
 		"clean": "gulp clean",
 		"build": "gulp build",
 		"build-packed": "gulp build-packed",
-		"lint": "gulp lint",
+		"lint": "eslint --max-warnings 0 src --ext ts",
 		"watch": "tsc -watch -p ./",
 		"package": "gulp package",
 		"ci-build": "gulp ci-build",

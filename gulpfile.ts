@@ -120,8 +120,6 @@ const ciBuildTask = gulp.series(cleanTask, compilePackedTaskFactory('production'
 
 gulp.task('clean', cleanTask);
 
-gulp.task('lint', lintTaskFactory());
-
 gulp.task('build', buildTask);
 
 gulp.task('build-packed', gulp.series(cleanTask, compilePackedTaskFactory('development')));
