@@ -499,7 +499,8 @@
 		"package": "gulp package",
 		"ci-build": "gulp ci-build",
 		"ci-package": "gulp ci-package",
-		"test": "gulp test"
+		"test": "node ./out/test/runAllTests.js",
+		"unit-test": "node ./out/test/runUnitTests.js"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^9.0.13",

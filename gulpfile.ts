@@ -110,14 +110,6 @@ function addI18nTask() {
         .pipe(gulp.dest('.'));
 }
 
-function testTask() {
-    return cp.spawn('node', ['./out/test/runAllTests.js'], { stdio: 'inherit' });
-}
-
-function unitTestTask() {
-    return cp.spawn('node', ['./out/test/runUnitTests.js'], { stdio: 'inherit' });
-}
-
 function vscePackageTask() {
     return vsce.createVSIX();
 }
@@ -133,10 +125,6 @@ gulp.task('lint', lintTaskFactory());
 gulp.task('build', buildTask);
 
 gulp.task('build-packed', gulp.series(cleanTask, compilePackedTaskFactory('development')));
-
-gulp.task('unit-test', gulp.series(buildTask, unitTestTask));
-
-gulp.task('test', gulp.series(buildTask, testTask));
 
 gulp.task('package', gulp.series(buildTask, vscePackageTask));
 
