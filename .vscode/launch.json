@@ -6,58 +6,36 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run Extension",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v",
-				"VSCODE_DAPR_IGNORE_BUNDLE": "true"
-			},
-			"outFiles": [
-				"${workspaceFolder}/out/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
-		},
+            "name": "Run Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "env": {
+                "DEBUGTELEMETRY": "1"
+            },
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.js"
+            ],
+            "preLaunchTask": "${defaultBuildTask}"
+        },
 		{
-			"name": "Run Extension (Packed)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v"
-			},
-			"outFiles": [
-				"${workspaceFolder}/dist/**/*.js"
-			],
-			"preLaunchTask": "build-packed"
-		},
-		{
-			"name": "Run Extension (Pseudo)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v",
-				"VSCODE_DAPR_IGNORE_BUNDLE": "true",
+            "name": "Run Extension (Pseudo)",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "env": {
+                "DEBUGTELEMETRY": "1",
 				"VSCODE_DAPR_LOCALE": "pseudo"
-			},
-			"sourceMaps": true,
-			"stopOnEntry": false,
-			"outFiles": [
-				"${workspaceFolder}/out/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
-		},
+            },
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.js"
+            ],
+            "preLaunchTask": "${defaultBuildTask}"
+        },
 		{
 			"name": "Extension Tests (All)",
 			"type": "extensionHost",
@@ -93,15 +71,6 @@
 				"${workspaceFolder}/out/test/**/*.js"
 			],
 			"preLaunchTask": "${defaultBuildTask}"
-		},
-		{
-			"name": "Run Gulp",
-			"type": "node",
-			"request": "launch",
-			"cwd": "${workspaceFolder}",
-			"runtimeArgs": ["-r", "ts-node/register"],
-			"args": ["${workspaceFolder}/node_modules/gulp/bin/gulp.js", "build"]
-
 		}
 	]
 }
