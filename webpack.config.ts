@@ -11,7 +11,7 @@ import * as webpack from 'webpack';
 import { NLSBundlePlugin } from 'vscode-nls-dev/lib/webpack-bundler';
 
 export const config: webpack.Configuration = {
-    devtool: 'source-map',
+    devtool: 'nosources-source-map',
     entry: './src/extension.ts',
     externals: {
         // Required by applicationinsights as a development dependency; not othewise needed.
@@ -20,6 +20,7 @@ export const config: webpack.Configuration = {
         // The vscode module is created on-the-fly and must be excluded.
         vscode: 'commonjs vscode'
     },
+    mode: 'none',
     module: {
         rules: [
             {

@@ -6,102 +6,53 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Run Extension",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v",
-				"VSCODE_DAPR_IGNORE_BUNDLE": "true"
-			},
-			"outFiles": [
-				"${workspaceFolder}/out/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
-		},
+            "name": "Run Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "env": {
+                "DEBUGTELEMETRY": "1"
+            },
+            "outFiles": [
+                "${workspaceFolder}/dist/**/*.js"
+            ],
+            "preLaunchTask": "${defaultBuildTask}"
+        },
+        {
+            // TODO: Running this requires running the webpack build manually first (background tasks can't be used as dependsOn at this time, https://github.com/microsoft/vscode/issues/70283)
+            "name": "Extension Tests (All)",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/suite/allTests"
+            ],
+            "env": {
+                "DEBUGTELEMETRY": "1"
+            },
+            "outFiles": [
+                "${workspaceFolder}/out/test/**/*.js"
+            ],
+            "preLaunchTask": "npm: build-test"
+        },
 		{
-			"name": "Run Extension (Packed)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v"
-			},
-			"outFiles": [
-				"${workspaceFolder}/dist/**/*.js"
-			],
-			"preLaunchTask": "build-packed"
-		},
-		{
-			"name": "Run Extension (Pseudo)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v",
-				"VSCODE_DAPR_IGNORE_BUNDLE": "true",
-				"VSCODE_DAPR_LOCALE": "pseudo"
-			},
-			"sourceMaps": true,
-			"stopOnEntry": false,
-			"outFiles": [
-				"${workspaceFolder}/out/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
-		},
-		{
-			"name": "Extension Tests (All)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/allTests"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v",
-				"VSCODE_DAPR_IGNORE_BUNDLE": "true"
-			},
-			"outFiles": [
-				"${workspaceFolder}/out/test/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
-		},
-		{
-			"name": "Extension Tests (Unit)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/unitTests"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v",
-				"VSCODE_DAPR_IGNORE_BUNDLE": "true"
-			},
-			"outFiles": [
-				"${workspaceFolder}/out/test/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
-		},
-		{
-			"name": "Run Gulp",
-			"type": "node",
-			"request": "launch",
-			"cwd": "${workspaceFolder}",
-			"runtimeArgs": ["-r", "ts-node/register"],
-			"args": ["${workspaceFolder}/node_modules/gulp/bin/gulp.js", "build"]
-
-		}
+            // TODO: Running this requires running the webpack build manually first (background tasks can't be used as dependsOn at this time, https://github.com/microsoft/vscode/issues/70283)
+            "name": "Extension Tests (Unit)",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/suite/unitTests"
+            ],
+            "env": {
+                "DEBUGTELEMETRY": "1"
+            },
+            "outFiles": [
+                "${workspaceFolder}/out/test/**/*.js"
+            ],
+            "preLaunchTask": "npm: build-test"
+        }
 	]
 }
