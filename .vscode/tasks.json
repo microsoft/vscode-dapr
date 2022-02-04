@@ -18,6 +18,17 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+		{
+            "type": "npm",
+            "script": "build-test",
+            "problemMatcher": [
+                "$ts-webpack-watch",
+                "$tslint-webpack-watch"
+            ],
+            "presentation": {
+                "reveal": "never"
+            }
         }
 	]
 }

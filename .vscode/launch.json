@@ -20,57 +20,39 @@
             ],
             "preLaunchTask": "${defaultBuildTask}"
         },
-		{
-            "name": "Run Extension (Pseudo)",
+        {
+            // TODO: Running this requires running the webpack build manually first (background tasks can't be used as dependsOn at this time, https://github.com/microsoft/vscode/issues/70283)
+            "name": "Extension Tests (All)",
             "type": "extensionHost",
             "request": "launch",
             "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}"
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/suite/allTests"
             ],
             "env": {
-                "DEBUGTELEMETRY": "1",
-				"VSCODE_DAPR_LOCALE": "pseudo"
+                "DEBUGTELEMETRY": "1"
             },
             "outFiles": [
-                "${workspaceFolder}/dist/**/*.js"
+                "${workspaceFolder}/out/test/**/*.js"
             ],
-            "preLaunchTask": "${defaultBuildTask}"
+            "preLaunchTask": "npm: build-test"
         },
 		{
-			"name": "Extension Tests (All)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/allTests"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v",
-				"VSCODE_DAPR_IGNORE_BUNDLE": "true"
-			},
-			"outFiles": [
-				"${workspaceFolder}/out/test/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
-		},
-		{
-			"name": "Extension Tests (Unit)",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/unitTests"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "v",
-				"VSCODE_DAPR_IGNORE_BUNDLE": "true"
-			},
-			"outFiles": [
-				"${workspaceFolder}/out/test/**/*.js"
-			],
-			"preLaunchTask": "${defaultBuildTask}"
-		}
+            // TODO: Running this requires running the webpack build manually first (background tasks can't be used as dependsOn at this time, https://github.com/microsoft/vscode/issues/70283)
+            "name": "Extension Tests (Unit)",
+            "type": "extensionHost",
+            "request": "launch",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionTestsPath=${workspaceFolder}/out/test/suite/unitTests"
+            ],
+            "env": {
+                "DEBUGTELEMETRY": "1"
+            },
+            "outFiles": [
+                "${workspaceFolder}/out/test/**/*.js"
+            ],
+            "preLaunchTask": "npm: build-test"
+        }
 	]
 }
