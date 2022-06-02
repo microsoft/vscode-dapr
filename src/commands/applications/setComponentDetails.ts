@@ -3,7 +3,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 import DetailsTreeDataProvider from "../../views/details/detailsTreeDataProvider";
 import DaprComponentMetadataNode from "../../views/applications/daprComponentMetadataNode";
 

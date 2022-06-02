@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { callWithTelemetryAndErrorHandling, IActionContext, registerCommand, TelemetryProperties } from "vscode-azureextensionui";
-import TreeNode from "../views/treeNode";
+import { callWithTelemetryAndErrorHandling, IActionContext, registerCommand, TelemetryProperties } from '@microsoft/vscode-azext-utils';
+import TreeNode from '../views/treeNode';
 
 interface ContextCommandTelemetryProperties extends TelemetryProperties {
     source: 'context' | 'palette';

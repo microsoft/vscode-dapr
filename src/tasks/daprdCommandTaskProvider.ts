@@ -8,7 +8,7 @@ import CommandTaskProvider from './commandTaskProvider';
 import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
 import { EnvironmentProvider } from '../services/environmentProvider';
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DaprInstallationManager } from '../services/daprInstallationManager';
 
 type DaprdLogLevel = 'debug' | 'info' | 'warning' | 'error' | 'fatal' | 'panic';
