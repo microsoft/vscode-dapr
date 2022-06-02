@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as fse from 'fs-extra';
+import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
@@ -22,7 +22,7 @@ async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder
 
     const componentsPath = path.join(rootWorkspaceFolderPath, 'components');
 
-    await fse.ensureDir(componentsPath);
+    await fs.mkdir(componentsPath, { recursive: true });
 
     // NOTE: As this command is now secondary (scaffolding now done for the user as part of `dapr init`),
     //       we'll simply skip upon finding conflicts; there's likely little need to overwrite existing

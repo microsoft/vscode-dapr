@@ -503,7 +503,6 @@
 		"package-impl": "vsce package"
 	},
 	"devDependencies": {
-		"@types/fs-extra": "^9.0.13",
 		"@types/glob": "^7.2.0",
 		"@types/handlebars": "^4.1.0",
 		"@types/mocha": "^9.0.0",
@@ -535,7 +534,6 @@
 		"@opentelemetry/api": "^1.0.3",
 		"@opentelemetry/tracing": "^0.24.0",
 		"axios": "^0.24.0",
-		"fs-extra": "^10.0.0",
 		"handlebars": "^4.7.7",
 		"portfinder": "^1.0.28",
 		"ps-list": "^7.2.0",

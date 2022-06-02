@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as fse from 'fs-extra';
+import * as fs from 'fs/promises';
 import * as vscode from 'vscode';
 import scaffoldConfiguration, { ConfigurationContentFactory } from './configurationScaffolder';
 import scaffoldTask, { TaskContentFactory } from './taskScaffolder';
@@ -15,14 +15,24 @@ export interface Scaffolder {
     scaffoldTask(label: string, folder: vscode.WorkspaceFolder, contentFactory: TaskContentFactory, onConflict: ConflictHandler): Promise<string | undefined>;
 }
 
+async function pathExists(path: string): Promise<boolean> {
+    try {
+        await fs.stat(path);
+
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 export default class LocalScaffolder implements Scaffolder {
     scaffoldConfiguration(name: string, folder: vscode.WorkspaceFolder, contentFactory: ConfigurationContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
         return scaffoldConfiguration(name, folder, contentFactory, onConflict);
     }
 
     async scaffoldFile(path: string, contentFactory: FileContentFactory, onConflict: ConflictHandler): Promise<string | undefined> {
-        if (await fse.pathExists(path)) {
-            const result = await onConflict(path, async targetPath => !(await fse.pathExists(targetPath)));
+        if (await pathExists(path)) {
+            const result = await onConflict(path, async targetPath => !(await pathExists(targetPath)));
 
             switch (result.type) {
                 case 'rename':
@@ -35,7 +45,7 @@ export default class LocalScaffolder implements Scaffolder {
 
         const content = await contentFactory(path);
 
-        await fse.writeFile(path, content, 'utf8');
+        await fs.writeFile(path, content, 'utf8');
 
         return path;
     }
