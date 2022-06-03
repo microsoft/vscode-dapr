@@ -540,11 +540,5 @@
 		"semver": "^7.3.5",
 		"tcp-port-used": "^1.0.2",
 		"vscode-nls": "^5.0.0"
-	},
-	"__metadata": {
-		"id": "a26f7145-c873-47d6-b175-41fdb0f68029",
-		"publisherDisplayName": "Microsoft",
-		"publisherId": "52b787f2-79a9-4f32-99b4-393afe3005d3",
-		"isPreReleaseVersion": false
 	}
 }
