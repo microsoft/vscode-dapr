@@ -15,7 +15,7 @@
 	"engines": {
 		"dapr-cli": ">=1.0",
 		"dapr-runtime": ">=1.0",
-		"vscode": "^1.63.2"
+		"vscode": "^1.67.2"
 	},
 	"categories": [
 		"Debuggers",
@@ -506,7 +506,7 @@
 		"@types/glob": "^7.2.0",
 		"@types/handlebars": "^4.1.0",
 		"@types/mocha": "^9.1.1",
-		"@types/node": "^14.16.0",
+		"@types/node": "^16.11.38",
 		"@types/semver": "^7.3.9",
 		"@types/tcp-port-used": "^1.0.1",
 		"@types/terser-webpack-plugin": "^5.2.0",
@@ -515,7 +515,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"eslint": "^8.16.0",
-		"glob": "^7.1.7",
+		"glob": "^8.0.3",
 		"mocha": "^10.0.0",
 		"opentelemetry": "^0.1.0",
 		"terser-webpack-plugin": "^5.3.3",
@@ -531,7 +531,7 @@
 	},
 	"dependencies": {
 		"@microsoft/vscode-azext-utils": "^0.3.2",
-		"@opentelemetry/api": "^1.0.3",
+		"@opentelemetry/api": "^1.1.0",
 		"@opentelemetry/tracing": "^0.24.0",
 		"axios": "^0.27.2",
 		"handlebars": "^4.7.7",
