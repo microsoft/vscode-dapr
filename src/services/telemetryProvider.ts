@@ -32,11 +32,12 @@ export default class AzureTelemetryProvider implements TelemetryProvider {
     registerContextCommandWithTelemetry<T extends TreeNode>(commandId: string, callback: (context: IActionContext, node: T | undefined, ...args: any[]) => unknown): void {
         this.registerCommandWithTelemetry(
             commandId,
-            (context, node, ...args) => {
+            (context, node: T | undefined, ...args) => {
                 const properties = context.telemetry.properties as ContextCommandTelemetryProperties;
 
                 properties.source = node ? 'context' : 'palette';
 
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 return callback(context, node, ...args);
             });
     }
