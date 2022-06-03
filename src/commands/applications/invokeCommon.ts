@@ -6,7 +6,7 @@ import * as nls from 'vscode-nls';
 import { DaprApplication, DaprApplicationProvider } from "../../services/daprApplicationProvider";
 import { UserInput, WizardStep } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
-import { IActionContext, ITelemetryContext } from 'vscode-azureextensionui';
+import { IActionContext, ITelemetryContext } from '@microsoft/vscode-azext-utils';
 import { getLocalizationPathForFile } from '../../util/localization';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));

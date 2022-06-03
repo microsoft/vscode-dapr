@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import DaprApplicationNode from "../../views/applications/daprApplicationNode";
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 import DetailsTreeDataProvider from "../../views/details/detailsTreeDataProvider";
 
 export function setAppDetails(context: IActionContext, detailsTreeDataProvider: DetailsTreeDataProvider, node: DaprApplicationNode | undefined): void {

@@ -8,7 +8,7 @@ import { DaprTaskDefinition } from "../tasks/daprCommandTaskProvider";
 import { DaprdDownTaskDefinition } from "../tasks/daprdDownTaskProvider";
 import { getWorkspaceConfigurations, DebugConfiguration } from '../scaffolding/configurationScaffolder';
 import { UserInput, WizardStep } from '../services/userInput';
-import { IActionContext, TelemetryProperties } from 'vscode-azureextensionui';
+import { IActionContext, TelemetryProperties } from '@microsoft/vscode-azext-utils';
 import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
 import { Scaffolder } from '../scaffolding/scaffolder';
 import { ConflictHandler, ConflictUniquenessPredicate } from '../scaffolding/conflicts';

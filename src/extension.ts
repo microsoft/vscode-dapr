@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import DaprCommandTaskProvider from './tasks/daprCommandTaskProvider';
 import DaprdCommandTaskProvider from './tasks/daprdCommandTaskProvider';
 import DaprdDownTaskProvider from './tasks/daprdDownTaskProvider';
-import { AzureUserInput, createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from 'vscode-azureextensionui';
+import { createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from '@microsoft/vscode-azext-utils';
 import ext from './ext';
 import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
 import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
@@ -53,7 +53,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 	ext.context = context;
 	ext.ignoreBundle = true;
 	ext.outputChannel = registerDisposable(createAzExtOutputChannel('Dapr', 'dapr'));
-	ext.ui = new AzureUserInput(context.globalState);
 
 	registerUIExtensionVariables(ext);
 
@@ -67,7 +66,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const settingsProvider = new VsCodeSettingsProvider();
 			const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider(createPlatformProcessProvider(), settingsProvider));
 			const daprClient = new HttpDaprClient(new AxiosHttpClient());
-			const ui = new AggregateUserInput(ext.ui);
+			const ui = new AggregateUserInput(actionContext.ui);
 
 			const scaffolder = new LocalScaffolder();
 			const templatesPath = path.join(context.extensionPath, 'assets', 'templates');

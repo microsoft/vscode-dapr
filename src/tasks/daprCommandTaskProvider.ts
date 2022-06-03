@@ -5,7 +5,7 @@ import CommandLineBuilder from '../util/commandLineBuilder';
 import CommandTaskProvider from './commandTaskProvider';
 import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DaprInstallationManager } from '../services/daprInstallationManager';
 
 export interface DaprTaskDefinition extends TaskDefinition {

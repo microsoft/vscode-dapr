@@ -2,8 +2,7 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import { IAzureUserInput, IAzureQuickPickOptions, IActionContext, AzureWizardPromptStep, AzureWizard } from 'vscode-azureextensionui';
-import ext from '../ext';
+import { IAzureUserInput, IAzureQuickPickOptions, IActionContext, AzureWizardPromptStep, AzureWizard } from '@microsoft/vscode-azext-utils';
 
 interface WizardOptions<T> {
     hideStepCount?: boolean;
@@ -95,7 +94,7 @@ export class AggregateUserInput implements UserInput {
                 measurements: {},
                 properties: {}
             },
-            ui: ext.ui,
+            ui: this.ui,
             valuesToMask: []
         };
 
