@@ -243,21 +243,21 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
         };
 
     const preLaunchTask = await scaffolder.scaffoldTask(
-        'daprd-debug',
+        'dapr-debug',
         result.folder,
         label => {
-            const daprdUpTask: DaprTaskDefinition = {
+            const daprUpTask: DaprTaskDefinition = {
                 appId: result.appId,
                 appPort: result.appPort,
                 label,
-                type: 'daprd'
+                type: 'dapr'
             };
         
             if (buildTask && buildTask !== label) {
-                daprdUpTask.dependsOn = buildTask;
+                daprUpTask.dependsOn = buildTask;
             }
 
-            return daprdUpTask;
+            return daprUpTask;
         },
         onTaskConflict);
 
