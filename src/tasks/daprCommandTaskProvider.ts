@@ -25,7 +25,7 @@ export interface DaprTaskDefinition extends TaskDefinition {
     logLevel?: 'debug' | 'info' | 'warning' | 'error' | 'fatal' | 'panic';
     placementHostAddress?: string;
     profilePort?: number;
-    type: 'daprd';
+    type: 'dapr';
 }
 
 export default class DaprCommandTaskProvider extends CommandTaskProvider {
