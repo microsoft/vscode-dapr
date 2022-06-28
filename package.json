@@ -530,7 +530,7 @@
 		"webpack-cli": "^4.9.2"
 	},
 	"dependencies": {
-		"@microsoft/vscode-azext-utils": "^0.3.3",
+		"@microsoft/vscode-azext-utils": "^0.3.7",
 		"@opentelemetry/api": "^1.1.0",
 		"@opentelemetry/tracing": "^0.24.0",
 		"axios": "^0.27.2",
