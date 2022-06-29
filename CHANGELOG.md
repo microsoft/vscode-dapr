@@ -1,5 +1,17 @@
 # Change Log
 
+## v0.6.1 - 29 June 2022
+
+Minor changes and dependency updates.
+
+### Fixes
+
+* Fail to invoke the application method for a .NET 6 Web API project [#214](https://github.com/microsoft/vscode-dapr/issues/214)
+
+### Added
+
+* Switch to using dapr-based tasks [#74](https://github.com/microsoft/vscode-dapr/issues/74)
+
 ## v0.6.0 - 10 January 2022
 
 Minor bug fixes and dependency updates.
