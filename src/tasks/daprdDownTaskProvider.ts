@@ -34,7 +34,7 @@ export default class DaprdDownTaskProvider extends CustomExecutionTaskProvider {
                             .filter(application => application.appId === daprdDownDefinition.appId)
                             .forEach(application => process.kill(application.pid, 'SIGKILL'));
                         
-                        writer.writeLine(localize('tasks.daprdDownTaskProvider.shutdownMessage', 'Shutting down daprd...'));
+                        writer.writeLine(localize('tasks.daprdDownTaskProvider.shutdownMessage', 'daprd shut down complete'));
                     });
             },
             /* isBackgroundTask: */ false,
