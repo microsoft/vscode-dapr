@@ -540,5 +540,8 @@
 		"semver": "^7.3.5",
 		"tcp-port-used": "^1.0.2",
 		"vscode-nls": "^5.0.0"
+	},
+	"overrides": {
+		"uglify-js": "3.13.0"
 	}
 }
