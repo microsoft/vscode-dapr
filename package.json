@@ -356,6 +356,25 @@
 						"description": "%vscode-dapr.tasks.daprd.properties.allowedOrigins.description%",
 						"default": "*"
 					},
+					"appHealthCheckPath": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.daprd.properties.appHealthCheckPath.description%"
+					},
+					"appHealthProbeInterval": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.daprd.properties.appHealthProbeInterval.description%",
+						"default": 0
+					},
+					"appHealthProbeTimeout": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.daprd.properties.appHealthProbeTimeout.description%",
+						"default": 0
+					},
+					"appHealthThreshold": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.daprd.properties.appHealthThreshold.description%",
+						"default": 0
+					},
 					"appId": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.appId.description%"
@@ -403,6 +422,21 @@
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.controlPlaneAddress.description%"
 					},
+					"enableApiLogging": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableApiLogging.description%",
+						"default": false
+					},
+					"enableHealthCheck": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableHealthCheck.description%",
+						"default": false
+					},
+					"enableMetrics": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.daprd.properties.enableMetrics.description%",
+						"default": false
+					},
 					"enableMtls": {
 						"type": "boolean",
 						"description": "%vscode-dapr.tasks.daprd.properties.enableMtls.description%",
@@ -418,10 +452,20 @@
 						"description": "%vscode-dapr.tasks.daprd.properties.grpcPort.description%",
 						"default": 50001
 					},
+					"httpMaxRequestSize": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.daprd.properties.httpMaxRequestSize.description%",
+						"default": -1
+					},
 					"httpPort": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.daprd.properties.httpPort.description%",
 						"default": 3500
+					},
+					"httpReadBufferSize": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.daprd.properties.httpReadBufferSize.description%",
+						"default": -1
 					},
 					"internalGrpcPort": {
 						"type": "integer",
@@ -431,6 +475,10 @@
 					"kubeConfig": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.kubeConfig.description%"
+					},
+					"listenAddresses": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.daprd.properties.listenAddresses.description%"
 					},
 					"logAsJson": {
 						"type": "boolean",
@@ -443,7 +491,7 @@
 						"enum": [
 							"debug",
 							"info",
-							"warning",
+							"warn",
 							"error",
 							"fatal",
 							"panic"
@@ -473,9 +521,21 @@
 						"description": "%vscode-dapr.tasks.daprd.properties.profilePort.description%",
 						"default": 7777
 					},
+					"publicPort": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.daprd.properties.publicPort.description%"
+					},
+					"resourcesPath": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.daprd.properties.resourcesPath.description%"
+					},
 					"sentryAddress": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.sentryAddress.description%"
+					},
+					"unixDomainSocket": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.daprd.properties.unixDomainSocket.description%"
 					}
 				},
 				"required": [

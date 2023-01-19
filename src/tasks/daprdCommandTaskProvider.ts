@@ -11,10 +11,14 @@ import { EnvironmentProvider } from '../services/environmentProvider';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DaprInstallationManager } from '../services/daprInstallationManager';
 
-type DaprdLogLevel = 'debug' | 'info' | 'warning' | 'error' | 'fatal' | 'panic';
+type DaprdLogLevel = 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'panic';
 
 export interface DaprdTaskDefinition extends TaskDefinition {
     allowedOrigins?: string;
+    appHealthCheckPath?: string;
+    appHealthProbeInterval?: number;
+    appHealthProbeTimeout?: number;
+    appHealthThreshold?: number;
     appId?: string;
     appMaxConcurrency?: number;
     appPort?: number;
@@ -24,20 +28,30 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     componentsPath?: string;
     config?: string;
     controlPlaneAddress?: string;
-    enableProfiling?: boolean;
+    enableApiLogging?: boolean;
+    enableHealthCheck?: boolean;
+    enableMetrics?: boolean;
     enableMtls?: boolean;
+    enableProfiling?: boolean;
+    gracefulShutdownSeconds?: number;
     grpcPort?: number;
+    httpMaxRequestSize?: number;
     httpPort?: number;
+    httpReadBufferSize?: number;
     internalGrpcPort?: number;
     kubeConfig?: string;
+    listenAddresses?: string;
     logAsJson?: boolean;
     logLevel?: DaprdLogLevel;
     metricsPort?: number;
     mode?: 'standalone' | 'kubernetes';
     placementHostAddress?: string;
     profilePort?: number;
+    publicPort?: number;
+    resourcesPath?: string;
     sentryAddress?: string;
     type: 'daprd';
+    unixDomainSocket?: string;
 }
 
 export default class DaprdCommandTaskProvider extends CommandTaskProvider {
@@ -59,6 +73,10 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                             CommandLineBuilder
                                 .create(daprdPathProvider())
                                 .withNamedArg('--allowed-origins', daprDefinition.allowedOrigins)
+                                .withNamedArg('--app-health-check-path', daprDefinition.appHealthCheckPath)
+                                .withNamedArg('--app-health-probe-interval', daprDefinition.appHealthProbeInterval)
+                                .withNamedArg('--app-health-probe-timeout', daprDefinition.appHealthProbeTimeout)
+                                .withNamedArg('--app-health-threshold', daprDefinition.appHealthThreshold)
                                 .withNamedArg('--app-id', daprDefinition.appId)
                                 .withNamedArg('--app-max-concurrency', daprDefinition.appMaxConcurrency)
                                 .withNamedArg('--app-port', daprDefinition.appPort)
@@ -67,9 +85,17 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--components-path', daprDefinition.componentsPath ?? path.join(os.homedir(), '.dapr', 'components'))
                                 .withNamedArg('--config', daprDefinition.config)
                                 .withNamedArg('--control-plane-address', daprDefinition.controlPlaneAddress)
+                                .withNamedArg('--dapr-graceful-shutdown-seconds', daprDefinition.gracefulShutdownSeconds)
                                 .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
+                                .withNamedArg('--dapr-http-max-request-size', daprDefinition.httpMaxRequestSize)
                                 .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
+                                .withNamedArg('--dapr-http-read-buffer-size', daprDefinition.httpReadBufferSize)
                                 .withNamedArg('--dapr-internal-grpc-port', daprDefinition.internalGrpcPort)
+                                .withNamedArg('--dapr-listen-addresses', daprDefinition.listenAddresses)
+                                .withNamedArg('--dapr-public-port', daprDefinition.publicPort)
+                                .withNamedArg('--enable-api-logging', daprDefinition.enableApiLogging, { assignValue: true })
+                                .withNamedArg('--enable-app-health-check', daprDefinition.enableHealthCheck, { assignValue: true })
+                                .withNamedArg('--enable-metrics', daprDefinition.enableMetrics, { assignValue: true })
                                 .withNamedArg('--enable-mtls', daprDefinition.enableMtls, { assignValue: true })
                                 .withNamedArg('--enable-profiling', daprDefinition.enableProfiling, { assignValue: true })
                                 .withNamedArg('--kubeconfig', daprDefinition.kubeConfig)
@@ -79,7 +105,9 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--mode', daprDefinition.mode)
                                 .withNamedArg('--placement-host-address', daprDefinition.placementHostAddress ?? `${process.env.DAPR_PLACEMENT_HOST_ADDRESS ?? 'localhost'}:${environmentProvider.isWindows ? 6050 : 50005}` /* NOTE: The placement address is actually required for daprd. */)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
+                                .withNamedArg('--resources-path', daprDefinition.resourcesPath)
                                 .withNamedArg('--sentry-address', daprDefinition.sentryAddress)
+                                .withNamedArg('--unix-domain-socket', daprDefinition.unixDomainSocket)
                                 .withArgs(daprDefinition.args)
                                 .build();
 
