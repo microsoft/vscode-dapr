@@ -27,7 +27,11 @@
     "vscode-dapr.views.details.title": "Details",
 
     "vscode-dapr.view-containers.dapr-explorer.title": "Dapr",
-    
+
+    "vscode-dapr.tasks.dapr.properties.appHealthCheckPath.description": "Path used for health checks; HTTP only.",
+    "vscode-dapr.tasks.dapr.properties.appHealthProbeInterval.description": "Interval to probe for the health of the app in seconds.",
+    "vscode-dapr.tasks.dapr.properties.appHealthProbeTimeout.description": "Timeout for app health probes in milliseconds.",
+    "vscode-dapr.tasks.dapr.properties.appHealthThreshold.description": "Number of consecutive failures for the app to be considered unhealthy.",
     "vscode-dapr.tasks.dapr.properties.appId.description": "An ID for your application, used for service discovery.",
     "vscode-dapr.tasks.dapr.properties.appMaxConcurrency.description": "Controls the concurrency level of the application.",
     "vscode-dapr.tasks.dapr.properties.appPort.description": "The port your application is listening on.",
@@ -38,12 +42,18 @@
     "vscode-dapr.tasks.dapr.properties.componentsPath.description": "The path for components directory (default \"<user>/.dapr/components\").",
     "vscode-dapr.tasks.dapr.properties.config.description": "The path to the Dapr configuration file.",
     "vscode-dapr.tasks.dapr.properties.cwd.description": "The directory in which to start Dapr.",
+    "vscode-dapr.tasks.dapr.properties.enableApiLogging.description": "Log API calls at INFO verbosity. Valid values are: true or false.",
+    "vscode-dapr.tasks.dapr.properties.enableHealthCheck.description": "Enable health checks for the application using the protocol defined with app-protocol.",
     "vscode-dapr.tasks.dapr.properties.enableProfiling.description": "Whether to enable pprof profiling via an HTTP endpoint.",
     "vscode-dapr.tasks.dapr.properties.grpcPort.description": "The gRPC port for Dapr to listen on.",
+    "vscode-dapr.tasks.dapr.properties.httpMaxRequestSize.description": "Max size of request body in MB.",
     "vscode-dapr.tasks.dapr.properties.httpPort.description": "The HTTP port for Dapr to listen on.",
+    "vscode-dapr.tasks.dapr.properties.httpReadBufferSize.description": "HTTP header read buffer in KB.",
     "vscode-dapr.tasks.dapr.properties.logLevel.description": "Sets the log verbosity.",
+    "vscode-dapr.tasks.dapr.properties.metricsPort.description": "The port of metrics on dapr.",
     "vscode-dapr.tasks.dapr.properties.placementHostAddress.description": "The host on which the placement service resides.",
     "vscode-dapr.tasks.dapr.properties.profilePort.description": "The port for the profile server to listen on.",
+    "vscode-dapr.tasks.dapr.properties.unixDomainSocket.description": "Path to a unix domain socket dir. If specified, Dapr API servers will use Unix Domain Sockets.",
 
     "vscode-dapr.tasks.daprd.properties.allowedOrigins.description": "Allowed HTTP origins.",
     "vscode-dapr.tasks.daprd.properties.appId.description": "An ID for your application, used for service discovery.",

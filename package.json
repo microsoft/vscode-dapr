@@ -207,6 +207,25 @@
 			{
 				"type": "dapr",
 				"properties": {
+					"appHealthCheckPath": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.appHealthCheckPath.description%"
+					},
+					"appHealthProbeInterval": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.dapr.properties.appHealthProbeInterval.description%",
+						"default": 0
+					},
+					"appHealthProbeTimeout": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.dapr.properties.appHealthProbeTimeout.description%",
+						"default": 0
+					},
+					"appHealthThreshold": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.dapr.properties.appHealthThreshold.description%",
+						"default": 0
+					},
 					"appId": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.appId.description%"
@@ -260,6 +279,16 @@
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.cwd.description%"
 					},
+					"enableApiLogging": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.dapr.properties.enableApiLogging.description%",
+						"default": false
+					},
+					"enableHealthCheck": {
+						"type": "boolean",
+						"description": "%vscode-dapr.tasks.dapr.properties.enableHealthCheck.description%",
+						"default": false
+					},
 					"enableProfiling": {
 						"type": "boolean",
 						"description": "%vscode-dapr.tasks.dapr.properties.enableProfiling.description%",
@@ -270,9 +299,19 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.grpcPort.description%",
 						"default": -1
 					},
+					"httpMaxRequestSize": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.dapr.properties.httpMaxRequestSize.description%",
+						"default": -1
+					},
 					"httpPort": {
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.dapr.properties.httpPort.description%",
+						"default": -1
+					},
+					"httpReadBufferSize": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.dapr.properties.httpReadBufferSize.description%",
 						"default": -1
 					},
 					"logLevel": {
@@ -281,12 +320,17 @@
 						"enum": [
 							"debug",
 							"info",
-							"warning",
+							"warn",
 							"error",
 							"fatal",
 							"panic"
 						],
 						"default": "info"
+					},
+					"metricsPort": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.dapr.properties.metricsPort.description%",
+						"default": -1
 					},
 					"placementHostAddress": {
 						"type": "string",
@@ -297,6 +341,10 @@
 						"type": "integer",
 						"description": "%vscode-dapr.tasks.dapr.properties.profilePort.description%",
 						"default": -1
+					},
+					"unixDomainSocket": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.unixDomainSocket.description%"
 					}
 				}
 			},
