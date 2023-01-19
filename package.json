@@ -13,8 +13,8 @@
 		"ui"
 	],
 	"engines": {
-		"dapr-cli": ">=1.0",
-		"dapr-runtime": ">=1.0",
+		"dapr-cli": ">=1.9",
+		"dapr-runtime": ">=1.9",
 		"vscode": "^1.67.2"
 	},
 	"categories": [
