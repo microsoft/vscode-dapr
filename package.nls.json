@@ -89,7 +89,7 @@
     "vscode-dapr.tasks.daprd.properties.profilePort.description": "The port for the profile server.",
     "vscode-dapr.tasks.daprd.properties.publicPort.description": "Public port for Dapr Health and Metadata to listen on.",
     "vscode-dapr.tasks.daprd.properties.resourcesPath.description": "Path for resources directory. If empty, resources will not be loaded. Self-hosted mode only.",
-    "vscode-dapr.tasks.daprd.properties.sentryAddress.description": "Address for the Sentry CA service",
+    "vscode-dapr.tasks.daprd.properties.sentryAddress.description": "Address for the Sentry CA service.",
     "vscode-dapr.tasks.daprd.properties.unixDomainSocket.description": "Path to a unix domain socket dir. If specified, Dapr API servers will use Unix Domain Sockets.",
 
     "vscode-dapr.tasks.daprd-down.properties.appId.description": "An ID for your application, used for service discovery."
