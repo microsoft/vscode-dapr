@@ -15,9 +15,6 @@
             "env": {
                 "DEBUGTELEMETRY": "1"
             },
-            "outFiles": [
-                "${workspaceFolder}/dist/**/*.js"
-            ],
             "preLaunchTask": "${defaultBuildTask}"
         },
         {

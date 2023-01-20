@@ -2,9 +2,9 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
+import CommandLineBuilder from '../util/commandLineBuilder';
+import { Process } from '../util/process';
 import Timer from '../util/timer';
-import { ProcessProvider } from './processProvider';
-import { SettingsProvider } from './settingsProvider';
 
 export interface DaprApplication {
     appId: string;
@@ -21,82 +21,28 @@ export interface DaprApplicationProvider {
     getApplications(): Promise<DaprApplication[]>;
 }
 
-function getAppId(cmd: string): string | undefined {
-    const appIdRegEx = /--app-id "?(?<appId>[a-zA-Z0-9_-]+)"?/g;
-        
-    const appIdMatch = appIdRegEx.exec(cmd);
-    
-    return appIdMatch?.groups?.['appId'];
+interface DaprListApplication {
+    appId: string;
+    httpPort: number;
+    grpcPort: number;
+    appPort: number;
+    metricsEnabled: boolean;
+    command: string;
+    age: string;
+    created: string;
+    daprdPid: number;
+    cliPid: number;
+    maxRequestBodySize: number;
+    httpReadBufferSize: number;
 }
 
-function getHttpPort(cmd: string): number {
-    const portRegEx = /--dapr-http-port "?(?<port>\d+)"?/g;
-        
-    const portMatch = portRegEx.exec(cmd);
-    
-    const portString = portMatch?.groups?.['port'];
-    
-    if (portString !== undefined) {
-        return parseInt(portString, 10);
-    } else {
-        return 3500;
-    }
-}
-
-function getGrpcPort(cmd: string): number {
-    const portRegEx = /--dapr-grpc-port "?(?<port>\d+)"?/g;
-        
-    const portMatch = portRegEx.exec(cmd);
-    
-    const portString = portMatch?.groups?.['port'];
-    
-    if (portString !== undefined) {
-        return parseInt(portString, 10);
-    } else {
-        return 50001;
-    }
-}
-
-function getAppPort(cmd: string): number | undefined {
-    const portRegEx = /--app-port "?(?<port>\d+)"?/g;
-        
-    const portMatch = portRegEx.exec(cmd);
-    
-    const portString = portMatch?.groups?.['port'];
-    
-    if (portString !== undefined) {
-        return parseInt(portString, 10);
-    } else {
-        return undefined;
-    }
-}
-
-function toApplication(cmd: string | undefined, pid: number, ppid: number | undefined): DaprApplication | undefined {
-    if (cmd) {
-        const appId = getAppId(cmd);
-
-        if (appId) {
-            return {
-                appId,
-                httpPort: getHttpPort(cmd),
-                pid,
-                grpcPort: getGrpcPort(cmd),
-                appPort: getAppPort(cmd),
-                ppid
-            };
-        }
-    }
-
-    return undefined;
-}
-
-export default class ProcessBasedDaprApplicationProvider extends vscode.Disposable implements DaprApplicationProvider {
+export default class DaprListBasedDaprApplicationProvider extends vscode.Disposable implements DaprApplicationProvider {
     private applications: DaprApplication[] | undefined;
     private currentRefresh: Promise<void> | undefined;
     private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
     private readonly timer: vscode.Disposable;
 
-    constructor(private readonly processProvider: ProcessProvider, private readonly settingsProvider: SettingsProvider) {
+    constructor(private readonly daprPathProvider: () => string) {
         super(() => {
             this.timer.dispose();
             this.onDidChangeEmitter.dispose();
@@ -134,11 +80,40 @@ export default class ProcessBasedDaprApplicationProvider extends vscode.Disposab
     }
 
     private async onRefresh(): Promise<void> {
-        const processes = await this.processProvider.listProcesses('daprd', this.settingsProvider.daprdPath);
-        
-        this.applications = processes
-            .map(process => toApplication(process.cmd, process.pid, process.ppid))
-            .filter((application): application is DaprApplication => application !== undefined);
+        const command =
+            CommandLineBuilder
+                .create(this.daprPathProvider(), 'list')
+                .withNamedArg('--output', 'json')
+                .build();
+
+        const result = await Process.exec(command);
+
+        if (result.code != 0) {
+            throw new Error(`'${command}' failed with exit code ${result.code}.`);
+        }
+
+        if (result.stderr.length > 0) {
+            throw new Error(`'${command}' failed with stderr: ${result.stderr}`);
+        }
+
+        const applicationsJson = result.stdout;
+
+        // NOTE: `dapr list --output json` returns inconsistent JSON (dapr/cli#1171)
+        let applications = JSON.parse(applicationsJson) as (DaprListApplication[] | DaprListApplication);
+
+        if (!Array.isArray(applications)) {
+            applications = [ applications ];
+        }
+
+        this.applications =
+            applications.map(application => ({
+                appId: application.appId,
+                appPort: application.appPort,
+                grpcPort: application.grpcPort,
+                httpPort: application.httpPort,
+                pid: application.daprdPid,
+                ppid: application.cliPid
+            }))
         
         this.onDidChangeEmitter.fire();
     }
