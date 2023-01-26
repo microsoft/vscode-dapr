@@ -9,7 +9,6 @@ import DaprdDownTaskProvider from './tasks/daprdDownTaskProvider';
 import { createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from '@microsoft/vscode-azext-utils';
 import ext from './ext';
 import DaprApplicationTreeDataProvider from './views/applications/daprApplicationTreeDataProvider';
-import ProcessBasedDaprApplicationProvider from './services/daprApplicationProvider';
 import createInvokeGetCommand from './commands/applications/invokeGet';
 import createInvokePostCommand from './commands/applications/invokePost';
 import { createPublishAllMessageCommand, createPublishMessageCommand } from './commands/applications/publishMessage';
@@ -23,7 +22,6 @@ import createReadDocumentationCommand from './commands/help/readDocumentation';
 import createReportIssueCommand from './commands/help/reportIssue';
 import createReviewIssuesCommand from './commands/help/reviewIssues';
 import createGetStartedCommand from './commands/help/getStarted';
-import createPlatformProcessProvider from './services/processProvider';
 import createOpenDaprDashboardCommand from './commands/openDaprDashboard';
 import LocalDaprInstallationManager from './services/daprInstallationManager';
 import HandlebarsTemplateScaffolder from './scaffolding/templateScaffolder';
@@ -38,6 +36,7 @@ import createInstallDaprCommand from './commands/help/installDapr';
 import DetailsTreeDataProvider from './views/details/detailsTreeDataProvider';
 import createSetAppDetailsCommand from './commands/applications/setAppDetails';
 import createSetComponentDetailsCommand from './commands/applications/setComponentDetails';
+import DaprListBasedDaprApplicationProvider from './services/daprApplicationProvider';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -64,7 +63,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			actionContext.telemetry.properties.isActivationEvent = 'true';
 			
 			const settingsProvider = new VsCodeSettingsProvider();
-			const daprApplicationProvider = registerDisposable(new ProcessBasedDaprApplicationProvider(createPlatformProcessProvider(), settingsProvider));
+			const daprApplicationProvider = registerDisposable(new DaprListBasedDaprApplicationProvider(() => settingsProvider.daprPath));
 			const daprClient = new HttpDaprClient(new AxiosHttpClient());
 			const ui = new AggregateUserInput(actionContext.ui);
 
