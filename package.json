@@ -542,6 +542,6 @@
 		"vscode-nls": "^5.0.0"
 	},
 	"overrides": {
-		"uglify-js": "3.13.0"
+		"uglify-js": "3.13.10"
 	}
 }
