@@ -92,10 +92,6 @@ export default class DaprListBasedDaprApplicationProvider extends vscode.Disposa
             throw new Error(`'${command}' failed with exit code ${result.code}.`);
         }
 
-        if (result.stderr.length > 0) {
-            throw new Error(`'${command}' failed with stderr: ${result.stderr}`);
-        }
-
         const applicationsJson = result.stdout;
 
         // NOTE: `dapr list --output json` returns inconsistent JSON (dapr/cli#1171)
