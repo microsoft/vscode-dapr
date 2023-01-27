@@ -342,6 +342,10 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.profilePort.description%",
 						"default": -1
 					},
+					"runFile": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.runFile.description%"
+					},
 					"unixDomainSocket": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.unixDomainSocket.description%"

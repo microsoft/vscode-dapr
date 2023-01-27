@@ -34,6 +34,7 @@ export interface DaprTaskDefinition extends TaskDefinition {
     metricsPort?: number;
     placementHostAddress?: string;
     profilePort?: number;
+    runFile?: string;
     type: 'dapr';
     unixDomainSocket?: string;
 }
@@ -74,6 +75,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--metrics-port', daprDefinition.metricsPort)
                                 .withNamedArg('--placement-host-address', daprDefinition.placementHostAddress)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
+                                .withNamedArg('--run-file', daprDefinition.runFile)
                                 .withNamedArg('--unix-domain-socket', daprDefinition.unixDomainSocket)
                                 .withArgs(daprDefinition.args)
                                 .withArgs(daprDefinition.command)

@@ -53,6 +53,7 @@
     "vscode-dapr.tasks.dapr.properties.metricsPort.description": "The port of metrics on dapr.",
     "vscode-dapr.tasks.dapr.properties.placementHostAddress.description": "The host on which the placement service resides.",
     "vscode-dapr.tasks.dapr.properties.profilePort.description": "The port for the profile server to listen on.",
+    "vscode-dapr.tasks.dapr.properties.runFile.description": "Path to the run template file for the list of apps to run.",
     "vscode-dapr.tasks.dapr.properties.unixDomainSocket.description": "Path to a unix domain socket dir. If specified, Dapr API servers will use Unix Domain Sockets.",
 
     "vscode-dapr.tasks.daprd.properties.allowedOrigins.description": "Allowed HTTP origins.",
