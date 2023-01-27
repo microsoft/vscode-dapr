@@ -49,7 +49,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                         await daprInstallationManager.ensureInitialized(context.errorHandling);
 
                         const daprDefinition = definition as DaprTaskDefinition;
-                        
+
                         const command =
                             CommandLineBuilder
                                 .create(daprPathProvider(), 'run')
