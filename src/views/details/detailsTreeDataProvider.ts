@@ -10,7 +10,6 @@ import { DaprComponentMetadata } from '../../services/daprClient';
 import { getLocalizationPathForFile } from '../../util/localization';
 import { Observable, Subscription } from 'rxjs';
 import DaprApplicationNode from '../applications/daprApplicationNode';
-import createScaffoldDaprComponentsCommand from '../../commands/scaffoldDaprComponents';
 import DaprComponentMetadataNode from '../applications/daprComponentMetadataNode';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));

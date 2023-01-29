@@ -34,8 +34,6 @@ import createStopCommand from './commands/applications/stopApp';
 import LocalDaprCliClient from './services/daprCliClient';
 import createInstallDaprCommand from './commands/help/installDapr';
 import DetailsTreeDataProvider from './views/details/detailsTreeDataProvider';
-import createSetAppDetailsCommand from './commands/applications/setAppDetails';
-import createSetComponentDetailsCommand from './commands/applications/setComponentDetails';
 import DaprListBasedDaprApplicationProvider from './services/daprApplicationProvider';
 import { Observable } from 'rxjs';
 import TreeNode from './views/treeNode';
@@ -81,8 +79,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.applications.publish-all-message', createPublishAllMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
-//			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.views.appDetails', createSetAppDetailsCommand(detailsTreeDataProvider));
-//			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.views.componentDetails', createSetComponentDetailsCommand(detailsTreeDataProvider));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.stop-app', createStopCommand(daprCliClient, ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.readDocumentation', createReadDocumentationCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.getStarted', createGetStartedCommand(ui));
