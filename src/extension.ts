@@ -63,7 +63,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			actionContext.telemetry.properties.isActivationEvent = 'true';
 			
 			const settingsProvider = new VsCodeSettingsProvider();
-			const daprApplicationProvider = registerDisposable(new DaprListBasedDaprApplicationProvider(() => settingsProvider.daprPath));
+			const daprApplicationProvider = new DaprListBasedDaprApplicationProvider(() => settingsProvider.daprPath);
 			const daprClient = new HttpDaprClient(new AxiosHttpClient());
 			const ui = new AggregateUserInput(actionContext.ui);
 

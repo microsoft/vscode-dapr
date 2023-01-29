@@ -8,25 +8,29 @@ import { DaprApplication, DaprApplicationProvider } from '../../services/daprApp
 import DaprDetailsNode from './daprDetailsNode';
 import { DaprComponentMetadata } from '../../services/daprClient';
 import { getLocalizationPathForFile } from '../../util/localization';
+import { Subscription } from 'rxjs';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export default class DetailsTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {    
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<TreeNode | null | undefined>();
-    private readonly applicationProviderListener: vscode.Disposable;
+    private readonly applicationProviderListener: Subscription;
     private details: DaprDetailItem[] = [];
 
     constructor(
         private readonly applicationProvider: DaprApplicationProvider) {
         super(() => {
-            this.applicationProviderListener.dispose();
+            this.applicationProviderListener.unsubscribe();
             this.onDidChangeTreeDataEmitter.dispose();
         });
 
-        this.applicationProviderListener = this.applicationProvider.onDidChange(
-            () => {
-                this.onDidChangeTreeDataEmitter.fire(undefined);
-            });
+        this.applicationProviderListener =
+            this.applicationProvider
+                .applications
+                .subscribe(
+                    () => {
+                        this.onDidChangeTreeDataEmitter.fire(undefined);
+                    });
     }
 
     get onDidChangeTreeData(): vscode.Event<TreeNode | null | undefined> | undefined {
