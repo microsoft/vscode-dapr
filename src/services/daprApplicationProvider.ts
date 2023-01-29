@@ -12,7 +12,8 @@ export interface DaprApplication {
     pid: number;
     grpcPort: number;
     appPort: number | undefined;
-    ppid: number | undefined; 
+    ppid: number | undefined;
+    runTemplatePath?: string; // Avaliable only for v1.10+
 }
 
 export interface DaprApplicationProvider {
@@ -34,6 +35,7 @@ interface DaprListApplication {
     cliPid: number;
     maxRequestBodySize: number;
     httpReadBufferSize: number;
+    runTemplatePath?: string; // Avaliable only for v1.10+
 }
 
 export default class DaprListBasedDaprApplicationProvider extends vscode.Disposable implements DaprApplicationProvider {
@@ -108,7 +110,8 @@ export default class DaprListBasedDaprApplicationProvider extends vscode.Disposa
                 grpcPort: application.grpcPort,
                 httpPort: application.httpPort,
                 pid: application.daprdPid,
-                ppid: application.cliPid
+                ppid: application.cliPid,
+                runTemplatePath: application.runTemplatePath
             }))
         
         this.onDidChangeEmitter.fire();
