@@ -110,7 +110,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			const selectionObservable = new Observable<readonly TreeNode[]>(
 				subscriber => {
-					var listener = applicationsTreeView.onDidChangeSelection(
+					const listener = applicationsTreeView.onDidChangeSelection(
 						changeEvent => {
 							subscriber.next(changeEvent.selection);
 						});

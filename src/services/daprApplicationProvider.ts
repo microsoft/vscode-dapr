@@ -4,8 +4,7 @@
 import { distinctUntilChanged, Observable, shareReplay, switchMap, timer } from 'rxjs';
 import CommandLineBuilder from '../util/commandLineBuilder';
 import { Process } from '../util/process';
-
-const isEqual = require('lodash.isequal');
+import isequal from 'lodash.isequal';
 
 export interface DaprApplication {
     appId: string;
@@ -43,7 +42,7 @@ export default class DaprListBasedDaprApplicationProvider implements DaprApplica
             timer(0, 2000)
                 .pipe(
                     switchMap(() => this.getApplications()),
-                    distinctUntilChanged(isEqual),
+                    distinctUntilChanged(isequal),
                     shareReplay(1)
                 );
     }

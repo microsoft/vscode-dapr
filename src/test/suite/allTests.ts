@@ -2,8 +2,8 @@
 // Licensed under the MIT license.
 
 import * as path from 'path';
-import * as Mocha from 'mocha';
-import * as glob from 'glob';
+import Mocha from 'mocha';
+import glob from 'glob';
 
 export function run(): Promise<void> {
 	// Create the mocha test

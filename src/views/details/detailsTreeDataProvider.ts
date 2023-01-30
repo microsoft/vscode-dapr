@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import TreeNode from '../treeNode';
 import * as nls from 'vscode-nls'
-import { DaprApplication, DaprApplicationProvider } from '../../services/daprApplicationProvider';
+import { DaprApplication } from '../../services/daprApplicationProvider';
 import DaprDetailsNode from './daprDetailsNode';
 import { DaprComponentMetadata } from '../../services/daprClient';
 import { getLocalizationPathForFile } from '../../util/localization';
