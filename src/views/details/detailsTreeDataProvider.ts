@@ -4,29 +4,36 @@
 import * as vscode from 'vscode';
 import TreeNode from '../treeNode';
 import * as nls from 'vscode-nls'
-import { DaprApplication, DaprApplicationProvider } from '../../services/daprApplicationProvider';
+import { DaprApplication } from '../../services/daprApplicationProvider';
 import DaprDetailsNode from './daprDetailsNode';
 import { DaprComponentMetadata } from '../../services/daprClient';
 import { getLocalizationPathForFile } from '../../util/localization';
+import { Observable, Subscription } from 'rxjs';
+import DaprApplicationNode from '../applications/daprApplicationNode';
+import DaprComponentMetadataNode from '../applications/daprComponentMetadataNode';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export default class DetailsTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {    
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<TreeNode | null | undefined>();
-    private readonly applicationProviderListener: vscode.Disposable;
+    private readonly applicationProviderListener: Subscription;
+    private selectedItems: readonly TreeNode[] = [];
     private details: DaprDetailItem[] = [];
 
     constructor(
-        private readonly applicationProvider: DaprApplicationProvider) {
+        applicationsSelection: Observable<readonly TreeNode[]>) {
         super(() => {
-            this.applicationProviderListener.dispose();
+            this.applicationProviderListener.unsubscribe();
             this.onDidChangeTreeDataEmitter.dispose();
         });
 
-        this.applicationProviderListener = this.applicationProvider.onDidChange(
-            () => {
-                this.onDidChangeTreeDataEmitter.fire(undefined);
-            });
+        this.applicationProviderListener =
+            applicationsSelection
+                .subscribe(
+                    selectedItems => {
+                        this.selectedItems = selectedItems;
+                        this.onDidChangeTreeDataEmitter.fire(undefined);
+                    });
     }
 
     get onDidChangeTreeData(): vscode.Event<TreeNode | null | undefined> | undefined {
@@ -38,38 +45,45 @@ export default class DetailsTreeDataProvider extends vscode.Disposable implement
     }
 
     getChildren(): TreeNode[] {
-        return this.details.map(detail => new DaprDetailsNode(detail.label, detail.value))
+        if (this.selectedItems.length === 1) {
+            const item = this.selectedItems[0];
+
+            if (item instanceof DaprApplicationNode) {
+                return this.setAppDetails(item.application)
+            } else if (item instanceof DaprComponentMetadataNode) {
+                return this.setComponentDetails(item.daprComponentMetadata);
+            }
+        }
+
+        return [];
     }
 
-    setAppDetails(application: DaprApplication | undefined) : void {
+    setAppDetails(application: DaprApplication) : DaprDetailsNode[] {
         const appID = localize('views.details.detailsTreeDataProvider.appID', 'App ID');
         const appPort = localize('views.details.detailsTreeDataProvider.appPort', 'App Port');
         const httpPort = localize('views.details.detailsTreeDataProvider.httpPort', 'Dapr HTTP Port');
         const grpcPort = localize('views.details.detailsTreeDataProvider.grpcPort', 'Dapr GRPC Port');
         const pid = localize('views.details.detailsTreeDataProvider.pid', 'Dapr Process ID');
 
-        if(application !== undefined) {
-            this.details = [
-                {label: appID, value: application?.appId.toString()} as DaprDetailItem, 
-                {label: appPort, value: application?.appPort !== undefined ? application?.appPort.toString() : "None"} as DaprDetailItem,
-                {label: httpPort, value: application?.httpPort.toString()} as DaprDetailItem,
-                {label: grpcPort, value: application?.grpcPort.toString()} as DaprDetailItem, 
-                {label: pid, value: application?.pid.toString()} as DaprDetailItem, 
-            ]
-        }
+        return [
+            new DaprDetailsNode(appID, application?.appId.toString()), 
+            new DaprDetailsNode(appPort, application?.appPort !== undefined ? application?.appPort.toString() : "None"),
+            new DaprDetailsNode(httpPort, application?.httpPort.toString()),
+            new DaprDetailsNode(grpcPort, application?.grpcPort.toString()), 
+            new DaprDetailsNode(pid, application?.pid.toString()) 
+        ];
     }
 
-    setComponentDetails(component: DaprComponentMetadata | undefined) : void {
+    setComponentDetails(component: DaprComponentMetadata) : DaprDetailsNode[] {
         const name = localize('views.details.detailsTreeDataProvider.name', 'Name');
         const type = localize('views.details.detailsTreeDataProvider.type', 'Type');
         const version = localize('views.details.detailsTreeDataProvider.version', 'Version');
-        if(component !== undefined) {
-            this.details = [
-                {label: name, value: component.name} as DaprDetailItem, 
-                {label: type, value: component.type} as DaprDetailItem,
-                {label: version, value: component.version} as DaprDetailItem]
-        }
-        
+
+        return [
+            new DaprDetailsNode(name, component.name), 
+            new DaprDetailsNode(type, component.type),
+            new DaprDetailsNode(version, component.version)
+        ];
     }  
 }
 

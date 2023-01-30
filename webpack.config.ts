@@ -6,7 +6,7 @@
 //
 
 import * as path from 'path';
-import * as TerserPlugin from 'terser-webpack-plugin';
+import TerserPlugin from 'terser-webpack-plugin';
 import * as webpack from 'webpack';
 import { NLSBundlePlugin } from 'vscode-nls-dev/lib/webpack-bundler';
 

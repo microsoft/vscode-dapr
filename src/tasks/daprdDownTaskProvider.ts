@@ -7,6 +7,7 @@ import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
 import { DaprApplicationProvider } from '../services/daprApplicationProvider';
 import { getLocalizationPathForFile } from '../util/localization';
+import { firstValueFrom } from 'rxjs';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -28,7 +29,7 @@ export default class DaprdDownTaskProvider extends CustomExecutionTaskProvider {
                             throw new Error(localize('tasks.daprdDownTaskProvider.appIdError', 'The \'appId\' property must be set.'));
                         }
                         
-                        const applications = await daprApplicationProvider.getApplications();
+                        const applications = await firstValueFrom(daprApplicationProvider.applications);
 
                         applications
                             .filter(application => application.appId === daprdDownDefinition.appId)

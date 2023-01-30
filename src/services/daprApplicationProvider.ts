@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as vscode from 'vscode';
+import { distinctUntilChanged, Observable, shareReplay, switchMap, timer } from 'rxjs';
 import CommandLineBuilder from '../util/commandLineBuilder';
 import { Process } from '../util/process';
-import Timer from '../util/timer';
+import isequal from 'lodash.isequal';
 
 export interface DaprApplication {
     appId: string;
@@ -12,13 +12,12 @@ export interface DaprApplication {
     pid: number;
     grpcPort: number;
     appPort: number | undefined;
-    ppid: number | undefined; 
+    ppid: number | undefined;
+    runTemplatePath?: string; // Avaliable only for v1.10+
 }
 
 export interface DaprApplicationProvider {
-    readonly onDidChange: vscode.Event<void>;
-
-    getApplications(): Promise<DaprApplication[]>;
+    readonly applications: Observable<DaprApplication[]>;
 }
 
 interface DaprListApplication {
@@ -34,52 +33,23 @@ interface DaprListApplication {
     cliPid: number;
     maxRequestBodySize: number;
     httpReadBufferSize: number;
+    runTemplatePath?: string; // Avaliable only for v1.10+
 }
 
-export default class DaprListBasedDaprApplicationProvider extends vscode.Disposable implements DaprApplicationProvider {
-    private applications: DaprApplication[] | undefined;
-    private currentRefresh: Promise<void> | undefined;
-    private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
-    private readonly timer: vscode.Disposable;
-
+export default class DaprListBasedDaprApplicationProvider implements DaprApplicationProvider {
     constructor(private readonly daprPathProvider: () => string) {
-        super(() => {
-            this.timer.dispose();
-            this.onDidChangeEmitter.dispose();
-        });
-
-        // TODO: Do a sane comparison of the old vs. new applications.
-        this.timer = Timer.Interval(
-            2000,
-            () => {
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                this.refreshApplications();
-            });
+        this.applications =
+            timer(0, 2000)
+                .pipe(
+                    switchMap(() => this.getApplications()),
+                    distinctUntilChanged(isequal),
+                    shareReplay(1)
+                );
     }
 
-    get onDidChange(): vscode.Event<void> {
-        return this.onDidChangeEmitter.event;
-    }
+    public readonly applications: Observable<DaprApplication[]>;
 
-    async getApplications(refresh?: boolean): Promise<DaprApplication[]> {
-        if (!this.applications || refresh) {
-            await this.refreshApplications();
-        }
-
-        return this.applications ?? [];
-    }
-
-    private async refreshApplications(): Promise<void> {
-        if (!this.currentRefresh) {
-            this.currentRefresh = this.onRefresh();
-        }
-
-        await this.currentRefresh;
-
-        this.currentRefresh = undefined;
-    }
-
-    private async onRefresh(): Promise<void> {
+    async getApplications(): Promise<DaprApplication[]> {
         const command =
             CommandLineBuilder
                 .create(this.daprPathProvider(), 'list')
@@ -101,16 +71,16 @@ export default class DaprListBasedDaprApplicationProvider extends vscode.Disposa
             applications = [ applications ];
         }
 
-        this.applications =
-            applications.map(application => ({
+        return applications
+            .map(application => ({
                 appId: application.appId,
                 appPort: application.appPort,
                 grpcPort: application.grpcPort,
                 httpPort: application.httpPort,
                 pid: application.daprdPid,
-                ppid: application.cliPid
+                ppid: application.cliPid,
+                runTemplatePath: application.runTemplatePath
             }))
-        
-        this.onDidChangeEmitter.fire();
+            .sort((a, b) => a.appId.localeCompare(b.appId))
     }
 }

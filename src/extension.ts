@@ -34,9 +34,9 @@ import createStopCommand from './commands/applications/stopApp';
 import LocalDaprCliClient from './services/daprCliClient';
 import createInstallDaprCommand from './commands/help/installDapr';
 import DetailsTreeDataProvider from './views/details/detailsTreeDataProvider';
-import createSetAppDetailsCommand from './commands/applications/setAppDetails';
-import createSetComponentDetailsCommand from './commands/applications/setComponentDetails';
 import DaprListBasedDaprApplicationProvider from './services/daprApplicationProvider';
+import { Observable } from 'rxjs';
+import TreeNode from './views/treeNode';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -63,14 +63,13 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			actionContext.telemetry.properties.isActivationEvent = 'true';
 			
 			const settingsProvider = new VsCodeSettingsProvider();
-			const daprApplicationProvider = registerDisposable(new DaprListBasedDaprApplicationProvider(() => settingsProvider.daprPath));
+			const daprApplicationProvider = new DaprListBasedDaprApplicationProvider(() => settingsProvider.daprPath);
 			const daprClient = new HttpDaprClient(new AxiosHttpClient());
 			const ui = new AggregateUserInput(actionContext.ui);
 
 			const scaffolder = new LocalScaffolder();
 			const templatesPath = path.join(context.extensionPath, 'assets', 'templates');
 			const templateScaffolder = new HandlebarsTemplateScaffolder(templatesPath);
-			const detailsTreeDataProvider = new DetailsTreeDataProvider(daprApplicationProvider)
 
 			const daprCliClient = new LocalDaprCliClient(() => settingsProvider.daprPath)
 			const daprDashboardProvider = new ProcessBasedDaprDashboardProvider(() => settingsProvider.daprPath);
@@ -80,8 +79,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.applications.publish-all-message', createPublishAllMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
-			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.views.appDetails', createSetAppDetailsCommand(detailsTreeDataProvider));
-			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.views.componentDetails', createSetComponentDetailsCommand(detailsTreeDataProvider));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.stop-app', createStopCommand(daprCliClient, ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.readDocumentation', createReadDocumentationCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.getStarted', createGetStartedCommand(ui));
@@ -104,15 +101,29 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(daprInstallationManager, () => settingsProvider.daprdPath, new NodeEnvironmentProvider(), telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider(daprApplicationProvider, telemetryProvider)));
 			
-			registerDisposable(
-				vscode.window.registerTreeDataProvider(
+			const applicationsTreeView = registerDisposable(
+				vscode.window.createTreeView(
 					'vscode-dapr.views.applications',
-					registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider, daprClient, daprInstallationManager, ui))));
+					{
+						treeDataProvider: registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider, daprClient, daprInstallationManager, ui))
+					}));
+
+			const selectionObservable = new Observable<readonly TreeNode[]>(
+				subscriber => {
+					const listener = applicationsTreeView.onDidChangeSelection(
+						changeEvent => {
+							subscriber.next(changeEvent.selection);
+						});
+
+					return () => {
+						listener.dispose();
+					};
+				});
 
 			registerDisposable(
 				vscode.window.registerTreeDataProvider(
 					'vscode-dapr.views.details',
-					registerDisposable(detailsTreeDataProvider)));
+					registerDisposable(new DetailsTreeDataProvider(selectionObservable))));
 
 			registerDisposable(
 				vscode.window.registerTreeDataProvider(

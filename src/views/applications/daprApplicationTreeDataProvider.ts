@@ -3,16 +3,18 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import { DaprApplicationProvider } from '../../services/daprApplicationProvider';
+import { DaprApplication, DaprApplicationProvider } from '../../services/daprApplicationProvider';
 import TreeNode from '../treeNode';
 import DaprApplicationNode from './daprApplicationNode';
 import { DaprInstallationManager } from '../../services/daprInstallationManager';
 import { UserInput } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
+import { Subscription } from 'rxjs';
 
 export default class DaprApplicationTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<TreeNode | null | undefined>();
-    private readonly applicationProviderListener: vscode.Disposable;
+    private readonly applicationProviderListener: Subscription;
+    private applications: DaprApplication[] = [];
 
     constructor(
         private readonly applicationProvider: DaprApplicationProvider,
@@ -20,14 +22,18 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
         private readonly installationManager: DaprInstallationManager,
         private readonly ui: UserInput) {
         super(() => {
-            this.applicationProviderListener.dispose();
+            this.applicationProviderListener.unsubscribe();
             this.onDidChangeTreeDataEmitter.dispose();
         });
 
-        this.applicationProviderListener = this.applicationProvider.onDidChange(
-            () => {
-                this.onDidChangeTreeDataEmitter.fire(undefined);
-            });
+        this.applicationProviderListener =
+            this.applicationProvider
+                .applications
+                .subscribe(
+                    applications => {
+                        this.applications = applications;
+                        this.onDidChangeTreeDataEmitter.fire(undefined);
+                    });
     }
 
     get onDidChangeTreeData(): vscode.Event<TreeNode | null | undefined> | undefined {
@@ -56,8 +62,7 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
                 }
             }
     
-            const applications = await this.applicationProvider.getApplications();
-            const appNodeList = applications.map(application => new DaprApplicationNode(application, this.daprClient));
+            const appNodeList = this.applications.map(application => new DaprApplicationNode(application, this.daprClient));
 
             // NOTE: Returning zero children indicates to VS Code that is should display a "welcome view".
             //       The one chosen for display depends on the context set above.

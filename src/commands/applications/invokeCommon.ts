@@ -8,6 +8,7 @@ import { UserInput, WizardStep } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
 import { IActionContext, ITelemetryContext } from '@microsoft/vscode-azext-utils';
 import { getLocalizationPathForFile } from '../../util/localization';
+import { firstValueFrom } from 'rxjs';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -17,7 +18,7 @@ const invokePostPayloadStateKey = 'vscode-docker.state.invokePost.payload';
 
 export async function getApplication(context: ITelemetryContext, daprApplicationProvider: DaprApplicationProvider, ui: UserInput, selectedApplication?: DaprApplication): Promise<DaprApplication> {
     if (!selectedApplication) {
-        const applications = await daprApplicationProvider.getApplications();
+        const applications = await firstValueFrom(daprApplicationProvider.applications);
 
         if (applications.length === 0) {
             throw new Error(localize('commands.invokeCommon.noApplicationsMessage', 'No Dapr applications are running.'));

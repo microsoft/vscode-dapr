@@ -20,6 +20,11 @@ export interface DaprCliClient {
     stopApp(application: DaprApplication | undefined): void;
 }
 
+interface DaprCliVersion {
+    'Cli version'?: string;
+    'Runtime version'?: string;
+}
+
 export default class LocalDaprCliClient implements DaprCliClient {
     constructor(private readonly daprPathProvider: () => string) {
     }
@@ -28,7 +33,7 @@ export default class LocalDaprCliClient implements DaprCliClient {
         const daprPath = this.daprPathProvider();
         const command =
             CommandLineBuilder
-                .create(daprPath, '--version')
+                .create(daprPath, 'version', '--output', 'json')
                 .build();
 
         const result = await Process.exec(command);
@@ -37,14 +42,11 @@ export default class LocalDaprCliClient implements DaprCliClient {
             throw new Error(localize('services.daprCliClient.versionFailed', 'Retrieving the dapr CLI version failed: {0}', result.stderr));
         }
 
-        const cliMatch = /^CLI version: (?<version>.+)$/gm.exec(result.stdout);  
-        const runtimeMatch = /^Runtime version: (?<version>.+)$/gm.exec(result.stdout);
+        const cliVersion = JSON.parse(result.stdout) as DaprCliVersion;
 
         return {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            cli: cliMatch ? cliMatch.groups!['version'] : undefined,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            runtime: runtimeMatch ? runtimeMatch.groups!['version'] : undefined
+            cli: cliVersion['Cli version'],
+            runtime: cliVersion['Runtime version']
         }
     }
 

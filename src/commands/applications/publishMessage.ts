@@ -10,6 +10,7 @@ import { DaprClient } from '../../services/daprClient';
 import { getApplication, getPayload } from './invokeCommon';
 import { IActionContext, ITelemetryContext } from '@microsoft/vscode-azext-utils';
 import { getLocalizationPathForFile } from '../../util/localization';
+import { firstValueFrom } from 'rxjs';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -122,7 +123,7 @@ export async function publishMessageCore(context: IActionContext, daprApplicatio
 }
 
 export async function publishAllMessage(context: IActionContext, daprApplicationProvider: DaprApplicationProvider, daprClient: DaprClient, outputChannel: vscode.OutputChannel, ui: UserInput, workspaceState: vscode.Memento): Promise<void> {
-    const applications = await daprApplicationProvider.getApplications();
+    const applications = await firstValueFrom(daprApplicationProvider.applications);
 
     // Published messages go to all applications, regardless of the application through which they are published, so use the first one...
     return await publishMessageCore(context, daprApplicationProvider, daprClient, outputChannel, ui, workspaceState, applications[0]);
