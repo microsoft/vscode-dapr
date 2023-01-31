@@ -10,6 +10,7 @@ import { DaprInstallationManager } from '../../services/daprInstallationManager'
 import { UserInput } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
 import { Subscription } from 'rxjs';
+import { DaprRunNode } from './daprRunNode';
 
 export default class DaprApplicationTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<TreeNode | null | undefined>();
@@ -62,12 +63,18 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
                 }
             }
     
-            const appNodeList = this.applications.map(application => new DaprApplicationNode(application, this.daprClient));
+            const runs = this.getRuns();
 
             // NOTE: Returning zero children indicates to VS Code that is should display a "welcome view".
             //       The one chosen for display depends on the context set above.
 
-            return appNodeList;
+            return runs;
         }
+    }
+
+    private getRuns(): DaprRunNode[] {
+        return [
+            new DaprRunNode('Individual Applications', this.applications, this.daprClient)
+        ];
     }
 }
