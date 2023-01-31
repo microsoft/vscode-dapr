@@ -15,14 +15,7 @@ export default class DaprApplicationNode implements TreeNode {
         const item = new vscode.TreeItem(this.application.appId, vscode.TreeItemCollapsibleState.Collapsed);
 
         item.contextValue = 'application';
-
         item.iconPath = new vscode.ThemeIcon('globe');
-
-        item.command = {
-            arguments: [ this ],
-            command: 'vscode-dapr.views.appDetails',
-            title: '' // NOTE: Title is required but unused here.
-        };
 
         return Promise.resolve(item);
     }
