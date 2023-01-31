@@ -11,6 +11,7 @@ import { UserInput } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
 import { Subscription } from 'rxjs';
 import { DaprRunNode } from './daprRunNode';
+import DaprApplicationNode from './daprApplicationNode';
 
 export default class DaprApplicationTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<TreeNode | null | undefined>();
@@ -72,7 +73,7 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
         }
     }
 
-    private getRuns(): DaprRunNode[] {
+    private getRuns(): TreeNode[] {
         const runs: { [key: string]: DaprApplication[] } = {};
         const individualApps: DaprApplication[] = [];
 
@@ -91,9 +92,20 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
             }
         }
 
-        return Object
-            .keys(runs)
-            .map(name => new DaprRunNode(name, runs[name], this.daprClient))
-            .concat(new DaprRunNode('Individual Applications', individualApps, this.daprClient));
+        const items: TreeNode[] = [];
+
+        const runNames = Object.keys(runs);
+
+        if (runNames.length > 0) {
+            items.push(...runNames.map(name => new DaprRunNode(name, runs[name], this.daprClient)))
+
+            if (individualApps.length > 0) {
+                items.push(new DaprRunNode('Individual Applications', individualApps, this.daprClient));
+            }
+        } else {
+            items.push(...individualApps.map(application => new DaprApplicationNode(application, this.daprClient)))
+        }
+
+        return items;
     }
 }
