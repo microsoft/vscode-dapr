@@ -33,10 +33,23 @@ async function attachToNodeProcess(application: DaprApplication, pid: number): P
         configuration);
 }
 
+async function attachToPythonProcess(application: DaprApplication, pid: number): Promise<void> {
+    const configuration: vscode.DebugConfiguration = {
+        name: `Dapr: ${application.appId} (${pid})`,
+        request: 'attach',
+        processId: pid.toString(),
+        type: 'python'
+    };
+
+    await vscode.debug.startDebugging(
+        vscode.workspace.workspaceFolders?.[0],
+        configuration);
+}
+
 function getAttachBehavior(application: DaprApplication, process: ProcessDescriptor, processes: ProcessDescriptor[]): AttachBehavior | undefined {
     const executable = path.basename(process.name);
 
-    switch (executable) {
+    switch (executable.toLowerCase()) {
         case 'dotnet':
             //
             // NOTE: The `dotnet` process is just the runner for the .NET application;
@@ -54,6 +67,11 @@ function getAttachBehavior(application: DaprApplication, process: ProcessDescrip
         case 'node':
             return () => attachToNodeProcess(application, process.pid);
 
+        case 'python':
+        case 'python2':
+        case 'python3':
+            return () => attachToPythonProcess(application, process.pid);
+
         default:
             return undefined;
     }
@@ -65,7 +83,7 @@ function findApplicationCommandProcess(application: DaprApplication, processes: 
     //       to the start of the command for the application.
     //
     //       It's important to note that this only works if each application has an entirely different commands.
-    return processes.find(process => application.command.startsWith(process.name));
+    return processes.find(process => application.command.startsWith(process.name.toLowerCase()));
 }
 
 async function debugApplication(application: DaprApplication): Promise<void> {
