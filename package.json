@@ -641,6 +641,7 @@
 		"handlebars": "^4.7.7",
 		"lodash.isequal": "^4.5.0",
 		"portfinder": "^1.0.28",
+		"ps-list": "^8.1.1",
 		"rxjs": "^7.8.0",
 		"semver": "^7.3.5",
 		"tcp-port-used": "^1.0.2",
