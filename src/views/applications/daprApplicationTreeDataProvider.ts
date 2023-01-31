@@ -2,10 +2,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as path from 'path';
 import * as vscode from 'vscode';
 import { DaprApplication, DaprApplicationProvider } from '../../services/daprApplicationProvider';
 import TreeNode from '../treeNode';
-import DaprApplicationNode from './daprApplicationNode';
 import { DaprInstallationManager } from '../../services/daprInstallationManager';
 import { UserInput } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
@@ -73,8 +73,27 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
     }
 
     private getRuns(): DaprRunNode[] {
-        return [
-            new DaprRunNode('Individual Applications', this.applications, this.daprClient)
-        ];
+        const runs: { [key: string]: DaprApplication[] } = {};
+        const individualApps: DaprApplication[] = [];
+
+        for (const application of this.applications) {
+            if (application.runTemplatePath) {
+                // TODO: Grouping needs to be done via <PPID, RunTemplatePath> to allow for multiple runs.
+                const name = path.basename(path.dirname(application.runTemplatePath));
+
+                const applications = runs[name] ?? [];
+
+                applications.push(application);
+
+                runs[name] = applications;
+            } else {
+                individualApps.push(application);
+            }
+        }
+
+        return Object
+            .keys(runs)
+            .map(name => new DaprRunNode(name, runs[name], this.daprClient))
+            .concat(new DaprRunNode('Individual Applications', individualApps, this.daprClient));
     }
 }
