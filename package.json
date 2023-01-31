@@ -29,21 +29,7 @@
 		"kubernetes"
 	],
 	"activationEvents": [
-		"onCommand:vscode-dapr.applications.invoke-get",
-		"onCommand:vscode-dapr.applications.invoke-post",
-		"onCommand:vscode-dapr.applications.publish-all-message",
-		"onCommand:vscode-dapr.applications.publish-message",
-		"onCommand:vscode-dapr.applications.stop-app",
-		"onCommand:vscode-dapr.help.getStarted",
-		"onCommand:vscode-dapr.help.installDapr",
-		"onCommand:vscode-dapr.help.readDocumentation",
-		"onCommand:vscode-dapr.help.reportIssue",
-		"onCommand:vscode-dapr.help.reviewIssues",
-		"onCommand:vscode-dapr.tasks.scaffoldDaprComponents",
-		"onCommand:vscode-dapr.tasks.scaffoldDaprTasks",
-		"onCommand:workbench.action.tasks.runTask",
-		"onCommand:vscode-dapr.tasks.openDaprDashboard",
-		"onView:vscode-dapr.views.applications"
+		"onCommand:workbench.action.tasks.runTask"
 	],
 	"repository": {
 		"type": "git",
@@ -53,6 +39,12 @@
 	"main": "./main.js",
 	"contributes": {
 		"commands": [
+			{
+				"command": "vscode-dapr.applications.debug",
+				"title": "%vscode-dapr.applications.debug.title%",
+				"category": "Dapr",
+				"icon": "$(debug-all)"
+			},
 			{
 				"command": "vscode-dapr.applications.invoke-get",
 				"title": "%vscode-dapr.applications.invoke-get.title%",
@@ -135,7 +127,18 @@
 			}
 		},
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "vscode-dapr.applications.debug",
+					"when": "never"
+				}
+			],
 			"view/item/context": [
+				{
+					"command": "vscode-dapr.applications.debug",
+					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"group": "inline"
+				},
 				{
 					"command": "vscode-dapr.applications.invoke-get",
 					"when": "view == vscode-dapr.views.applications && viewItem == application",

@@ -37,6 +37,7 @@ import DetailsTreeDataProvider from './views/details/detailsTreeDataProvider';
 import DaprListBasedDaprApplicationProvider from './services/daprApplicationProvider';
 import { Observable } from 'rxjs';
 import TreeNode from './views/treeNode';
+import createDebugApplicationCommand from './commands/applications/debugApplication';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -75,6 +76,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const daprDashboardProvider = new ProcessBasedDaprDashboardProvider(() => settingsProvider.daprPath);
 
 
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.debug', createDebugApplicationCommand());
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.applications.publish-all-message', createPublishAllMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
