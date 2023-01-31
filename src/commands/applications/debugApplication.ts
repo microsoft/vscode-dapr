@@ -59,10 +59,27 @@ function getAttachBehavior(application: DaprApplication, process: ProcessDescrip
     }
 }
 
+function findApplicationCommandProcess(application: DaprApplication, processes: ProcessDescriptor[]): ProcessDescriptor | undefined {
+    // NOTE: Until we get https://github.com/dapr/cli/issues/1191, we can't directly determine which of the child processes
+    //       created by `dapr` correspond to a given application. For the time being, we correlate the name of the process
+    //       to the start of the command for the application.
+    //
+    //       It's important to note that this only works if each application has an entirely different commands.
+    return processes.find(process => application.command.startsWith(process.name));
+}
+
 async function debugApplication(application: DaprApplication): Promise<void> {
     var processes = await psList();
 
-    const children = processes.filter(process => process.ppid === application.ppid);
+    const daprChildren = processes.filter(process => process.ppid === application.ppid);
+
+    const applicationCommandProcess = findApplicationCommandProcess(application, daprChildren);
+
+    if (applicationCommandProcess === undefined) {
+        throw new Error('Unable to determine the application command process.');
+    }
+
+    const children = [ applicationCommandProcess ];
 
     let childProcess: ProcessDescriptor | undefined;
     let attach: AttachBehavior | undefined = undefined;
