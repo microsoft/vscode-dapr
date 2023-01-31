@@ -7,9 +7,22 @@ import psList, { ProcessDescriptor } from 'ps-list';
 
 type AttachBehavior = () => Promise<void>;
 
-async function attachToNodeProcess(pid: number): Promise<void> {
+async function attachToDotnetProcess(application: DaprApplication, pid: number): Promise<void> {
     const configuration: vscode.DebugConfiguration = {
-        name: `Node Process ${pid}`,
+        name: `Dapr: ${application.appId} (${pid})`,
+        request: 'attach',
+        processId: pid.toString(),
+        type: 'coreclr'
+    };
+
+    await vscode.debug.startDebugging(
+        vscode.workspace.workspaceFolders?.[0],
+        configuration);
+}
+
+async function attachToNodeProcess(application: DaprApplication, pid: number): Promise<void> {
+    const configuration: vscode.DebugConfiguration = {
+        name: `Dapr: ${application.appId} (${pid})`,
         request: 'attach',
         processId: pid.toString(),
         type: 'node'
@@ -20,12 +33,26 @@ async function attachToNodeProcess(pid: number): Promise<void> {
         configuration);
 }
 
-function getAttachBehavior(process: ProcessDescriptor): AttachBehavior | undefined {
+function getAttachBehavior(application: DaprApplication, process: ProcessDescriptor, processes: ProcessDescriptor[]): AttachBehavior | undefined {
     const executable = path.basename(process.name);
 
     switch (executable) {
+        case 'dotnet':
+            //
+            // NOTE: The `dotnet` process is just the runner for the .NET application;
+            //       we need to look for (a single) child process.
+            //
+
+            const childProcesses = processes.filter(p => p.ppid === process.pid);
+
+            if (childProcesses.length !== 1) {
+                throw new Error('Unable to determine the child process of the .NET application to attach to.');
+            }
+
+            return () => attachToDotnetProcess(application, childProcesses[0].pid);
+
         case 'node':
-            return () => attachToNodeProcess(process.pid);
+            return () => attachToNodeProcess(application, process.pid);
 
         default:
             return undefined;
@@ -41,7 +68,7 @@ async function debugApplication(application: DaprApplication): Promise<void> {
     let attach: AttachBehavior | undefined = undefined;
 
     while (childProcess = children.pop()) {
-        attach = getAttachBehavior(childProcess);
+        attach = getAttachBehavior(application, childProcess, processes);
 
         if (attach) {
             break;
