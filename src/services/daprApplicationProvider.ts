@@ -8,7 +8,7 @@ import isequal from 'lodash.isequal';
 
 export interface DaprApplication {
     appId: string;
-    appPid?: number;
+    appPid?: number; // Available only for v1.10+
     command: string;
     httpPort: number;
     pid: number;
@@ -77,7 +77,7 @@ export default class DaprListBasedDaprApplicationProvider implements DaprApplica
         return applications
             .map(application => ({
                 appId: application.appId,
-                appPid: application.appPid,
+                appPid: application.appPid !== 0 ? application.appPid : undefined,
                 appPort: application.appPort,
                 command: application.command,
                 grpcPort: application.grpcPort,

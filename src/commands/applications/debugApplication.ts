@@ -77,10 +77,10 @@ function getAttachBehavior(application: DaprApplication, process: ProcessDescrip
     }
 }
 
-async function debugApplication(application: DaprApplication): Promise<void> {
+export async function debugApplication(application: DaprApplication): Promise<void> {
     // If using a version of Dapr that doesn't include the app PID, or the app PID is zero (meaning there was no app started),
     // we won't be able to (definitively) determine the app process...
-    if (application.appPid === undefined || application.appPid === 0) {
+    if (application.appPid === undefined) {
         throw new Error('Unable to determine the application command process.');
     }
 

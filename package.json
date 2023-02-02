@@ -97,6 +97,12 @@
 				"category": "Dapr"
 			},
 			{
+				"command": "vscode-dapr.runs.debug",
+				"title": "%vscode-dapr.runs.debug.title%",
+				"category": "Dapr",
+				"icon": "$(debug-all)"
+			},
+			{
 				"command": "vscode-dapr.tasks.scaffoldDaprComponents",
 				"title": "%vscode-dapr.tasks.scaffoldDaprComponents.title%",
 				"category": "Dapr"
@@ -131,6 +137,10 @@
 				{
 					"command": "vscode-dapr.applications.debug",
 					"when": "never"
+				},
+				{
+					"command": "vscode-dapr.runs.debug",
+					"when": "never"
 				}
 			],
 			"view/item/context": [
@@ -158,6 +168,11 @@
 					"command": "vscode-dapr.applications.stop-app",
 					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "stop"
+				},
+				{
+					"command": "vscode-dapr.runs.debug",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /run/ && viewItem =~ /attachable/",
+					"group": "inline"
 				}
 			],
 			"view/title": [

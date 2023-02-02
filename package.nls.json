@@ -14,6 +14,9 @@
     "vscode-dapr.help.installDapr.title": "Install Dapr",
     "vscode-dapr.help.reportIssue.title": "Report Issue",
     "vscode-dapr.help.reviewIssues.title": "Review Issues",
+
+    "vscode-dapr.runs.debug.title": "Debug Run",
+
     "vscode-dapr.tasks.scaffoldDaprComponents.title": "Scaffold Dapr Components",
     "vscode-dapr.tasks.scaffoldDaprTasks.title": "Scaffold Dapr Tasks",
     "vscode-dapr.tasks.openDaprDashboard.title": "Open Dapr Dashboard",

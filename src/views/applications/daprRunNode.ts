@@ -7,14 +7,16 @@ import DaprApplicationNode from "./daprApplicationNode";
 export class DaprRunNode implements TreeNode {
     constructor(
         private readonly name: string,
-        private readonly applications: DaprApplication[],
+        public readonly applications: DaprApplication[],
         private readonly daprClient: DaprClient) {
     }
 
     getTreeItem(): Promise<vscode.TreeItem> {
-        var treeItem = new vscode.TreeItem(this.name, vscode.TreeItemCollapsibleState.Expanded);
+        const item = new vscode.TreeItem(this.name, vscode.TreeItemCollapsibleState.Expanded);
 
-        return Promise.resolve(treeItem);
+        item.contextValue = ['run', this.applications.some(application => application.appPid !== undefined) ? 'attachable' : ''].join(' ');
+
+        return Promise.resolve(item);
     }
 
     getChildren(): TreeNode[] {
