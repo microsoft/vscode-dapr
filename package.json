@@ -136,27 +136,27 @@
 			"view/item/context": [
 				{
 					"command": "vscode-dapr.applications.debug",
-					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/ && viewItem =~ /attachable/",
 					"group": "inline"
 				},
 				{
 					"command": "vscode-dapr.applications.invoke-get",
-					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "invoke"
 				},
 				{
 					"command": "vscode-dapr.applications.invoke-post",
-					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "invoke"
 				},
 				{
 					"command": "vscode-dapr.applications.publish-message",
-					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "invoke"
 				},
 				{
 					"command": "vscode-dapr.applications.stop-app",
-					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "stop"
 				}
 			],
