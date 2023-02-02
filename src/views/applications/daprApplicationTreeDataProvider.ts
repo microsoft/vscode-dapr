@@ -97,10 +97,10 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
         const runNames = Object.keys(runs);
 
         if (runNames.length > 0) {
-            items.push(...runNames.map(name => new DaprRunNode(name, runs[name], this.daprClient)))
+            items.push(...runNames.map(name => DaprRunNode.CreateRunNode(name, runs[name], this.daprClient)))
 
             if (individualApps.length > 0) {
-                items.push(new DaprRunNode('Individual Applications', individualApps, this.daprClient));
+                items.push(DaprRunNode.CreateIndividualApplicationsNode(individualApps, this.daprClient));
             }
         } else {
             items.push(...individualApps.map(application => new DaprApplicationNode(application, this.daprClient)))

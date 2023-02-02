@@ -5,16 +5,34 @@ import TreeNode from "../treeNode";
 import DaprApplicationNode from "./daprApplicationNode";
 
 export class DaprRunNode implements TreeNode {
-    constructor(
-        private readonly name: string,
+    public static CreateRunNode(
+        label: string,
+        applications: DaprApplication[],
+        daprClient: DaprClient): DaprRunNode {
+        return new DaprRunNode(label, applications, daprClient);
+    }
+
+    public static CreateIndividualApplicationsNode(
+        applications: DaprApplication[],
+        daprClient: DaprClient) : DaprRunNode {
+        return new DaprRunNode('Individual Applications', applications, daprClient, true);
+    }
+
+    private constructor(
+        private readonly label: string,
         public readonly applications: DaprApplication[],
-        private readonly daprClient: DaprClient) {
+        private readonly daprClient: DaprClient,
+        private readonly isIndividualApplicationsNode: boolean = false) {
     }
 
     getTreeItem(): Promise<vscode.TreeItem> {
-        const item = new vscode.TreeItem(this.name, vscode.TreeItemCollapsibleState.Expanded);
+        const item = new vscode.TreeItem(this.label, vscode.TreeItemCollapsibleState.Expanded);
 
         item.contextValue = ['run', this.applications.some(application => application.appPid !== undefined) ? 'attachable' : ''].join(' ');
+        
+        if (!this.isIndividualApplicationsNode) {
+            item.iconPath = new vscode.ThemeIcon('layers');
+        }
 
         return Promise.resolve(item);
     }
