@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { DaprApplication } from "../../services/daprApplicationProvider";
 import { DaprRunNode } from "../../views/applications/daprRunNode";

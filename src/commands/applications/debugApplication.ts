@@ -1,18 +1,25 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as nls from 'vscode-nls';
 import { IActionContext } from "@microsoft/vscode-azext-utils";
 import { DaprApplication } from "../../services/daprApplicationProvider";
 import DaprApplicationNode from "../../views/applications/daprApplicationNode";
 import psList, { ProcessDescriptor } from 'ps-list';
+import { getLocalizationPathForFile } from '../../util/localization';
+
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 type AttachBehavior = () => Promise<void>;
 
-async function attachToDotnetProcess(application: DaprApplication, pid: number): Promise<void> {
+async function attachToProcess(application: DaprApplication, type: string, pid: number): Promise<void> {
     const configuration: vscode.DebugConfiguration = {
-        name: `Dapr: ${application.appId} (${pid})`,
+        name: localize('commands.applications.debugApplication.sessionLabel', 'Dapr: {0} ({1})', application.appId, pid),
         request: 'attach',
         processId: pid.toString(),
-        type: 'coreclr'
+        type
     };
 
     await vscode.debug.startDebugging(
@@ -20,30 +27,17 @@ async function attachToDotnetProcess(application: DaprApplication, pid: number):
         configuration);
 }
 
-async function attachToNodeProcess(application: DaprApplication, pid: number): Promise<void> {
-    const configuration: vscode.DebugConfiguration = {
-        name: `Dapr: ${application.appId} (${pid})`,
-        request: 'attach',
-        processId: pid.toString(),
-        type: 'node'
-    };
+function attachToDotnetProcess(application: DaprApplication, pid: number): Promise<void> {
+    return attachToProcess(application, 'coreclr', pid);
+}
 
-    await vscode.debug.startDebugging(
-        vscode.workspace.workspaceFolders?.[0],
-        configuration);
+function attachToNodeProcess(application: DaprApplication, pid: number): Promise<void> {
+    return attachToProcess(application, 'node', pid);
 }
 
 async function attachToPythonProcess(application: DaprApplication, pid: number): Promise<void> {
-    const configuration: vscode.DebugConfiguration = {
-        name: `Dapr: ${application.appId} (${pid})`,
-        request: 'attach',
-        processId: pid.toString(),
-        type: 'python'
-    };
-
-    await vscode.debug.startDebugging(
-        vscode.workspace.workspaceFolders?.[0],
-        configuration);
+    // NOTE: I've yet to see this succeed (the adaptor can't seem to attach to the process).
+    return attachToProcess(application, 'python', pid);
 }
 
 function getAttachBehavior(application: DaprApplication, process: ProcessDescriptor, processes: ProcessDescriptor[]): AttachBehavior | undefined {
