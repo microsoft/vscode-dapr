@@ -53,7 +53,7 @@ function getAttachBehavior(application: DaprApplication, process: ProcessDescrip
             const childProcesses = processes.filter(p => p.ppid === process.pid);
 
             if (childProcesses.length !== 1) {
-                throw new Error('Unable to determine the child process of the .NET application to attach to.');
+                throw new Error(localize('commands.applications.debugApplication.tooManyDotnetProcesses', 'Unable to determine the child process of the .NET application to attach to.'));
             }
 
             return () => attachToDotnetProcess(application, childProcesses[0].pid);
@@ -72,10 +72,8 @@ function getAttachBehavior(application: DaprApplication, process: ProcessDescrip
 }
 
 export async function debugApplication(application: DaprApplication): Promise<void> {
-    // If using a version of Dapr that doesn't include the app PID, or the app PID is zero (meaning there was no app started),
-    // we won't be able to (definitively) determine the app process...
     if (application.appPid === undefined) {
-        throw new Error('Unable to determine the application command process.');
+        throw new Error(localize('commands.applications.debugApplication.noAppProcess', 'No process is associated with the application \'{0}\'.', application.appId));
     }
 
     const processes = await psList();
@@ -83,7 +81,7 @@ export async function debugApplication(application: DaprApplication): Promise<vo
     const applicationCommandProcess = processes.find(process => process.pid === application.appPid);
 
     if (applicationCommandProcess === undefined) {
-        throw new Error('The application process is not running.');
+        throw new Error(localize('commands.applications.debugApplication.processNotFound', 'The process associated with the application \'{0}\' is not running.', application.appId));
     }
 
     const children = [ applicationCommandProcess ];
@@ -103,7 +101,7 @@ export async function debugApplication(application: DaprApplication): Promise<vo
     }
 
     if (attach === undefined) {
-        throw new Error('Unable to find an attachable process in the Dapr process tree.');
+        throw new Error(localize('commands.applications.debugApplication.processNotRecognized', 'Unable to find an attachable process for the application \'{0}\'.', application.appId));
     }
     
     await attach();
@@ -111,7 +109,7 @@ export async function debugApplication(application: DaprApplication): Promise<vo
 
 const createDebugApplicationCommand = () => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => {
     if (node == undefined) {
-        throw new Error('An application must be selected.');
+        throw new Error(localize('commands.applications.debugApplication.noPaletteSupport', 'Debugging requires selecting an application in the Dapr view.'));
     }
 
     return debugApplication(node.application);

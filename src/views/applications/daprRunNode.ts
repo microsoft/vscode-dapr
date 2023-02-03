@@ -2,10 +2,14 @@
 // Licensed under the MIT license.
 
 import * as vscode from "vscode";
+import * as nls from 'vscode-nls';
 import { DaprApplication } from "../../services/daprApplicationProvider";
 import { DaprClient } from "../../services/daprClient";
 import TreeNode from "../treeNode";
 import DaprApplicationNode from "./daprApplicationNode";
+import { getLocalizationPathForFile } from '../../util/localization';
+
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export class DaprRunNode implements TreeNode {
     public static CreateRunNode(
@@ -18,7 +22,7 @@ export class DaprRunNode implements TreeNode {
     public static CreateIndividualApplicationsNode(
         applications: DaprApplication[],
         daprClient: DaprClient) : DaprRunNode {
-        return new DaprRunNode('Individual Applications', applications, daprClient, true);
+        return new DaprRunNode(localize('views.applications.daprRunNode.individualApplicationsLabel', 'Individual Applications'), applications, daprClient, true);
     }
 
     private constructor(
