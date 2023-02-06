@@ -7,6 +7,7 @@ import * as nls from 'vscode-nls';
 import { getLocalizationPathForFile } from '../util/localization';
 import { DaprApplication } from "./daprApplicationProvider";
 import * as os from 'os'
+import * as vscode from 'vscode';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -16,6 +17,7 @@ export interface DaprVersion {
 }
 
 export interface DaprCliClient {
+    startDashboard(token: vscode.CancellationToken): Promise<number>;
     version(): Promise<DaprVersion>;
     stopApp(application: DaprApplication | undefined): void;
 }
@@ -26,7 +28,40 @@ interface DaprCliVersion {
 }
 
 export default class LocalDaprCliClient implements DaprCliClient {
+    private static readonly DashboardRunningRegex = /^Dapr Dashboard running on http:\/\/localhost:(?<port>\d+)$/;
+
     constructor(private readonly daprPathProvider: () => string) {
+    }
+
+    async startDashboard(token: vscode.CancellationToken): Promise<number> {
+        const command =
+            CommandLineBuilder
+                .create(this.daprPathProvider(), 'dashboard', '--port', '0')
+                .build();
+
+        let port = 0;
+
+        await Process.start(
+            command,
+            line => {
+                const match = LocalDaprCliClient.DashboardRunningRegex.exec(line);
+
+                if (match) {
+                    const portString = match.groups?.['port'];
+
+                    if (portString) {
+                        port = parseInt(portString, 10);
+
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+            {},
+            token);
+
+        return port;
     }
 
     async version(): Promise<DaprVersion> {
@@ -60,6 +95,4 @@ export default class LocalDaprCliClient implements DaprCliClient {
             processId !== undefined ? process.kill(processId, 'SIGTERM') : null;
         } 
     }
-
-
 }
