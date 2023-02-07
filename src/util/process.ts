@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import * as localization from './localization';
 import * as readline from 'node:readline';
+import treeKill from 'tree-kill';
 
 const localize = nls.loadMessageBundle(localization.getLocalizationPathForFile(__filename));
 
@@ -115,7 +116,7 @@ export class Process {
         }
     }
 
-    static async start(command: string, readyPredicate: (stdout: string) => boolean, options?: cp.ExecOptions, token?: vscode.CancellationToken): Promise<void> {
+    static async start(command: string, readyPredicate: (stdout: string) => boolean, options?: cp.SpawnOptions, token?: vscode.CancellationToken): Promise<void> {
         let outputHandler: LineOutputHandler | undefined;
         
         try {
@@ -168,7 +169,9 @@ export class Process {
                 if (token) {
                     const tokenListener = token.onCancellationRequested(
                         () => {
-                            process.kill();
+                            if (process.pid !== undefined) {
+                                treeKill(process.pid);
+                            }
 
                             tokenListener.dispose();
                         });

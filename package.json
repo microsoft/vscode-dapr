@@ -609,7 +609,6 @@
 		"@types/mocha": "^9.1.1",
 		"@types/node": "^16.11.38",
 		"@types/semver": "^7.3.9",
-		"@types/tcp-port-used": "^1.0.1",
 		"@types/terser-webpack-plugin": "^5.2.0",
 		"@types/vscode": "^1.67.0",
 		"@types/webpack": "^4.41.26",
@@ -637,10 +636,9 @@
 		"axios": "^0.27.2",
 		"handlebars": "^4.7.7",
 		"lodash.isequal": "^4.5.0",
-		"portfinder": "^1.0.28",
 		"rxjs": "^7.8.0",
 		"semver": "^7.3.5",
-		"tcp-port-used": "^1.0.2",
+		"tree-kill": "^1.2.2",
 		"vscode-nls": "^5.0.0"
 	},
 	"overrides": {

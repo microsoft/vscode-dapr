@@ -17,7 +17,7 @@ export interface DaprVersion {
 }
 
 export interface DaprCliClient {
-    startDashboard(token: vscode.CancellationToken): Promise<number>;
+    startDashboard(token: vscode.CancellationToken): Promise<string>;
     version(): Promise<DaprVersion>;
     stopApp(application: DaprApplication | undefined): void;
 }
@@ -28,18 +28,18 @@ interface DaprCliVersion {
 }
 
 export default class LocalDaprCliClient implements DaprCliClient {
-    private static readonly DashboardRunningRegex = /^Dapr Dashboard running on http:\/\/localhost:(?<port>\d+)$/;
+    private static readonly DashboardRunningRegex = /^Dapr Dashboard running on (?<url>.+)$/;
 
     constructor(private readonly daprPathProvider: () => string) {
     }
 
-    async startDashboard(token: vscode.CancellationToken): Promise<number> {
+    async startDashboard(token: vscode.CancellationToken): Promise<string> {
         const command =
             CommandLineBuilder
                 .create(this.daprPathProvider(), 'dashboard', '--port', '0')
                 .build();
 
-        let port = 0;
+        let url = '';
 
         await Process.start(
             command,
@@ -47,11 +47,9 @@ export default class LocalDaprCliClient implements DaprCliClient {
                 const match = LocalDaprCliClient.DashboardRunningRegex.exec(line);
 
                 if (match) {
-                    const portString = match.groups?.['port'];
+                    url = match.groups?.['url'] ?? '';
 
-                    if (portString) {
-                        port = parseInt(portString, 10);
-
+                    if (url) {
                         return true;
                     }
                 }
@@ -61,7 +59,7 @@ export default class LocalDaprCliClient implements DaprCliClient {
             {},
             token);
 
-        return port;
+        return url;
     }
 
     async version(): Promise<DaprVersion> {
