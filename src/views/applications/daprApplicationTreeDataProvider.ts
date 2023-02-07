@@ -2,14 +2,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as path from 'path';
 import * as vscode from 'vscode';
 import { DaprApplication, DaprApplicationProvider } from '../../services/daprApplicationProvider';
 import TreeNode from '../treeNode';
-import DaprApplicationNode from './daprApplicationNode';
 import { DaprInstallationManager } from '../../services/daprInstallationManager';
 import { UserInput } from '../../services/userInput';
 import { DaprClient } from '../../services/daprClient';
 import { Subscription } from 'rxjs';
+import { DaprRunNode } from './daprRunNode';
+import DaprApplicationNode from './daprApplicationNode';
 
 export default class DaprApplicationTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<TreeNode | null | undefined>();
@@ -62,12 +64,48 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
                 }
             }
     
-            const appNodeList = this.applications.map(application => new DaprApplicationNode(application, this.daprClient));
+            const runs = this.getRuns();
 
             // NOTE: Returning zero children indicates to VS Code that is should display a "welcome view".
             //       The one chosen for display depends on the context set above.
 
-            return appNodeList;
+            return runs;
         }
+    }
+
+    private getRuns(): TreeNode[] {
+        const runs: { [key: string]: DaprApplication[] } = {};
+        const individualApps: DaprApplication[] = [];
+
+        for (const application of this.applications) {
+            if (application.runTemplatePath) {
+                // TODO: Grouping needs to be done via <PPID, RunTemplatePath> to allow for multiple runs.
+                const name = path.basename(path.dirname(application.runTemplatePath));
+
+                const applications = runs[name] ?? [];
+
+                applications.push(application);
+
+                runs[name] = applications;
+            } else {
+                individualApps.push(application);
+            }
+        }
+
+        const items: TreeNode[] = [];
+
+        const runNames = Object.keys(runs);
+
+        if (runNames.length > 0) {
+            items.push(...runNames.map(name => DaprRunNode.CreateRunNode(name, runs[name], this.daprClient)))
+
+            if (individualApps.length > 0) {
+                items.push(DaprRunNode.CreateIndividualApplicationsNode(individualApps, this.daprClient));
+            }
+        } else {
+            items.push(...individualApps.map(application => new DaprApplicationNode(application, this.daprClient)))
+        }
+
+        return items;
     }
 }

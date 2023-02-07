@@ -15,7 +15,7 @@
 	"engines": {
 		"dapr-cli": ">=1.9",
 		"dapr-runtime": ">=1.9",
-		"vscode": "^1.67.2"
+		"vscode": "^1.74.0"
 	},
 	"categories": [
 		"Debuggers",
@@ -29,21 +29,8 @@
 		"kubernetes"
 	],
 	"activationEvents": [
-		"onCommand:vscode-dapr.applications.invoke-get",
-		"onCommand:vscode-dapr.applications.invoke-post",
-		"onCommand:vscode-dapr.applications.publish-all-message",
-		"onCommand:vscode-dapr.applications.publish-message",
-		"onCommand:vscode-dapr.applications.stop-app",
-		"onCommand:vscode-dapr.help.getStarted",
-		"onCommand:vscode-dapr.help.installDapr",
-		"onCommand:vscode-dapr.help.readDocumentation",
-		"onCommand:vscode-dapr.help.reportIssue",
-		"onCommand:vscode-dapr.help.reviewIssues",
-		"onCommand:vscode-dapr.tasks.scaffoldDaprComponents",
-		"onCommand:vscode-dapr.tasks.scaffoldDaprTasks",
-		"onCommand:workbench.action.tasks.runTask",
-		"onCommand:vscode-dapr.tasks.openDaprDashboard",
-		"onView:vscode-dapr.views.applications"
+		"onTaskType:dapr",
+		"onTaskType:daprd"
 	],
 	"repository": {
 		"type": "git",
@@ -53,6 +40,12 @@
 	"main": "./main.js",
 	"contributes": {
 		"commands": [
+			{
+				"command": "vscode-dapr.applications.debug",
+				"title": "%vscode-dapr.applications.debug.title%",
+				"category": "Dapr",
+				"icon": "$(debug-all)"
+			},
 			{
 				"command": "vscode-dapr.applications.invoke-get",
 				"title": "%vscode-dapr.applications.invoke-get.title%",
@@ -105,6 +98,12 @@
 				"category": "Dapr"
 			},
 			{
+				"command": "vscode-dapr.runs.debug",
+				"title": "%vscode-dapr.runs.debug.title%",
+				"category": "Dapr",
+				"icon": "$(debug-all)"
+			},
+			{
 				"command": "vscode-dapr.tasks.scaffoldDaprComponents",
 				"title": "%vscode-dapr.tasks.scaffoldDaprComponents.title%",
 				"category": "Dapr"
@@ -135,26 +134,46 @@
 			}
 		},
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "vscode-dapr.applications.debug",
+					"when": "never"
+				},
+				{
+					"command": "vscode-dapr.runs.debug",
+					"when": "never"
+				}
+			],
 			"view/item/context": [
 				{
+					"command": "vscode-dapr.applications.debug",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/ && viewItem =~ /attachable/",
+					"group": "inline"
+				},
+				{
 					"command": "vscode-dapr.applications.invoke-get",
-					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "invoke"
 				},
 				{
 					"command": "vscode-dapr.applications.invoke-post",
-					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "invoke"
 				},
 				{
 					"command": "vscode-dapr.applications.publish-message",
-					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "invoke"
 				},
 				{
 					"command": "vscode-dapr.applications.stop-app",
-					"when": "view == vscode-dapr.views.applications && viewItem == application",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "stop"
+				},
+				{
+					"command": "vscode-dapr.runs.debug",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /run/ && viewItem =~ /attachable/",
+					"group": "inline"
 				}
 			],
 			"view/title": [
@@ -636,6 +655,7 @@
 		"axios": "^0.27.2",
 		"handlebars": "^4.7.7",
 		"lodash.isequal": "^4.5.0",
+		"ps-list": "^8.1.1",
 		"rxjs": "^7.8.0",
 		"semver": "^7.3.5",
 		"tree-kill": "^1.2.2",
