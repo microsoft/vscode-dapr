@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { default as tk } from "tree-kill";
 
 export function treeKill(pid: number): Promise<void> {
