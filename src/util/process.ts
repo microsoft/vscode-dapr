@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import * as localization from './localization';
 import * as readline from 'node:readline';
-import treeKill from 'tree-kill';
+import { treeKill } from './treeKill';
 
 const localize = nls.loadMessageBundle(localization.getLocalizationPathForFile(__filename));
 
@@ -170,7 +170,7 @@ export class Process {
                     const tokenListener = token.onCancellationRequested(
                         () => {
                             if (process.pid !== undefined) {
-                                treeKill(process.pid);
+                                process.kill();
                             }
 
                             tokenListener.dispose();
@@ -178,4 +178,53 @@ export class Process {
                 }
             });
     }
+
+    static async spawnProcess(command: string, options?: SpawnOptions): Promise<SpawnedProcess> {
+        options = options || {};
+        options.shell ??= true;
+
+        const process = cp.spawn(command, options);
+
+        options.outputHandler?.listen(process.stderr, process.stdout);
+
+        const spawnTask = new Promise<void>(
+            (resolve, reject) => {
+                process.on(
+                    'spawn',
+                    () => {
+                        resolve();
+                    });
+
+                process.on(
+                    'error',
+                    err => {
+                        reject(err);
+                    });
+            });
+
+        await spawnTask;
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const pid = process.pid!;
+
+        return {
+            pid,
+            kill: () => new Promise(
+                resolve => {
+                    if (process.exitCode === null) {
+                        process.once('exit', resolve);
+                    } else {
+                        resolve();
+                    }
+                }),
+            killAll: async () => treeKill(pid)
+        }
+    }
+}
+
+export interface SpawnedProcess {
+    pid: number;
+
+    kill(): Promise<void>;
+    killAll(): Promise<void>;
 }

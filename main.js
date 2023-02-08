@@ -41,8 +41,10 @@ function activate(ctx) {
     getExtension(ctx.extensionPath).activate(ctx);
 }
 
-function deactivate(ctx) {
-    getExtension(ctx.extensionPath).deactivate(ctx);
+function deactivate() {
+    if (actualExtension) {
+        return actualExtension.deactivate();
+    }
 }
 
 exports.activate = activate;

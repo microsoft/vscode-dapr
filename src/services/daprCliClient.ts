@@ -2,12 +2,13 @@
 // Licensed under the MIT license.
 
 import CommandLineBuilder from "../util/commandLineBuilder";
-import { Process } from "../util/process";
+import { LineOutputHandler, Process } from "../util/process";
 import * as nls from 'vscode-nls';
 import { getLocalizationPathForFile } from '../util/localization';
 import { DaprApplication } from "./daprApplicationProvider";
 import * as os from 'os'
 import * as vscode from 'vscode';
+import { AsyncDisposable } from "../util/asyncDisposable";
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -16,8 +17,12 @@ export interface DaprVersion {
     runtime: string | undefined;
 }
 
+export interface DaprDashboard extends AsyncDisposable {
+    readonly url: string;
+}
+
 export interface DaprCliClient {
-    startDashboard(token: vscode.CancellationToken): Promise<string>;
+    startDashboard(): Promise<DaprDashboard>;
     version(): Promise<DaprVersion>;
     stopApp(application: DaprApplication | undefined): void;
 }
@@ -33,33 +38,44 @@ export default class LocalDaprCliClient implements DaprCliClient {
     constructor(private readonly daprPathProvider: () => string) {
     }
 
-    async startDashboard(token: vscode.CancellationToken): Promise<string> {
+    async startDashboard(): Promise<DaprDashboard> {
         const command =
             CommandLineBuilder
                 .create(this.daprPathProvider(), 'dashboard', '--port', '0')
                 .build();
 
-        let url = '';
+        let onLine: (line: string) => void;
 
-        await Process.start(
-            command,
-            line => {
-                const match = LocalDaprCliClient.DashboardRunningRegex.exec(line);
-
-                if (match) {
-                    url = match.groups?.['url'] ?? '';
-
-                    if (url) {
-                        return true;
+        const readyTask = new Promise<string>(
+            resolve => {
+                onLine = (line: string) => {
+                    const match = LocalDaprCliClient.DashboardRunningRegex.exec(line);
+        
+                    if (match) {
+                        const url = match.groups?.['url'];
+        
+                        if (url) {
+                            resolve(url);
+                        }
                     }
-                }
+                };
+            });
 
-                return false;
-            },
-            {},
-            token);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const outputHandler = new LineOutputHandler(onLine!);
 
-        return url;
+        try {
+            const process = await Process.spawnProcess(command, { outputHandler });
+
+            const url = await readyTask;
+
+            return {
+                dispose: () => process.killAll(),
+                url
+            };
+        } finally {
+            outputHandler.dispose();
+        }
     }
 
     async version(): Promise<DaprVersion> {

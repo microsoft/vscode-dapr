@@ -39,9 +39,18 @@ import { Observable } from 'rxjs';
 import TreeNode from './views/treeNode';
 import createDebugApplicationCommand from './commands/applications/debugApplication';
 import createDebugRunCommand from './commands/applications/debugRun';
+import { AsyncDisposable } from './util/asyncDisposable';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
+}
+
+const asyncDisposables: AsyncDisposable[] = [];
+
+function registerAsyncDisposable<T extends AsyncDisposable>(disposable: T): T {
+	asyncDisposables.push(disposable);
+
+	return disposable;
 }
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
@@ -74,7 +83,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const templateScaffolder = new HandlebarsTemplateScaffolder(templatesPath);
 
 			const daprCliClient = new LocalDaprCliClient(() => settingsProvider.daprPath)
-			const daprDashboardProvider = registerDisposable(new DaprBasedDaprDashboardProvider(daprCliClient));
+			const daprDashboardProvider = registerAsyncDisposable(new DaprBasedDaprDashboardProvider(daprCliClient));
 
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.debug', createDebugApplicationCommand());
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
@@ -136,6 +145,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 	});
 }
 
-export function deactivate(): Promise<void> {
-	return Promise.resolve();
+export async function deactivate(): Promise<void> {
+	for (const disposable of asyncDisposables) {
+		await disposable.dispose();
+	}
 }
