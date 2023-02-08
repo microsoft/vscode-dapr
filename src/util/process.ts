@@ -99,6 +99,13 @@ export class BufferedOutputHandler extends WrittenOutputHandler {
     public readonly stderrBuffer: Buffer;
 }
 
+export interface SpawnedProcess {
+    pid: number;
+
+    kill(): Promise<void>;
+    killAll(): Promise<void>;
+}
+
 export class Process {
     static async exec(command: string, options?: cp.ExecOptions, token?: vscode.CancellationToken): Promise<{ code: number; stderr: string; stdout: string }> {
         const outputHandler = new BufferedOutputHandler();
@@ -113,28 +120,6 @@ export class Process {
             };
         } finally {
             outputHandler.dispose();
-        }
-    }
-
-    static async start(command: string, readyPredicate: (stdout: string) => boolean, options?: cp.SpawnOptions, token?: vscode.CancellationToken): Promise<void> {
-        let outputHandler: LineOutputHandler | undefined;
-        
-        try {
-            const waiter = new Promise<void>(
-                resolve => {
-                    outputHandler = new LineOutputHandler(
-                        line => {
-                            if (readyPredicate(line)) {
-                                resolve();
-                            }
-                        });
-                });
-
-            void Process.spawn(command, { ...options, outputHandler }, token);
-
-            await waiter;
-        } finally {
-            outputHandler?.dispose();
         }
     }
 
@@ -220,11 +205,4 @@ export class Process {
             killAll: async () => treeKill(pid)
         }
     }
-}
-
-export interface SpawnedProcess {
-    pid: number;
-
-    kill(): Promise<void>;
-    killAll(): Promise<void>;
 }
