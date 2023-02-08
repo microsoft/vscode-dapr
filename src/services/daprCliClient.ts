@@ -7,7 +7,6 @@ import * as nls from 'vscode-nls';
 import { getLocalizationPathForFile } from '../util/localization';
 import { DaprApplication } from "./daprApplicationProvider";
 import * as os from 'os'
-import * as vscode from 'vscode';
 import { AsyncDisposable } from "../util/asyncDisposable";
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
