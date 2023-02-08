@@ -1,51 +1,34 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
-import * as portfinder from 'portfinder'
-import {Process} from '../util/process'
-import * as nls from 'vscode-nls'
-import { getLocalizationPathForFile } from '../util/localization';
-import * as tcp from 'tcp-port-used'
 
-const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
-
+import { AsyncDisposable } from '../util/asyncDisposable';
+import { DaprCliClient, DaprDashboard } from './daprCliClient';
 
 export interface DaprDashboardProvider {
     startDashboard(): Promise<string>;
 }
 
-export default class ProcessBasedDaprDashboardProvider implements DaprDashboardProvider {
-    private port: number | undefined;
-    private startUp: Promise<number> | undefined;
-    
-    constructor(private readonly daprPathProvider: () => string) {
+export default class DaprBasedDaprDashboardProvider implements DaprDashboardProvider, AsyncDisposable {
+    private dashboardTask: Promise<DaprDashboard> | undefined;
+
+    constructor(private readonly daprCliClient: DaprCliClient) {
+    }
+
+    async dispose() {
+        if (this.dashboardTask) {
+            const dashboard = await this.dashboardTask;
+
+            await dashboard.dispose();
+        }
     }
 
     async startDashboard(): Promise<string> {
-        let localStartup = this.startUp;
-
-        if (!localStartup) {
-            localStartup = new Promise(
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-                async (resolve, reject) => {
-                    try {
-                        const openPort = await portfinder.getPortPromise();
-                        void Process.exec(`${this.daprPathProvider()} dashboard -p ${openPort}`)
-                        
-                        await tcp.waitForStatus(openPort, 'localhost', true, 500, 4000)
-                        
-                        resolve(openPort);
-                    } catch(error) {
-                        this.startUp = undefined;
-                        const msg = localize('dashboard.startDashboard.startupError', 'Dashboard instance failed to start. \'{0}\' ', (<Error>error).message);
-                        reject(msg);
-                    }
-                });
-                
-            this.startUp = localStartup;
+        if (this.dashboardTask === undefined) {
+            this.dashboardTask = this.daprCliClient.startDashboard();
         }
-        
-        this.port = await localStartup;                
-        return `http://localhost:${this.port}`;
-    }
 
+        const dashboard = await this.dashboardTask;
+
+        return dashboard.url;
+    }
 }

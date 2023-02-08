@@ -29,7 +29,7 @@ import LocalScaffolder from './scaffolding/scaffolder';
 import NodeEnvironmentProvider from './services/environmentProvider';
 import createScaffoldDaprComponentsCommand from './commands/scaffoldDaprComponents';
 import VsCodeSettingsProvider from './services/settingsProvider';
-import ProcessBasedDaprDashboardProvider from './services/daprDashboardProvider';
+import DaprBasedDaprDashboardProvider from './services/daprDashboardProvider';
 import createStopCommand from './commands/applications/stopApp';
 import LocalDaprCliClient from './services/daprCliClient';
 import createInstallDaprCommand from './commands/help/installDapr';
@@ -39,9 +39,18 @@ import { Observable } from 'rxjs';
 import TreeNode from './views/treeNode';
 import createDebugApplicationCommand from './commands/applications/debugApplication';
 import createDebugRunCommand from './commands/applications/debugRun';
+import { AsyncDisposable } from './util/asyncDisposable';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
+}
+
+const asyncDisposables: AsyncDisposable[] = [];
+
+function registerAsyncDisposable<T extends AsyncDisposable>(disposable: T): T {
+	asyncDisposables.push(disposable);
+
+	return disposable;
 }
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
@@ -74,8 +83,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const templateScaffolder = new HandlebarsTemplateScaffolder(templatesPath);
 
 			const daprCliClient = new LocalDaprCliClient(() => settingsProvider.daprPath)
-			const daprDashboardProvider = new ProcessBasedDaprDashboardProvider(() => settingsProvider.daprPath);
-
+			const daprDashboardProvider = registerAsyncDisposable(new DaprBasedDaprDashboardProvider(daprCliClient));
 
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.debug', createDebugApplicationCommand());
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
@@ -93,7 +101,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand(daprDashboardProvider));
 
-			
 			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;
 			const daprInstallationManager = new LocalDaprInstallationManager(
 				extensionPackage.engines['dapr-cli'],
@@ -138,6 +145,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 	});
 }
 
-export function deactivate(): Promise<void> {
-	return Promise.resolve();
+export async function deactivate(): Promise<void> {
+	for (const disposable of asyncDisposables) {
+		await disposable.dispose();
+	}
 }

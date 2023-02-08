@@ -5,7 +5,7 @@ import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
-import { Process } from '../util/process';
+import { Process, WrittenOutputHandler } from '../util/process';
 import { TaskDefinition } from './taskDefinition';
 import { getLocalizationPathForFile } from '../util/localization';
 
@@ -24,20 +24,12 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
                 return callback(
                     definition,
                     async (command, options) => {
-                        const process = new Process();
+                        const outputHandler = new WrittenOutputHandler(
+                            data => writer.write(data),
+                            data => writer.write(data));
 
                         try {
-                            process.onStdErr(
-                                data => {
-                                    writer.write(data);
-                                });
-
-                            process.onStdOut(
-                                data => {
-                                    writer.write(data);
-                                });
-
-                            const spawnOptions = options || {};
+                            const spawnOptions = { ...(options ?? {}), outputHandler };
 
                             if (spawnOptions.cwd === undefined) {
                                 if (vscode.workspace.workspaceFolders === undefined || vscode.workspace.workspaceFolders.length === 0) {
@@ -50,9 +42,9 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
                             writer.writeLine(localize('tasks.commandTaskProvider.executingMessage', '> Executing command: {0} <', command), 'bold');
                             writer.writeLine('');
 
-                            await process.spawn(command, spawnOptions, token);
+                            await Process.spawn(command, spawnOptions, token);
                         } finally {
-                            process.dispose();
+                            outputHandler.dispose();
                         }
                     },
                     token);

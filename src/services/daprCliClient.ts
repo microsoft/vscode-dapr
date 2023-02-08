@@ -2,11 +2,12 @@
 // Licensed under the MIT license.
 
 import CommandLineBuilder from "../util/commandLineBuilder";
-import { Process } from "../util/process";
+import { LineOutputHandler, Process } from "../util/process";
 import * as nls from 'vscode-nls';
 import { getLocalizationPathForFile } from '../util/localization';
 import { DaprApplication } from "./daprApplicationProvider";
 import * as os from 'os'
+import { AsyncDisposable } from "../util/asyncDisposable";
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -15,7 +16,12 @@ export interface DaprVersion {
     runtime: string | undefined;
 }
 
+export interface DaprDashboard extends AsyncDisposable {
+    readonly url: string;
+}
+
 export interface DaprCliClient {
+    startDashboard(): Promise<DaprDashboard>;
     version(): Promise<DaprVersion>;
     stopApp(application: DaprApplication | undefined): void;
 }
@@ -26,7 +32,49 @@ interface DaprCliVersion {
 }
 
 export default class LocalDaprCliClient implements DaprCliClient {
+    private static readonly DashboardRunningRegex = /^Dapr Dashboard running on (?<url>.+)$/;
+
     constructor(private readonly daprPathProvider: () => string) {
+    }
+
+    async startDashboard(): Promise<DaprDashboard> {
+        const command =
+            CommandLineBuilder
+                .create(this.daprPathProvider(), 'dashboard', '--port', '0')
+                .build();
+
+        let onLine: (line: string) => void;
+
+        const readyTask = new Promise<string>(
+            resolve => {
+                onLine = (line: string) => {
+                    const match = LocalDaprCliClient.DashboardRunningRegex.exec(line);
+        
+                    if (match) {
+                        const url = match.groups?.['url'];
+        
+                        if (url) {
+                            resolve(url);
+                        }
+                    }
+                };
+            });
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const outputHandler = new LineOutputHandler(onLine!);
+
+        try {
+            const process = await Process.spawnProcess(command, { outputHandler });
+
+            const url = await readyTask;
+
+            return {
+                dispose: () => process.killAll(),
+                url
+            };
+        } finally {
+            outputHandler.dispose();
+        }
     }
 
     async version(): Promise<DaprVersion> {
@@ -60,6 +108,4 @@ export default class LocalDaprCliClient implements DaprCliClient {
             processId !== undefined ? process.kill(processId, 'SIGTERM') : null;
         } 
     }
-
-
 }
