@@ -40,6 +40,7 @@ import TreeNode from './views/treeNode';
 import createDebugApplicationCommand from './commands/applications/debugApplication';
 import createDebugRunCommand from './commands/applications/debugRun';
 import { AsyncDisposable } from './util/asyncDisposable';
+import createStopRunCommand from './commands/applications/stopRun';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -97,6 +98,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reportIssue', createReportIssueCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.reviewIssues', createReviewIssuesCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.runs.debug', createDebugRunCommand());
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.runs.stop', createStopRunCommand(daprCliClient));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprComponents', createScaffoldDaprComponentsCommand(scaffolder, templateScaffolder));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand(daprDashboardProvider));

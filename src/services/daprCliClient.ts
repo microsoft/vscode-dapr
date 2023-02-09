@@ -24,6 +24,7 @@ export interface DaprCliClient {
     startDashboard(): Promise<DaprDashboard>;
     version(): Promise<DaprVersion>;
     stopApp(application: DaprApplication | undefined): void;
+    stopRun(runTemplatePath: string): Promise<void>;
 }
 
 interface DaprCliVersion {
@@ -107,5 +108,21 @@ export default class LocalDaprCliClient implements DaprCliClient {
         } else {
             processId !== undefined ? process.kill(processId, 'SIGTERM') : null;
         } 
+    }
+
+    async stopRun(runTemplateFile: string): Promise<void> {
+        const daprPath = this.daprPathProvider();
+
+        const command =
+            CommandLineBuilder
+                .create(daprPath, 'stop')
+                .withNamedArg("--run-file", runTemplateFile)
+                .build();
+
+        const result = await Process.exec(command);
+
+        if (result.code !== 0) {
+            throw new Error(localize('services.daprCliClient.stopRunFailed', 'Stopping the run failed: {0}', result.stderr));
+        }
     }
 }

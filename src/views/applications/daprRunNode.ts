@@ -14,19 +14,21 @@ const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 export class DaprRunNode implements TreeNode {
     public static CreateRunNode(
         label: string,
+        runTemplatePath: string,
         applications: DaprApplication[],
         daprClient: DaprClient): DaprRunNode {
-        return new DaprRunNode(label, applications, daprClient);
+        return new DaprRunNode(label, runTemplatePath, applications, daprClient);
     }
 
     public static CreateIndividualApplicationsNode(
         applications: DaprApplication[],
         daprClient: DaprClient) : DaprRunNode {
-        return new DaprRunNode(localize('views.applications.daprRunNode.individualApplicationsLabel', 'Individual Applications'), applications, daprClient, true);
+        return new DaprRunNode(localize('views.applications.daprRunNode.individualApplicationsLabel', 'Individual Applications'), undefined, applications, daprClient, true);
     }
 
     private constructor(
-        private readonly label: string,
+        public readonly label: string,
+        public readonly runTemplatePath: string | undefined,
         public readonly applications: DaprApplication[],
         private readonly daprClient: DaprClient,
         private readonly isIndividualApplicationsNode: boolean = false) {
@@ -35,7 +37,11 @@ export class DaprRunNode implements TreeNode {
     getTreeItem(): Promise<vscode.TreeItem> {
         const item = new vscode.TreeItem(this.label, vscode.TreeItemCollapsibleState.Expanded);
 
-        item.contextValue = ['run', this.applications.some(application => application.appPid !== undefined) ? 'attachable' : ''].join(' ');
+        item.contextValue = [
+            'run',
+            this.applications.some(application => application.appPid !== undefined) ? 'attachable' : '',
+            this.runTemplatePath !== undefined ? 'stoppable' : ''
+        ].join(' ');
         
         if (!this.isIndividualApplicationsNode) {
             item.iconPath = new vscode.ThemeIcon('layers');

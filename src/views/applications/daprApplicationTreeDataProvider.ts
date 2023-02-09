@@ -74,7 +74,7 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
     }
 
     private getRuns(): TreeNode[] {
-        const runs: { [key: string]: DaprApplication[] } = {};
+        const runs: { [key: string]: { applications: DaprApplication[], runTemplatePath: string } } = {};
         const individualApps: DaprApplication[] = [];
 
         for (const application of this.applications) {
@@ -82,11 +82,11 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
                 // TODO: Grouping needs to be done via <PPID, RunTemplatePath> to allow for multiple runs.
                 const name = path.basename(path.dirname(application.runTemplatePath));
 
-                const applications = runs[name] ?? [];
+                const run = runs[name] ?? { applications: [], runTemplatePath: application.runTemplatePath };
 
-                applications.push(application);
+                run.applications.push(application);
 
-                runs[name] = applications;
+                runs[name] = run;
             } else {
                 individualApps.push(application);
             }
@@ -97,7 +97,7 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
         const runNames = Object.keys(runs);
 
         if (runNames.length > 0) {
-            items.push(...runNames.map(name => DaprRunNode.CreateRunNode(name, runs[name], this.daprClient)))
+            items.push(...runNames.map(name => DaprRunNode.CreateRunNode(name, runs[name].runTemplatePath, runs[name].applications, this.daprClient)))
 
             if (individualApps.length > 0) {
                 items.push(DaprRunNode.CreateIndividualApplicationsNode(individualApps, this.daprClient));
