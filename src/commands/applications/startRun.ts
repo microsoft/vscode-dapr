@@ -4,6 +4,7 @@
 import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { getLocalizationPathForFile } from '../../util/localization';
 import * as nls from 'vscode-nls';
+import * as path from 'path';
 import * as vscode from 'vscode';
 import DaprCommandTaskProvider, { DaprTaskDefinition } from '../../tasks/daprCommandTaskProvider';
 
@@ -15,11 +16,13 @@ export async function startRun(runTemplateFile: string, taskProvider: DaprComman
         runFile: runTemplateFile
     };
 
+    const runFileName = path.basename(path.dirname(runTemplateFile));
+
     const resolvedTask = await taskProvider.resolveTask(
         new vscode.Task(
             taskDefinition,
             vscode.TaskScope.Workspace,
-            "Run File",
+            runFileName,
             "Dapr"));
 
     if (!resolvedTask) {
