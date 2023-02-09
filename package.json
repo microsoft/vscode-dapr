@@ -637,6 +637,12 @@
 				"contents": "%vscode-dapr.views.applications.contents.notRunning%",
 				"when": "vscode-dapr.views.applications.state == 'notRunning'"
 			}
+		],
+		"yamlValidation": [
+			{
+				"fileMatch": "dapr.yaml",
+				"url": "./assets/schemas/dapr.io/dapr/cli/run-file.json"
+			}
 		]
 	},
 	"scripts": {
