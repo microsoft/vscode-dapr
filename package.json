@@ -29,6 +29,7 @@
 		"kubernetes"
 	],
 	"activationEvents": [
+		"onDebugResolve:dapr",
 		"onTaskType:dapr",
 		"onTaskType:daprd"
 	],
@@ -144,6 +145,22 @@
 				}
 			}
 		},
+		"debuggers": [
+			{
+				"type": "dapr",
+				"configurationAttributes": {
+					"launch": {
+						"properties": {
+							"runFile": {
+								"type": "string",
+								"description": "%vscode-dapr.debuggers.dapr.properties.runFile.description%"
+							}
+						},
+						"required": ["runFile"]
+					}
+				}
+			}
+		],
 		"menus": {
 			"commandPalette": [
 				{
@@ -660,6 +677,7 @@
 	"devDependencies": {
 		"@types/glob": "^7.2.0",
 		"@types/handlebars": "^4.1.0",
+		"@types/js-yaml": "^4.0.5",
 		"@types/lodash.isequal": "^4.5.6",
 		"@types/mocha": "^9.1.1",
 		"@types/node": "^16.11.38",
@@ -690,6 +708,7 @@
 		"@opentelemetry/tracing": "^0.24.0",
 		"axios": "^0.27.2",
 		"handlebars": "^4.7.7",
+		"js-yaml": "^4.1.0",
 		"lodash.isequal": "^4.5.0",
 		"ps-list": "^8.1.1",
 		"rxjs": "^7.8.0",

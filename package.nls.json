@@ -9,6 +9,8 @@
     "vscode-dapr.configuration.paths.daprPath.description": "The full path to the dapr binary.",
     "vscode-dapr.configuration.paths.daprdPath.description": "The full path to the daprd binary.",
 
+    "vscode-dapr.debuggers.dapr.properties.runFile.description": "Path to the run template file for the list of apps to run.",
+
     "vscode-dapr.help.readDocumentation.title": "Read Documentation",
     "vscode-dapr.help.getStarted.title": "Get Started",
     "vscode-dapr.help.installDapr.title": "Install Dapr",
