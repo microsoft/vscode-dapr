@@ -16,6 +16,7 @@
     "vscode-dapr.help.reviewIssues.title": "Review Issues",
 
     "vscode-dapr.runs.debug.title": "Debug Run",
+    "vscode-dapr.runs.start.title": "Start Run",
 
     "vscode-dapr.tasks.scaffoldDaprComponents.title": "Scaffold Dapr Components",
     "vscode-dapr.tasks.scaffoldDaprTasks.title": "Scaffold Dapr Tasks",
