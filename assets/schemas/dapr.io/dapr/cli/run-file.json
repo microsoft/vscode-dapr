@@ -1,0 +1,177 @@
+{
+    "$schema": "http://json-schema.org/draft/2020-12/schema",
+    "$id": "https://dapr.io/dapr/cli/run-file.json",
+    "title": "Dapr CLI Run File",
+    "description": "A configuration file used to run multiple Dapr applications.",
+    "type": "object",
+    "properties": {
+        "apps": {
+            "description": "The applications to run.",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "allOf": [
+                    { "$ref": "#/$defs/common" },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "appDirPath": {
+                                "description": "The path to the application directory, relative to this file.",
+                                "type": "string"
+                            },
+                            "appID": {
+                                "description": "An ID for your application, used for service discovery.",
+                                "type": "string"
+                            },
+                            "appPort": {
+                                "description": "The port your application is listening on.",
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "command": {
+                                "description": "The command and arguments used to start your application.",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "daprGRPCPort": {
+                                "description": "The gRPC port for Dapr to listen on.",
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "daprHTTPPort": {
+                                "description": "The HTTP port for Dapr to listen on.",
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "daprInternalGRPCPort": {
+                                "description": "The gRPC port for the Dapr Internal API to listen on.",
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "metricsPort": {
+                                "description": "The port for the metrics server.",
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "profilePort": {
+                                "description": "The port for the profile server.",
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "unixDomainSocket": {
+                                "description": "Path to a unix domain socket dir. If specified, Dapr API servers will use Unix Domain Sockets.",
+                                "type": "string"
+                            }
+                        },
+                        "required": ["appDirPath"]
+                    }
+                ]
+            }
+        },
+        "common": {
+            "description": "Properties that apply to all applications in the run.",
+            "type": "object",
+            "allOf": [
+                { "$ref": "#/$defs/common" }
+            ]
+        },
+        "version": {
+            "description": "The version of the run file schema.",
+            "type": "integer"
+        }
+    },
+    "required": ["version"],
+    "$defs": {
+        "common": {
+            "type": "object",
+            "properties": {
+                "apiListenAddresses": {
+                    "description": "One or more addresses for the Dapr API to listen on, comma-delimited.",
+                    "type": "string"
+                },
+                "appHealthCheckPath": {
+                    "description": "Path used for health checks; HTTP only.",
+                    "type": "string"
+                },
+                "appHealthProbeInterval": {
+                    "description": "Interval to probe for the health of the app in seconds.",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "appHealthProbeTimeout": {
+                    "description": "Timeout for app health probes in milliseconds.",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "appHealthThreshold": {
+                    "description": "Number of consecutive failures for the app to be considered unhealthy.",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "appMaxConcurrency": {
+                    "description": "Controls the concurrency level of the application.",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "appProtocol": {
+                    "description": "Tells Dapr to use HTTP or gRPC to talk to the application.",
+                    "type": "string",
+                    "enum": ["grpc", "http"]
+                },
+                "appSSL": {
+                    "description": "Enable HTTPS when Dapr invokes the application.",
+                    "type": "boolean"
+                },
+                "configFilePath": {
+                    "description": "The path to the Dapr configuration file.",
+                    "type": "string"
+                },
+                "daprHTTPMaxRequestSize": {
+                    "description": "Max size of request body in MB.",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "daprHTTPReadBufferSize": {
+                    "description": "HTTP header read buffer in KB.",
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "daprPath": {
+                    "description": "The path to the Dapr runtime (i.e. daprd).",
+                    "type": "string"
+                },
+                "enableApiLogging": {
+                    "description": "Log API calls at INFO verbosity.",
+                    "type": "boolean"
+                },
+                "enableAppHealthCheck": {
+                    "description": "Enable health checks for the application using the protocol defined with app-protocol.",
+                    "type": "boolean"
+                },
+                "enableProfiling": {
+                    "description": "Whether to enable pprof profiling via an HTTP endpoint.",
+                    "type": "boolean"
+                },
+                "env": {
+                    "description": "Environment variables to be passed to the application.",
+                    "type": "string"
+                },
+                "logLevel": {
+                    "description": "Sets the log verbosity.",
+                    "type": "string",
+                    "enum": ["debug", "info", "warn", "error", "fatal", "panic"]
+                },
+                "placementHostAddress": {
+                    "description": "The host on which the placement service resides.",
+                    "type": "string"
+                },
+                "resourcesPath": {
+                    "description": "Path for resources directory.",
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
