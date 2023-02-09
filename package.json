@@ -104,6 +104,11 @@
 				"icon": "$(debug-all)"
 			},
 			{
+				"command": "vscode-dapr.runs.start",
+				"title": "%vscode-dapr.runs.start.title%",
+				"category": "Dapr"
+			},
+			{
 				"command": "vscode-dapr.runs.stop",
 				"title": "%vscode-dapr.runs.stop.title%",
 				"category": "Dapr",
@@ -150,8 +155,18 @@
 					"when": "never"
 				},
 				{
+					"command": "vscode-dapr.runs.start",
+					"when": "never"
+				},
+				{
 					"command": "vscode-dapr.runs.stop",
 					"when": "never"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "vscode-dapr.runs.start",
+					"when": "resourceFilename == dapr.yaml"
 				}
 			],
 			"view/item/context": [
