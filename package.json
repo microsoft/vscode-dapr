@@ -151,12 +151,29 @@
 				"configurationAttributes": {
 					"launch": {
 						"properties": {
+							"excludeApps": {
+								"type": "array",
+								"description": "%vscode-dapr.debuggers.dapr.properties.excludeApps.description%",
+								"items": {
+									"type": "string"
+								}
+							},
+							"includeApps": {
+								"type": "array",
+								"description": "%vscode-dapr.debuggers.dapr.properties.includeApps.description%",
+								"items": {
+									"type": "string"
+								}
+							},
 							"runFile": {
 								"type": "string",
 								"description": "%vscode-dapr.debuggers.dapr.properties.runFile.description%"
 							}
 						},
-						"required": ["runFile"]
+						"required": ["runFile"],
+						"not": {
+							"required": ["excludeApps", "includeApps"]
+						}
 					}
 				}
 			}

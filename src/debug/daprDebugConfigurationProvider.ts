@@ -14,6 +14,8 @@ import { fromCancellationToken } from '../util/observableCancellationToken';
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface DaprDebugConfiguration extends vscode.DebugConfiguration {
+    excludeApps?: string[];
+    includeApps?: string[];
     runFile: string;
 }
 
@@ -38,6 +40,29 @@ function getAppId(app: DaprRunApplication): string {
     throw new Error(localize('debug.daprDebugConfigurationProvider.unableToDetermineAppId', 'Unable to determine a configured application\'s ID.'));
 }
 
+async function getAppIdsToDebug(configuration: DaprDebugConfiguration): Promise<Set<string>> {
+    if (configuration.includeApps) {
+        return new Set<string>(configuration.includeApps);
+    }
+
+    const runFileContent = await fs.readFile(configuration.runFile, { encoding: 'utf8' });
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const runFile = load(runFileContent) as DaprRunFile;
+
+    const appIds = new Set<string>();
+
+    for (const app of (runFile.apps ?? [])) {
+        const appId = getAppId(app);
+
+        if (configuration.excludeApps === undefined || !configuration.excludeApps.includes(appId)) {
+            appIds.add(appId);
+        }
+    }
+
+    return appIds;
+}
+
 export class DaprDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
     constructor(
         private readonly daprApplicationProvider: DaprApplicationProvider,
@@ -47,12 +72,7 @@ export class DaprDebugConfigurationProvider implements vscode.DebugConfiguration
     async resolveDebugConfigurationWithSubstitutedVariables?(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, debugToken?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | undefined> {
         const daprDebugConfiguration = <DaprDebugConfiguration>debugConfiguration;
 
-        const runFileContent = await fs.readFile(daprDebugConfiguration.runFile, { encoding: 'utf8' });
-
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        const runFile = load(runFileContent) as DaprRunFile;
-
-        const appIds = new Set<string>(runFile.apps?.map(getAppId) ?? []);
+        const appIds = await getAppIdsToDebug(daprDebugConfiguration);
 
         await this.userInput.withProgress(
             localize('debug.daprDebugConfigurationProvider.attachingProgress', 'Attaching to Dapr applications...'),

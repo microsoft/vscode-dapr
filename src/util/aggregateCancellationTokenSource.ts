@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as vscode from 'vscode';
 
 export async function withAggregateTokens<T>(callback: (token: vscode.CancellationToken) => Promise<T>, ...tokens: (vscode.CancellationToken | undefined)[]): Promise<T> {
