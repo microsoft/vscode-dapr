@@ -155,7 +155,7 @@ export class Process {
                     const tokenListener = token.onCancellationRequested(
                         () => {
                             if (process.pid !== undefined) {
-                                process.kill();
+                                void treeKill(process.pid);
                             }
 
                             tokenListener.dispose();
