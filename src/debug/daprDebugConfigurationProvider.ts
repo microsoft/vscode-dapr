@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as fs from 'fs/promises';
 import * as nls from 'vscode-nls';
 import * as path from 'path';
@@ -123,13 +126,22 @@ export class DaprDebugConfigurationProvider implements vscode.DebugConfiguration
     }
 
     private async waitForAttach(applications: DaprApplication[], token: vscode.CancellationToken) {
+        let hadFailures = false;
+
         for (const application of applications) {
             if (token.isCancellationRequested) {
                 break;
             }
 
-            // TODO: Catch errors to keep trying...
-            await debugApplication(application);
+            try {
+                await debugApplication(application);
+            } catch {
+                hadFailures = true;
+            }
+        }
+
+        if (hadFailures) {
+            throw new Error(localize('debug.daprDebugConfigurationProvider.hadFailures', 'The debugger failed to attach to all applications.'));
         }
     }
 }
