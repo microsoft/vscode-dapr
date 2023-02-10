@@ -42,6 +42,7 @@ import createDebugRunCommand from './commands/applications/debugRun';
 import { AsyncDisposable } from './util/asyncDisposable';
 import createStartRunCommand from './commands/applications/startRun';
 import createStopRunCommand from './commands/applications/stopRun';
+import { DaprDebugConfigurationProvider } from './debug/daprDebugConfigurationProvider';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -117,6 +118,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(daprInstallationManager, () => settingsProvider.daprdPath, new NodeEnvironmentProvider(), telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider(daprApplicationProvider, telemetryProvider)));
 			
+			registerDisposable(vscode.debug.registerDebugConfigurationProvider('dapr', new DaprDebugConfigurationProvider(daprApplicationProvider, ui)));
+
 			const applicationsTreeView = registerDisposable(
 				vscode.window.createTreeView(
 					'vscode-dapr.views.applications',
