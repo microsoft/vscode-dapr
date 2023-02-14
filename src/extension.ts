@@ -43,6 +43,8 @@ import { AsyncDisposable } from './util/asyncDisposable';
 import createStartRunCommand from './commands/applications/startRun';
 import createStopRunCommand from './commands/applications/stopRun';
 import { DaprDebugConfigurationProvider } from './debug/daprDebugConfigurationProvider';
+import createViewAppLogsCommand from './commands/applications/viewAppLogs';
+import createViewDaprLogsCommand from './commands/applications/viewDaprLogs';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -102,6 +104,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.applications.publish-all-message', createPublishAllMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.publish-message', createPublishMessageCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.stop-app', createStopCommand(daprCliClient, ui));
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.view-app-logs', createViewAppLogsCommand());
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.view-dapr-logs', createViewDaprLogsCommand());
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.readDocumentation', createReadDocumentationCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.getStarted', createGetStartedCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.help.installDapr', createInstallDaprCommand(ui));

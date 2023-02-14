@@ -74,6 +74,16 @@
 				"category": "Dapr"
 			},
 			{
+				"command": "vscode-dapr.applications.view-app-logs",
+				"title": "%vscode-dapr.applications.view-app-logs.title%",
+				"category": "Dapr"
+			},
+			{
+				"command": "vscode-dapr.applications.view-dapr-logs",
+				"title": "%vscode-dapr.applications.view-dapr-logs.title%",
+				"category": "Dapr"
+			},
+			{
 				"command": "vscode-dapr.help.getStarted",
 				"title": "%vscode-dapr.help.getStarted.title%",
 				"category": "Dapr"
@@ -185,6 +195,14 @@
 					"when": "never"
 				},
 				{
+					"command": "vscode-dapr.applications.view-app-logs",
+					"when": "never"
+				},
+				{
+					"command": "vscode-dapr.applications.view-dapr-logs",
+					"when": "never"
+				},
+				{
 					"command": "vscode-dapr.runs.debug",
 					"when": "never"
 				},
@@ -228,6 +246,16 @@
 					"command": "vscode-dapr.applications.stop-app",
 					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/",
 					"group": "stop"
+				},
+				{
+					"command": "vscode-dapr.applications.view-app-logs",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/ && viewItem =~ /hasLogs/",
+					"group": "logs"
+				},
+				{
+					"command": "vscode-dapr.applications.view-dapr-logs",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/ && viewItem =~ /hasLogs/",
+					"group": "logs"
 				},
 				{
 					"command": "vscode-dapr.runs.debug",
