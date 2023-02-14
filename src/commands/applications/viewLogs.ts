@@ -43,6 +43,5 @@ export async function viewLogs(application: DaprApplication, type: DaprLogType):
 
     const newestFile = files.reduce((newestFile, nextFile) => newestFile.fsPath.localeCompare(nextFile.fsPath) < 0 ? nextFile : newestFile);
 
-    // TODO: Scroll to end.
     await vscode.window.showTextDocument(newestFile);
 }

@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 import * as nls from 'vscode-nls';
-import * as path from 'path';
 import * as vscode from 'vscode';
 import { getLocalizationPathForFile } from '../util/localization';
 import { DaprApplication, DaprApplicationProvider } from '../services/daprApplicationProvider';
@@ -11,7 +10,7 @@ import { debugApplication } from '../commands/applications/debugApplication';
 import { UserInput } from '../services/userInput';
 import { withAggregateTokens } from '../util/aggregateCancellationTokenSource';
 import { fromCancellationToken } from '../util/observableCancellationToken';
-import { DaprRunApplication, fromRunFilePath, getAppId } from '../util/runFileReader';
+import { fromRunFilePath, getAppId } from '../util/runFileReader';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
