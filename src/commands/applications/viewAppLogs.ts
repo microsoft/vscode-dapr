@@ -12,19 +12,6 @@ import { fromRunFilePath, getAppId } from "../../util/runFileReader";
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
-function getTimestamp(file: vscode.Uri): string {
-    const filePath = file.fsPath;
-    const fileName = path.basename(filePath);
-
-    const splitFileName = fileName.split('_');
-
-    if (splitFileName.length < 3) {
-        throw new Error(localize('commands.applications.viewAppLogs.unexpectedFileName', 'The filename \'{0}\' did not have the expected format.', filePath));
-    }
-
-    return splitFileName[2];
-}
-
 export async function viewAppLogs(application: DaprApplication): Promise<void> {
     if (!application.runTemplatePath) {
         throw new Error(localize('commands.applications.viewAppLogs.noRunFile', 'Logs can be viewed only when applications are started via a run file.'));
@@ -45,18 +32,14 @@ export async function viewAppLogs(application: DaprApplication): Promise<void> {
 
             const files = await vscode.workspace.findFiles(relativePattern);
 
-            const timestampedFiles = files.map(file => ({ file: file, timestamp: getTimestamp(file) }))
-
-            timestampedFiles.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-
-            if (timestampedFiles.length < 1) {
-                throw new Error(localize('commands.applications.viewAppLogs.logNotFound', 'No logs for application \'{0}\' were.', application.appId));
+            if (files.length === 0) {
+                throw new Error(localize('commands.applications.viewAppLogs.logNotFound', 'No logs for application \'{0}\' were found.', application.appId));
             }
 
-            const logFile = timestampedFiles[0].file;
+            const newestFile = files.reduce((newestFile, nextFile) => newestFile.fsPath.localeCompare(nextFile.fsPath) < 0 ? nextFile : newestFile);
 
             // TODO: Scroll to end.
-            await vscode.window.showTextDocument(logFile);
+            await vscode.window.showTextDocument(newestFile);
 
             return;
         }
