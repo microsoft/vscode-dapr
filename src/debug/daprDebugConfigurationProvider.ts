@@ -26,7 +26,7 @@ async function getAppIdsToDebug(configuration: DaprDebugConfiguration): Promise<
         return new Set<string>(configuration.includeApps);
     }
 
-    const runFile = await fromRunFilePath(configuration.runFile);
+    const runFile = await fromRunFilePath(vscode.Uri.file(configuration.runFile));
 
     const appIds = new Set<string>();
 

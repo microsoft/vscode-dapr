@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as fs from 'fs/promises';
 import * as nls from 'vscode-nls';
 import * as path from 'path';
+import * as vscode from 'vscode';
 import { getLocalizationPathForFile } from '../util/localization';
 import { load } from "js-yaml";
 
@@ -18,14 +18,14 @@ export interface DaprRunFile {
     apps?: DaprRunApplication[];
 }
 
-export async function fromRunFilePath(path: string): Promise<DaprRunFile>{
-    const runFileContent = await fs.readFile(path, { encoding: 'utf8' });
+export async function fromRunFilePath(path: vscode.Uri): Promise<DaprRunFile>{
+    const runFileContent = await vscode.workspace.fs.readFile(path);
 
     if (!runFileContent) {
-        throw new Error(localize('util.runFileReader.noContent', 'There is no run file content at path: {0}', path));
+        throw new Error(localize('util.runFileReader.noContent', 'There is no run file content at path: {0}', path.fsPath));
     }
 
-    return fromRunFileContent(runFileContent);
+    return fromRunFileContent(runFileContent.toString());
 }
 
 export function fromRunFileContent(content: string): DaprRunFile {

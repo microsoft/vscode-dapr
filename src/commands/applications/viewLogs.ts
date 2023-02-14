@@ -17,7 +17,7 @@ export async function viewLogs(application: DaprApplication, type: DaprLogType):
         throw new Error(localize('commands.applications.viewLogs.noRunFile', 'Logs can be viewed only when applications are started via a run file.'));
     }
 
-    const runFile = await fromRunFilePath(application.runTemplatePath);
+    const runFile = await fromRunFilePath(vscode.Uri.file(application.runTemplatePath));
 
     const runFileApplication = (runFile.apps ?? []).find(app => application.appId === getAppId(app));
 
