@@ -1,11 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as fs from 'fs/promises';
 import * as nls from 'vscode-nls';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { load } from 'js-yaml';
 import { getLocalizationPathForFile } from '../util/localization';
 import { DaprApplication, DaprApplicationProvider } from '../services/daprApplicationProvider';
 import { filter, first, firstValueFrom, map, race, timeout } from 'rxjs';
@@ -13,6 +11,7 @@ import { debugApplication } from '../commands/applications/debugApplication';
 import { UserInput } from '../services/userInput';
 import { withAggregateTokens } from '../util/aggregateCancellationTokenSource';
 import { fromCancellationToken } from '../util/observableCancellationToken';
+import { DaprRunApplication, fromRunFilePath, getAppId } from '../util/runFileReader';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -22,36 +21,12 @@ export interface DaprDebugConfiguration extends vscode.DebugConfiguration {
     runFile: string;
 }
 
-interface DaprRunApplication {
-    appDirPath?: string;
-    appID?: string;
-}
-
-interface DaprRunFile {
-    apps?: DaprRunApplication[];
-}
-
-function getAppId(app: DaprRunApplication): string {
-    if (app.appID) {
-        return app.appID;
-    }
-
-    if (app.appDirPath) {
-        return path.basename(app.appDirPath);
-    }
-
-    throw new Error(localize('debug.daprDebugConfigurationProvider.unableToDetermineAppId', 'Unable to determine a configured application\'s ID.'));
-}
-
 async function getAppIdsToDebug(configuration: DaprDebugConfiguration): Promise<Set<string>> {
     if (configuration.includeApps) {
         return new Set<string>(configuration.includeApps);
     }
 
-    const runFileContent = await fs.readFile(configuration.runFile, { encoding: 'utf8' });
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const runFile = load(runFileContent) as DaprRunFile;
+    const runFile = await fromRunFilePath(configuration.runFile);
 
     const appIds = new Set<string>();
 
