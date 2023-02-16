@@ -20,7 +20,7 @@ async function browseToApplication(application: DaprApplication, ui: UserInput):
 }
 
 const createBrowseToApplicationCommand = (ui: UserInput) => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => {
-    if (node == undefined) {
+    if (node === undefined) {
         throw new Error(localize('commands.applications.browseToApplication.noPaletteSupport', 'Browsing requires selecting an application in the Dapr view.'));
     }
 

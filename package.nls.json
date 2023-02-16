@@ -1,5 +1,5 @@
 {
-    "vscode-dapr.applications.browse.title": "Browse to Application",
+    "vscode-dapr.applications.browse.title": "Open Application in Browser",
     "vscode-dapr.applications.debug.title": "Debug Application",
     "vscode-dapr.applications.invoke-get.title": "Invoke (GET) Application Method",
     "vscode-dapr.applications.invoke-post.title": "Invoke (POST) Application Method",

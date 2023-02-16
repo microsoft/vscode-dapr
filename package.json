@@ -235,12 +235,12 @@
 				{
 					"command": "vscode-dapr.applications.browse",
 					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/ && viewItem =~ /browsable/",
-					"group": "inline"
+					"group": "inline@1"
 				},
 				{
 					"command": "vscode-dapr.applications.debug",
 					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/ && viewItem =~ /attachable/",
-					"group": "inline"
+					"group": "inline@2"
 				},
 				{
 					"command": "vscode-dapr.applications.invoke-get",
