@@ -1,5 +1,30 @@
 # Change Log
 
+## v0.7.0 - 16 February 2023
+
+Integrating new features of Dapr 1.10.
+
+### Fixed
+
+* Warning logLevel inconsistency [#237](https://github.com/microsoft/vscode-dapr/issues/237)
+* Update tasks to reflect current Dapr arguments [#262](https://github.com/microsoft/vscode-dapr/issues/262)
+* Dapr explorer missing applications on Windows [#199](https://github.com/microsoft/vscode-dapr/issues/199)
+* Switch to `dapr list` to obtain running Dapr applications [#264](https://github.com/microsoft/vscode-dapr/issues/264)
+* Details pane is sluggish when changing between nodes [#202](https://github.com/microsoft/vscode-dapr/issues/202)
+* Info in the Details pane does not clear when Tye is shutdown [#203](https://github.com/microsoft/vscode-dapr/issues/203)
+
+### Added
+
+* [Enhancement] Organize Dapr applications by run file [#269](https://github.com/microsoft/vscode-dapr/issues/269)
+* [Feature] Attach debugger to application process [#270](https://github.com/microsoft/vscode-dapr/issues/270)
+* [Engineering] Switch to dapr dashboard -p 0 [#277](https://github.com/microsoft/vscode-dapr/issues/277)
+* [Feature] Add stop command to Dapr runs [#274](https://github.com/microsoft/vscode-dapr/issues/274)
+* [Feature] Start Dapr run file from context menu [#268](https://github.com/microsoft/vscode-dapr/issues/268)
+* [Feature] IntelliSense for Dapr run file YAML [#276](https://github.com/microsoft/vscode-dapr/issues/276)
+* [Feature] Dapr custom launch debug configuration [#273](https://github.com/microsoft/vscode-dapr/issues/273)
+* [Feature] Open logs for run file applications [#285](https://github.com/microsoft/vscode-dapr/issues/285)
+* [Feature] Open browser to Dapr application port [#275](https://github.com/microsoft/vscode-dapr/issues/275)
+
 ## v0.6.1 - 29 June 2022
 
 Minor changes and dependency updates.
