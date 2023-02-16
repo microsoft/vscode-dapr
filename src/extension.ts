@@ -45,6 +45,7 @@ import createStopRunCommand from './commands/applications/stopRun';
 import { DaprDebugConfigurationProvider } from './debug/daprDebugConfigurationProvider';
 import createViewAppLogsCommand from './commands/applications/viewAppLogs';
 import createViewDaprLogsCommand from './commands/applications/viewDaprLogs';
+import createBrowseToApplicationCommand from './commands/applications/browseToApplication';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -98,6 +99,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				ui);
 			const daprCommandTaskProvider = new DaprCommandTaskProvider(daprInstallationManager, () => settingsProvider.daprPath, telemetryProvider);
 
+			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.browse', createBrowseToApplicationCommand(ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.debug', createDebugApplicationCommand());
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-get', createInvokeGetCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.applications.invoke-post', createInvokePostCommand(daprApplicationProvider, daprClient, ext.outputChannel, ui, context.workspaceState));

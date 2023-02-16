@@ -25,6 +25,7 @@ module.exports = {
         '@typescript-eslint'
     ],
     rules: {
+        "eqeqeq": ["error"],
         "@typescript-eslint/restrict-template-expressions": ["error", { "allowBoolean": true }]
     }
 };

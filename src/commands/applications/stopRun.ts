@@ -27,7 +27,7 @@ async function stopRun(context: IActionContext, label: string, runTemplatePath: 
 }
 
 const createStopRunCommand = (daprCliClient: DaprCliClient) => (context: IActionContext, node: DaprRunNode | undefined): Promise<void> => {
-    if (node == undefined || node.runTemplatePath === undefined) {
+    if (node === undefined || node.runTemplatePath === undefined) {
         throw new Error(localize('commands.applications.stopRun.noPaletteSupport', 'Stopping requires selecting a valid run in the Dapr view.'));
     }
 

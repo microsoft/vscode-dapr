@@ -10,7 +10,7 @@ import { viewLogs } from './viewLogs';
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 const createViewAppLogsCommand = () => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => {
-    if (node == undefined) {
+    if (node === undefined) {
         throw new Error(localize('commands.applications.viewAppLogs.noPaletteSupport', 'Viewing application logs requires selecting an application in the Dapr view.'));
     }
 

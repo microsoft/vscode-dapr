@@ -108,7 +108,7 @@ export async function debugApplication(application: DaprApplication): Promise<vo
 }
 
 const createDebugApplicationCommand = () => (context: IActionContext, node: DaprApplicationNode | undefined): Promise<void> => {
-    if (node == undefined) {
+    if (node ===undefined) {
         throw new Error(localize('commands.applications.viewLogs.noPaletteSupport', 'Debugging requires selecting an application in the Dapr view.'));
     }
 

@@ -42,6 +42,12 @@
 	"contributes": {
 		"commands": [
 			{
+				"command": "vscode-dapr.applications.browse",
+				"title": "%vscode-dapr.applications.browse.title%",
+				"category": "Dapr",
+				"icon": "$(globe)"
+			},
+			{
 				"command": "vscode-dapr.applications.debug",
 				"title": "%vscode-dapr.applications.debug.title%",
 				"category": "Dapr",
@@ -191,6 +197,10 @@
 		"menus": {
 			"commandPalette": [
 				{
+					"command": "vscode-dapr.applications.browse",
+					"when": "never"
+				},
+				{
 					"command": "vscode-dapr.applications.debug",
 					"when": "never"
 				},
@@ -223,9 +233,14 @@
 			],
 			"view/item/context": [
 				{
+					"command": "vscode-dapr.applications.browse",
+					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/ && viewItem =~ /browsable/",
+					"group": "inline@1"
+				},
+				{
 					"command": "vscode-dapr.applications.debug",
 					"when": "view == vscode-dapr.views.applications && viewItem =~ /application/ && viewItem =~ /attachable/",
-					"group": "inline"
+					"group": "inline@2"
 				},
 				{
 					"command": "vscode-dapr.applications.invoke-get",
