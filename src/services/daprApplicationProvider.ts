@@ -61,7 +61,7 @@ export default class DaprListBasedDaprApplicationProvider implements DaprApplica
 
         const result = await Process.exec(command);
 
-        if (result.code != 0) {
+        if (result.code !== 0) {
             throw new Error(`'${command}' failed with exit code ${result.code}.`);
         }
 
