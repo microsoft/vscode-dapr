@@ -8,6 +8,16 @@ The Dapr extension makes it easy to setup debugging of applications within the D
 
 ## Prerequisites
 
+### Platforms
+
+Supported platforms:
+
+ - MacOS
+ - Linux
+ - Windows
+
+> Some Dapr 1.10 features, such "run files", are not supported on "native" Windows but can still be run within WSL on Windows.
+
 ### Docker
 
 Local development with Dapr requires a running instance of Docker; follow the [Docker guide](https://www.docker.com/products/docker-desktop) to installing Docker Desktop for your platform.
