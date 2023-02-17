@@ -16,15 +16,82 @@ Local development with Dapr requires a running instance of Docker; follow the [D
 
 Follow the [Dapr guide](https://dapr.io/#download) to install the Dapr CLI for your platform and initialize the Dapr runtime.
 
-> This extension requires Dapr version 1.9.0 or later.
+> This extension requires:
+> - Dapr CLI version 1.10.0 or later
+> - Dapr Runtime version 1.9.0 or later
 
 ### Visual Studio Code
 
 Follow the [VS Code guide](https://code.visualstudio.com/) for installing VS Code for your platform.
 
-> This extension requires Visual Studio Code version 1.67.2 or later.
+> This extension requires Visual Studio Code version 1.74.0 or later.
 
 ## Feature Overview
+
+### [New for 0.7.0] Dapr Run File Support
+
+Dapr 1.10 enables starting multiple Dapr applications through the use of a "run file", and the Dapr extension allows you to start the "run" directly from the File Explorer.
+
+![Start Run From Context Menu](assets/readme/startRunFromContextMenu.png)
+
+The Dapr extension also allows you to start multiple Dapr applications through a single `dapr` task by just referencing the run file.
+
+Sample `tasks.json`:
+
+```json
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "dapr",
+            "type": "dapr",
+            "runFile": "./dapr.yaml"
+        }
+    ]
+}
+```
+
+### [New for 0.7.0] Run File Editing Assistence
+
+When working with Dapr run files, the extension provides you with basic schema prompts and validation:
+
+![Dapr YAML Editing](assets/readme/daprYamlEditing.png)
+
+### [New for 0.7.0] Dapr Application Debugging
+
+Dapr CLI 1.10 now tracks the application started via `dapr run`, which enables the Dapr extension to attach the debugger to running instances, whether started inside or outside of VS Code, directly from the Dapr applications view.
+
+The debugger can be attached to individual applications, or to all applications in a run.
+
+![Attach to Application](assets/readme/attachToApplication.png)
+
+![Attach to Run](assets/readme/attachToRun.png)
+
+The Dapr extension also enables "F5" debugging of Dapr applications through a new custom debug launch configuration, which will automatically start and attach to the applications.  Individual applications can be included or excluded from the set of applications the debugger attaches to.
+
+Sample `launch.json`:
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Dapr",
+            "request": "launch",
+            "type": "dapr",
+            "runFile": "${workspaceFolder}/dapr.yaml",
+            "includeApps": ["csharp-subscriber", "node-subscriber"],
+            "preLaunchTask": "dapr"
+        }
+    ]
+}
+```
+
+### [New for 0.7.0] View Dapr Logs
+
+When using Dapr run files, Dapr redirects the application and Dapr sidecar logs to application-specific locations (rather than writing them to the console). The Dapr extension enables you to open these logs directly from the Dapr applications view.
+
+![View Logs](assets/readme/viewLogs.png)
 
 ### Scaffold Dapr task, launch, and component assets
 
