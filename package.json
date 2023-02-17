@@ -770,7 +770,7 @@
 		"handlebars": "^4.7.7",
 		"js-yaml": "^4.1.0",
 		"lodash.isequal": "^4.5.0",
-		"ps-list": "^8.1.1",
+		"ps-list": "^7.2.0",
 		"rxjs": "^7.8.0",
 		"semver": "^7.3.5",
 		"tree-kill": "^1.2.2",
