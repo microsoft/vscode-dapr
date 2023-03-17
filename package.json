@@ -12,6 +12,9 @@
 		"workspace",
 		"ui"
 	],
+	"extensionDependencies": [
+		"redhat.vscode-yaml"
+	],
 	"engines": {
 		"dapr-cli": ">=1.10",
 		"dapr-runtime": ">=1.9",

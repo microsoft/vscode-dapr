@@ -21,7 +21,8 @@
                             },
                             "appID": {
                                 "description": "An ID for your application, used for service discovery.",
-                                "type": "string"
+                                "type": "string",
+                                "pattern": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$"
                             },
                             "appPort": {
                                 "description": "The port your application is listening on.",
@@ -156,7 +157,10 @@
                 },
                 "env": {
                     "description": "Environment variables to be passed to the application.",
-                    "type": "string"
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": ["string", "number", "boolean"]
+                    }
                 },
                 "logLevel": {
                     "description": "Sets the log verbosity.",
@@ -165,7 +169,8 @@
                 },
                 "placementHostAddress": {
                     "description": "The host on which the placement service resides.",
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$"
                 },
                 "resourcesPath": {
                     "description": "Path for resources directory.",
