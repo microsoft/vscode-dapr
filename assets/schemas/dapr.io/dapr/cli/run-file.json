@@ -139,7 +139,7 @@
                     "type": "integer",
                     "minimum": 0
                 },
-                "daprPath": {
+                "runtimePath": {
                     "description": "The path to the Dapr runtime (i.e. daprd).",
                     "type": "string"
                 },
