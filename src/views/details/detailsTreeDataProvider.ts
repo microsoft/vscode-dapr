@@ -11,6 +11,7 @@ import { getLocalizationPathForFile } from '../../util/localization';
 import { Observable, Subscription } from 'rxjs';
 import DaprApplicationNode from '../applications/daprApplicationNode';
 import DaprComponentMetadataNode from '../applications/daprComponentMetadataNode';
+import { DaprKeyNode } from '../applications/daprKeyNode';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -44,18 +45,20 @@ export default class DetailsTreeDataProvider extends vscode.Disposable implement
         return element.getTreeItem();    
     }
 
-    getChildren(): TreeNode[] {
+    getChildren(): Promise<TreeNode[]> {
         if (this.selectedItems.length === 1) {
             const item = this.selectedItems[0];
 
             if (item instanceof DaprApplicationNode) {
-                return this.setAppDetails(item.application)
+                return Promise.resolve(this.setAppDetails(item.application))
             } else if (item instanceof DaprComponentMetadataNode) {
-                return this.setComponentDetails(item.daprComponentMetadata);
+                return Promise.resolve(this.setComponentDetails(item.daprComponentMetadata));
+            } else if (item instanceof DaprKeyNode) {
+                return DetailsTreeDataProvider.setKeyDetails(item);
             }
         }
 
-        return [];
+        return Promise.resolve([]);
     }
 
     setAppDetails(application: DaprApplication) : DaprDetailsNode[] {
@@ -84,7 +87,16 @@ export default class DetailsTreeDataProvider extends vscode.Disposable implement
             new DaprDetailsNode(type, component.type),
             new DaprDetailsNode(version, component.version)
         ];
-    }  
+    }
+
+    private static async setKeyDetails(keyNode: DaprKeyNode) : Promise<DaprDetailsNode[]> {
+        const value = await keyNode.key.getValue();
+
+        return [
+            new DaprDetailsNode(localize('views.details.detailsTreeDataProviderKeyLabel', 'Key'), keyNode.key.name),
+            new DaprDetailsNode(localize('views.details.detailsTreeDataProviderValueLabel', 'Value'), value ?? localize('views.details.detailsTreeDataProviderValueLabelNone', 'None'))
+        ];
+    }
 }
 
 export interface DaprDetailItem {

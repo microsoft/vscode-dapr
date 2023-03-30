@@ -46,6 +46,9 @@ import { DaprDebugConfigurationProvider } from './debug/daprDebugConfigurationPr
 import createViewAppLogsCommand from './commands/applications/viewAppLogs';
 import createViewDaprLogsCommand from './commands/applications/viewDaprLogs';
 import createBrowseToApplicationCommand from './commands/applications/browseToApplication';
+import DaprApplicationNode from './views/applications/daprApplicationNode';
+import DaprComponentsNode from './views/applications/daprComponentsNode';
+import { RedisDaprStateStoreProvider } from './services/daprStateStoreProvider';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -126,11 +129,21 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			
 			registerDisposable(vscode.debug.registerDebugConfigurationProvider('dapr', new DaprDebugConfigurationProvider(daprApplicationProvider, ui)));
 
+			const daprStateStoreProvider = new RedisDaprStateStoreProvider();
+
 			const applicationsTreeView = registerDisposable(
 				vscode.window.createTreeView(
 					'vscode-dapr.views.applications',
 					{
-						treeDataProvider: registerDisposable(new DaprApplicationTreeDataProvider(daprApplicationProvider, daprClient, daprInstallationManager, ui))
+						treeDataProvider: registerDisposable(
+							new DaprApplicationTreeDataProvider(
+								application => new DaprApplicationNode(
+										application,
+										application => new DaprComponentsNode(application, daprClient, daprStateStoreProvider)),
+								daprApplicationProvider,
+								daprClient,
+								daprInstallationManager,
+								ui))
 					}));
 
 			const selectionObservable = new Observable<readonly TreeNode[]>(

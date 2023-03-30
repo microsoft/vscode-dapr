@@ -5,10 +5,11 @@ import * as vscode from 'vscode';
 import TreeNode from "../treeNode";
 import { DaprApplication } from '../../services/daprApplicationProvider';
 import DaprComponentsNode from "./daprComponentsNode";
-import { DaprClient } from '../../services/daprClient';
 
 export default class DaprApplicationNode implements TreeNode {
-    constructor(public readonly application: DaprApplication, public readonly daprClient: DaprClient) {
+    constructor(
+        public readonly application: DaprApplication,
+        private readonly componentsNodeFactory: (application: DaprApplication) => DaprComponentsNode) {
     }
 
     getTreeItem(): Promise<vscode.TreeItem> {
@@ -26,6 +27,6 @@ export default class DaprApplicationNode implements TreeNode {
     }
 
     getChildren(): TreeNode[] {
-        return [new DaprComponentsNode(this.application, this.daprClient)];
+        return [this.componentsNodeFactory(this.application)];
     }
 }

@@ -4,24 +4,34 @@
 import * as vscode from 'vscode';
 import { DaprComponentMetadata } from '../../services/daprClient';
 import TreeNode from "../treeNode";
-import { DaprStateStoreProvider, RedisDaprStateStoreProvider } from '../../services/daprStateStoreProvider';
-import { DaprKeyNode } from './daprKeyNode';
+import { DaprStateNode } from './daprStateNode';
+
+export interface DaprApplicationStateStore {
+    getKeys(): Promise<string[]>;
+    getValue(key: string): Promise<string | undefined>;
+}
 
 export default class DaprComponentMetadataNode implements TreeNode {
-    private readonly stateStoreProvider: DaprStateStoreProvider = new RedisDaprStateStoreProvider();
-
     constructor(
         public readonly daprComponentMetadata: DaprComponentMetadata,
+        private readonly stateStore: DaprApplicationStateStore,
         private readonly themeIconId: string) {
     }
 
-    async getChildren(): Promise<TreeNode[]> {
-        const stateStore = await this.stateStoreProvider.getStateStore(this.daprComponentMetadata.name);
+    getChildren(): TreeNode[] {
+        return [
+            new DaprStateNode(
+                async () => {
+                    const keys = await this.stateStore.getKeys();
 
-        // TODO: Push down appId.
-        const keys = await stateStore.getKeys("order-processor");
-
-        return keys.map(key => new DaprKeyNode(key));
+                    return keys.map(key => ({
+                        name: key,
+                        getValue: async () => {
+                            return await this.stateStore.getValue(key);
+                        }
+                    }));
+                })
+        ];
     }
 
     getTreeItem(): Promise<vscode.TreeItem> {

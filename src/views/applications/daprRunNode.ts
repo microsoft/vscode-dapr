@@ -15,20 +15,23 @@ export class DaprRunNode implements TreeNode {
     public static CreateRunNode(
         label: string,
         runTemplatePath: string,
+        applicationNodeFactory: (application: DaprApplication) => DaprApplicationNode,
         applications: DaprApplication[],
         daprClient: DaprClient): DaprRunNode {
-        return new DaprRunNode(label, runTemplatePath, applications, daprClient);
+        return new DaprRunNode(label, runTemplatePath, applicationNodeFactory, applications, daprClient);
     }
 
     public static CreateIndividualApplicationsNode(
+        applicationNodeFactory: (application: DaprApplication) => DaprApplicationNode,
         applications: DaprApplication[],
         daprClient: DaprClient) : DaprRunNode {
-        return new DaprRunNode(localize('views.applications.daprRunNode.individualApplicationsLabel', 'Individual Applications'), undefined, applications, daprClient, true);
+        return new DaprRunNode(localize('views.applications.daprRunNode.individualApplicationsLabel', 'Individual Applications'), undefined, applicationNodeFactory, applications, daprClient, true);
     }
 
     private constructor(
         public readonly label: string,
         public readonly runTemplatePath: string | undefined,
+        private readonly applicationNodeFactory: (application: DaprApplication) => DaprApplicationNode,
         public readonly applications: DaprApplication[],
         private readonly daprClient: DaprClient,
         private readonly isIndividualApplicationsNode: boolean = false) {
@@ -51,6 +54,6 @@ export class DaprRunNode implements TreeNode {
     }
 
     getChildren(): TreeNode[] {
-        return this.applications.map(application => new DaprApplicationNode(application, this.daprClient));
+        return this.applications.map(application => this.applicationNodeFactory(application));
     }
 }

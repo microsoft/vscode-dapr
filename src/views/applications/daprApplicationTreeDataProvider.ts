@@ -19,6 +19,7 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
     private applications: DaprApplication[] = [];
 
     constructor(
+        private readonly applicationNodeFactory: (application: DaprApplication) => DaprApplicationNode,
         private readonly applicationProvider: DaprApplicationProvider,
         private readonly daprClient: DaprClient,
         private readonly installationManager: DaprInstallationManager,
@@ -97,13 +98,13 @@ export default class DaprApplicationTreeDataProvider extends vscode.Disposable i
         const runNames = Object.keys(runs);
 
         if (runNames.length > 0) {
-            items.push(...runNames.map(name => DaprRunNode.CreateRunNode(name, runs[name].runTemplatePath, runs[name].applications, this.daprClient)))
+            items.push(...runNames.map(name => DaprRunNode.CreateRunNode(name, runs[name].runTemplatePath, this.applicationNodeFactory, runs[name].applications, this.daprClient)))
 
             if (individualApps.length > 0) {
-                items.push(DaprRunNode.CreateIndividualApplicationsNode(individualApps, this.daprClient));
+                items.push(DaprRunNode.CreateIndividualApplicationsNode(this.applicationNodeFactory, individualApps, this.daprClient));
             }
         } else {
-            items.push(...individualApps.map(application => new DaprApplicationNode(application, this.daprClient)))
+            items.push(...individualApps.map(application => this.applicationNodeFactory(application)))
         }
 
         return items;
