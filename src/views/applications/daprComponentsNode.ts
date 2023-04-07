@@ -28,7 +28,7 @@ export default class DaprComponentsNode implements TreeNode {
 
         item.contextValue = 'components';
 
-        item.iconPath = new vscode.ThemeIcon('archive');
+        item.iconPath = new vscode.ThemeIcon('extensions');
 
         return Promise.resolve(item);
     }
@@ -51,8 +51,7 @@ export default class DaprComponentsNode implements TreeNode {
                         
                         return await stateStore.getValue(this.application.appId, key)
                     },
-                },
-                'database'));
+                }));
         }
         return [new DaprDetailsNode(label, '')];
     }

@@ -14,8 +14,7 @@ export interface DaprApplicationStateStore {
 export default class DaprComponentMetadataNode implements TreeNode {
     constructor(
         public readonly daprComponentMetadata: DaprComponentMetadata,
-        private readonly stateStore: DaprApplicationStateStore,
-        private readonly themeIconId: string) {
+        private readonly stateStore: DaprApplicationStateStore) {
     }
 
     getChildren(): TreeNode[] {
@@ -39,8 +38,21 @@ export default class DaprComponentMetadataNode implements TreeNode {
         const item = new vscode.TreeItem(this.daprComponentMetadata.name, isStateStore ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
 
         item.contextValue = 'metadata';
-        item.iconPath = new vscode.ThemeIcon(this.themeIconId);
+        item.iconPath = new vscode.ThemeIcon(DaprComponentMetadataNode.getThemeIconId(this.daprComponentMetadata.type));
 
         return Promise.resolve(item); 
+    }
+
+    private static getThemeIconId(componentType: string): string {
+        const split = componentType.split('.');
+
+        switch (split[0]) {
+            case 'pubsub':
+                return 'broadcast';
+            case 'state':
+                return 'database';
+            default:
+                return 'archive';
+        }
     }
 }

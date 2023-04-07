@@ -11,7 +11,9 @@ import { getLocalizationPathForFile } from '../../util/localization';
 import { Observable, Subscription } from 'rxjs';
 import DaprApplicationNode from '../applications/daprApplicationNode';
 import DaprComponentMetadataNode from '../applications/daprComponentMetadataNode';
-import { DaprKeyNode } from '../applications/daprKeyNode';
+import { DaprKeyNode } from './daprKeyNode';
+import { DaprStateNode } from '../applications/daprStateNode';
+import DaprApplicationTreeDataProvider from '../applications/daprApplicationTreeDataProvider';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -53,12 +55,18 @@ export default class DetailsTreeDataProvider extends vscode.Disposable implement
                 return Promise.resolve(this.setAppDetails(item.application))
             } else if (item instanceof DaprComponentMetadataNode) {
                 return Promise.resolve(this.setComponentDetails(item.daprComponentMetadata));
-            } else if (item instanceof DaprKeyNode) {
-                return DetailsTreeDataProvider.setKeyDetails(item);
+            } else if (item instanceof DaprStateNode) {
+                return DetailsTreeDataProvider.getKeys(item);
             }
         }
 
         return Promise.resolve([]);
+    }
+
+    private static async getKeys(item: DaprStateNode): Promise<TreeNode[]> {
+        const keys = await item.keyProvider();
+
+        return keys.map(key => new DaprKeyNode(key));
     }
 
     setAppDetails(application: DaprApplication) : DaprDetailsNode[] {
