@@ -13,6 +13,7 @@ export interface DaprApplicationStateStore {
 
 export default class DaprComponentMetadataNode implements TreeNode {
     constructor(
+        private readonly applicationId: string,
         public readonly daprComponentMetadata: DaprComponentMetadata,
         private readonly stateStore: DaprApplicationStateStore) {
     }
@@ -25,9 +26,7 @@ export default class DaprComponentMetadataNode implements TreeNode {
 
                     return keys.map(key => ({
                         name: key,
-                        getValue: async () => {
-                            return await this.stateStore.getValue(key);
-                        }
+                        value: vscode.Uri.parse(`dapr://state/${this.applicationId}/${this.daprComponentMetadata.name}/keys/${key}`)
                     }));
                 })
         ];

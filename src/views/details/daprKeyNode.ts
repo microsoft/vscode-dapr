@@ -10,6 +10,12 @@ export class DaprKeyNode implements TreeNode {
     getTreeItem(): Promise<vscode.TreeItem> {
         const item = new vscode.TreeItem(this.key.name);
 
+        item.command = {
+            arguments: [this.key.value],
+            command: 'vscode.open',
+            title: ''
+        };
+
         item.contextValue = 'key';
         item.iconPath = new vscode.ThemeIcon('key');
 

@@ -39,6 +39,7 @@ export default class DaprComponentsNode implements TreeNode {
         const components = responseData.components;
         if(components.length > 0) {
             return components.map(comp => new DaprComponentMetadataNode(
+                this.application.appId,
                 comp,
                 {
                     getKeys: async () => {

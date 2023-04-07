@@ -13,7 +13,6 @@ import DaprApplicationNode from '../applications/daprApplicationNode';
 import DaprComponentMetadataNode from '../applications/daprComponentMetadataNode';
 import { DaprKeyNode } from './daprKeyNode';
 import { DaprStateNode } from '../applications/daprStateNode';
-import DaprApplicationTreeDataProvider from '../applications/daprApplicationTreeDataProvider';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -94,15 +93,6 @@ export default class DetailsTreeDataProvider extends vscode.Disposable implement
             new DaprDetailsNode(name, component.name), 
             new DaprDetailsNode(type, component.type),
             new DaprDetailsNode(version, component.version)
-        ];
-    }
-
-    private static async setKeyDetails(keyNode: DaprKeyNode) : Promise<DaprDetailsNode[]> {
-        const value = await keyNode.key.getValue();
-
-        return [
-            new DaprDetailsNode(localize('views.details.detailsTreeDataProviderKeyLabel', 'Key'), keyNode.key.name),
-            new DaprDetailsNode(localize('views.details.detailsTreeDataProviderValueLabel', 'Value'), value ?? localize('views.details.detailsTreeDataProviderValueLabelNone', 'None'))
         ];
     }
 }

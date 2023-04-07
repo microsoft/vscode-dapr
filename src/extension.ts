@@ -14,7 +14,7 @@ import createInvokePostCommand from './commands/applications/invokePost';
 import { createPublishAllMessageCommand, createPublishMessageCommand } from './commands/applications/publishMessage';
 import AxiosHttpClient from './services/httpClient';
 import { AggregateUserInput } from './services/userInput';
-import HttpDaprClient from './services/daprClient';
+import HttpDaprClient, { getDaprClient } from './services/daprClient';
 import createScaffoldDaprTasksCommand from './commands/scaffoldDaprTasks';
 import AzureTelemetryProvider from './services/telemetryProvider';
 import HelpTreeDataProvider from './views/help/helpTreeDataProvider';
@@ -49,6 +49,8 @@ import createBrowseToApplicationCommand from './commands/applications/browseToAp
 import DaprApplicationNode from './views/applications/daprApplicationNode';
 import DaprComponentsNode from './views/applications/daprComponentsNode';
 import { RedisDaprStateStoreProvider } from './services/daprStateStoreProvider';
+import DaprStateStoreDocumentContentProvider from './documents/daprStateStoreDocumentContentProvider';
+import { daprStateValueProviderFactory } from './services/daprStateValueProvider';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -168,6 +170,15 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					'vscode-dapr.views.help',
 					new HelpTreeDataProvider()));
 		
+			registerDisposable(
+				vscode.workspace.registerTextDocumentContentProvider(
+					'dapr',
+					registerDisposable(new DaprStateStoreDocumentContentProvider(
+						daprStateValueProviderFactory(
+							daprApplicationProvider,
+							getDaprClient)
+						))));
+
 			return Promise.resolve();
 	});
 }

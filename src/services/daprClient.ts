@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as dapr from '@dapr/dapr';
 import * as url from 'url';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
@@ -82,3 +83,15 @@ export interface DaprMetadata {
       version: string;
   }
 
+export interface DaprClientApplication {
+    grpcPort: number;
+    httpPort: number;
+}
+
+export function getDaprClient(application: DaprClientApplication): dapr.DaprClient {
+    return new dapr.DaprClient({
+        daprHost: 'localhost',
+        daprPort: application.grpcPort.toString(),
+        communicationProtocol: dapr.CommunicationProtocolEnum.GRPC
+    });
+}

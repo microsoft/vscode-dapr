@@ -7,8 +7,7 @@ const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface Key {
     readonly name: string;
-
-    getValue(): Promise<string | undefined>;
+    readonly value: vscode.Uri;
 }
 
 export class DaprStateNode implements TreeNode {
