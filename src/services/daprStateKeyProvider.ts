@@ -5,8 +5,19 @@ import * as nls from 'vscode-nls';
 import { getLocalizationPathForFile } from '../util/localization';
 import { load } from 'js-yaml';
 import { createClient } from 'redis';
+import { DaprClientApplication } from './daprClient';
+import { DaprClient } from '@dapr/dapr';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
+
+interface DaprComponentMetadata {
+    readonly name?: string;
+    readonly secretKeyRef?: {
+        readonly name?: string;
+        readonly key?: string;
+    }
+    readonly value?: string;
+}
 
 interface DaprComponentConfiguration {
     readonly apiVersion?: string;
@@ -17,29 +28,48 @@ interface DaprComponentConfiguration {
     readonly spec?: {
         readonly type?: string;
         readonly version?: string;
-        readonly metadata?: {
-            readonly name?: string;
-            readonly value?: string;
-        }[];
+        readonly metadata?: DaprComponentMetadata[];
+    }
+    readonly auth?: {
+        readonly secretStore?: string;
     }
 }
 
-async function getRedisKeys(applicationId: string, configuration: DaprComponentConfiguration): Promise<string[]> {
-    const hostMetadata = configuration.spec?.metadata?.find(metadata => metadata.name === 'redisHost');
+type DaprSecretProvider = (store: string, name: string, key: string) => Promise<string | undefined>;
 
-    if (!hostMetadata || !hostMetadata.value) {
-        throw new Error('Redis host metadata not found.');
+function resolveDaprComponentMetadata(
+    metadata: DaprComponentMetadata | undefined,
+    secretStore: string | undefined,
+    secretProvider: DaprSecretProvider): Promise<string | undefined> {
+    if (!metadata) {
+        return Promise.resolve(undefined);
     }
 
-    const host = hostMetadata.value;
-
-    const passwordMetadata = configuration.spec?.metadata?.find(metadata => metadata.name === 'redisPassword');
-
-    if (!passwordMetadata) {
-        throw new Error('Redis password metadata not found.');
+    if (metadata.value !== undefined) {
+        return Promise.resolve(metadata.value);
     }
 
-    const password = passwordMetadata.value;
+    if (secretStore && metadata.secretKeyRef?.key && metadata.secretKeyRef?.name) {
+        return secretProvider(secretStore, metadata.secretKeyRef.name, metadata.secretKeyRef.key);
+    }
+
+    return Promise.resolve(undefined);
+}
+
+async function getRedisKeys(applicationId: string, configuration: DaprComponentConfiguration, secretProvider: DaprSecretProvider): Promise<string[]> {
+    const host = await resolveDaprComponentMetadata(
+        configuration.spec?.metadata?.find(metadata => metadata.name === 'redisHost'),
+        configuration.auth?.secretStore,
+        secretProvider);
+
+    if (host === undefined) {
+        throw new Error('Unable to find or resolve Redis host metadata.');
+    }
+
+    const password = await resolveDaprComponentMetadata(
+        configuration.spec?.metadata?.find(metadata => metadata.name === 'redisPassword'),
+        configuration.auth?.secretStore,
+        secretProvider);
 
     const client = createClient({
         url: `redis://${host}`,
@@ -69,7 +99,9 @@ async function getRedisKeys(applicationId: string, configuration: DaprComponentC
 
 export type DaprStateKeyProvider = (applicationId: string, componentName: string) => Promise<string[]>;
 
-export function createDaprStateKeyProvider(applicationsProvider : () => Promise<DaprApplication[]>): DaprStateKeyProvider {
+export function createDaprStateKeyProvider(
+    applicationsProvider : () => Promise<DaprApplication[]>,
+    clientProvider: (application: DaprClientApplication) => DaprClient): DaprStateKeyProvider {
     return async (applicationId: string, componentName: string) => {
         const applications = await applicationsProvider();
         const application = applications.find(application => application.appId === applicationId);
@@ -86,7 +118,7 @@ export function createDaprStateKeyProvider(applicationsProvider : () => Promise<
             throw new Error(localize('services.daprStateKeyProvider.processNotFound', 'The process associated with the application \'{0}\' is not running.', application.appId));
         }
 
-        const componentsPathRegex = /--components-path (?<componentsPath>([^" ]+)|"[^"]+")/g;
+        const componentsPathRegex = /--(components-path|resources-path) (?<componentsPath>([^" ]+)|"[^"]+")/g;
 
         // TODO: Support Windows (as cmd property isn't supported).
         const componentsPathMatch = componentsPathRegex.exec(applicationCommandProcess.cmd ?? '');
@@ -120,9 +152,18 @@ export function createDaprStateKeyProvider(applicationsProvider : () => Promise<
             throw new Error(localize('services.daprStateKeyProvider.componentNotFound', 'The component \'{0}\' was not found.', componentName));
         }
 
+        async function getSecret(store: string, name: string, key: string): Promise<string | undefined> {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const daprClient = clientProvider(application!);
+
+            const secret = await daprClient.secret.get(store, name) as { [key: string]: string };
+
+            return secret[key];
+        }
+
         switch (foundComponentConfig.spec?.type) {
             case 'state.redis':
-                return await getRedisKeys(applicationId, foundComponentConfig);
+                return await getRedisKeys(applicationId, foundComponentConfig, getSecret);
             default:
                 throw new Error(localize('services.daprStateKeyProvider.componentTypeNotSupported', 'The component type \'{0}\' is not supported.', foundComponentConfig.spec?.type));
         }

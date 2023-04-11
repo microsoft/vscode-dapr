@@ -133,8 +133,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			registerDisposable(vscode.debug.registerDebugConfigurationProvider('dapr', new DaprDebugConfigurationProvider(daprApplicationProvider, ui)));
 
 			const daprStateKeyProvider = createDaprStateKeyProvider(
-				() => firstValueFrom(daprApplicationProvider.applications)
-			);
+				() => firstValueFrom(daprApplicationProvider.applications),
+				getDaprClient);
 
 			const applicationsTreeView = registerDisposable(
 				vscode.window.createTreeView(
