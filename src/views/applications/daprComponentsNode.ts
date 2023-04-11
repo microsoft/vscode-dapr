@@ -9,7 +9,7 @@ import DaprComponentMetadataNode from './daprComponentMetadataNode';
 import { DaprClient } from '../../services/daprClient';
 import { getLocalizationPathForFile } from '../../util/localization';
 import DaprDetailsNode from '../details/daprDetailsNode';
-import { DaprStateStoreProvider } from '../../services/daprStateStoreProvider';
+import { DaprStateKeyProvider } from '../../services/daprStateKeyProvider';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -18,7 +18,7 @@ export default class DaprComponentsNode implements TreeNode {
     constructor(
         private readonly application: DaprApplication,
         private readonly daprClient: DaprClient,
-        private readonly stateStoreProvider: DaprStateStoreProvider) {
+        private readonly daprStateKeyProvider: DaprStateKeyProvider) {
     }
 
     getTreeItem(): Promise<vscode.TreeItem> {
@@ -41,18 +41,7 @@ export default class DaprComponentsNode implements TreeNode {
             return components.map(comp => new DaprComponentMetadataNode(
                 this.application.appId,
                 comp,
-                {
-                    getKeys: async () => {
-                        const stateStore = await this.stateStoreProvider.getStateStore(comp.name);
-                        
-                        return await stateStore.getKeys(this.application.appId);
-                    },
-                    getValue: async key => {
-                        const stateStore = await this.stateStoreProvider.getStateStore(comp.name);
-                        
-                        return await stateStore.getValue(this.application.appId, key)
-                    },
-                }));
+                this.daprStateKeyProvider));
         }
         return [new DaprDetailsNode(label, '')];
     }

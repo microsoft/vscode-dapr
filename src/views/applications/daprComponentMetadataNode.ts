@@ -5,24 +5,24 @@ import * as vscode from 'vscode';
 import { DaprComponentMetadata } from '../../services/daprClient';
 import TreeNode from "../treeNode";
 import { DaprStateNode } from './daprStateNode';
+import { DaprStateKeyProvider } from '../../services/daprStateKeyProvider';
 
 export interface DaprApplicationStateStore {
     getKeys(): Promise<string[]>;
-    getValue(key: string): Promise<string | undefined>;
 }
 
 export default class DaprComponentMetadataNode implements TreeNode {
     constructor(
         private readonly applicationId: string,
         public readonly daprComponentMetadata: DaprComponentMetadata,
-        private readonly stateStore: DaprApplicationStateStore) {
+        private readonly daprStateKeyProvider: DaprStateKeyProvider,) {
     }
 
     getChildren(): TreeNode[] {
         return [
             new DaprStateNode(
                 async () => {
-                    const keys = await this.stateStore.getKeys();
+                    const keys = await this.daprStateKeyProvider(this.applicationId, this.daprComponentMetadata.name);
 
                     return keys.map(key => ({
                         name: key,

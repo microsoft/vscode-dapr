@@ -35,7 +35,7 @@ import LocalDaprCliClient from './services/daprCliClient';
 import createInstallDaprCommand from './commands/help/installDapr';
 import DetailsTreeDataProvider from './views/details/detailsTreeDataProvider';
 import DaprListBasedDaprApplicationProvider from './services/daprApplicationProvider';
-import { Observable } from 'rxjs';
+import { Observable, firstValueFrom } from 'rxjs';
 import TreeNode from './views/treeNode';
 import createDebugApplicationCommand from './commands/applications/debugApplication';
 import createDebugRunCommand from './commands/applications/debugRun';
@@ -51,6 +51,7 @@ import DaprComponentsNode from './views/applications/daprComponentsNode';
 import { RedisDaprStateStoreProvider } from './services/daprStateStoreProvider';
 import DaprStateStoreDocumentContentProvider from './documents/daprStateStoreDocumentContentProvider';
 import { daprStateValueProviderFactory } from './services/daprStateValueProvider';
+import { createDaprStateKeyProvider } from './services/daprStateKeyProvider';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -131,7 +132,9 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			
 			registerDisposable(vscode.debug.registerDebugConfigurationProvider('dapr', new DaprDebugConfigurationProvider(daprApplicationProvider, ui)));
 
-			const daprStateStoreProvider = new RedisDaprStateStoreProvider();
+			const daprStateKeyProvider = createDaprStateKeyProvider(
+				() => firstValueFrom(daprApplicationProvider.applications)
+			);
 
 			const applicationsTreeView = registerDisposable(
 				vscode.window.createTreeView(
@@ -141,7 +144,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 							new DaprApplicationTreeDataProvider(
 								application => new DaprApplicationNode(
 										application,
-										application => new DaprComponentsNode(application, daprClient, daprStateStoreProvider)),
+										application => new DaprComponentsNode(application, daprClient, daprStateKeyProvider)),
 								daprApplicationProvider,
 								daprClient,
 								daprInstallationManager,
