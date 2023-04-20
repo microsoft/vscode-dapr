@@ -21,8 +21,7 @@
                             },
                             "appID": {
                                 "description": "An ID for your application, used for service discovery.",
-                                "type": "string",
-                                "pattern": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$"
+                                "type": "string"
                             },
                             "appPort": {
                                 "description": "The port your application is listening on.",
@@ -175,8 +174,7 @@
                 },
                 "placementHostAddress": {
                     "description": "The host on which the placement service resides.",
-                    "type": "string",
-                    "pattern": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$"
+                    "type": "string"
                 },
                 "resourcesPath": {
                     "description": "Path for resources directory.",
