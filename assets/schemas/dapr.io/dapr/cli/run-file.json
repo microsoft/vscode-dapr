@@ -26,7 +26,8 @@
                             "appPort": {
                                 "description": "The port your application is listening on.",
                                 "type": "integer",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 65535
                             },
                             "command": {
                                 "description": "The command and arguments used to start your application.",
@@ -38,27 +39,32 @@
                             "daprGRPCPort": {
                                 "description": "The gRPC port for Dapr to listen on.",
                                 "type": "integer",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 65535
                             },
                             "daprHTTPPort": {
                                 "description": "The HTTP port for Dapr to listen on.",
                                 "type": "integer",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 65535
                             },
                             "daprInternalGRPCPort": {
                                 "description": "The gRPC port for the Dapr Internal API to listen on.",
                                 "type": "integer",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 65535
                             },
                             "metricsPort": {
                                 "description": "The port for the metrics server.",
                                 "type": "integer",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 65535
                             },
                             "profilePort": {
                                 "description": "The port for the profile server.",
                                 "type": "integer",
-                                "minimum": 0
+                                "minimum": 0,
+                                "maximum": 65535
                             },
                             "unixDomainSocket": {
                                 "description": "Path to a unix domain socket dir. If specified, Dapr API servers will use Unix Domain Sockets.",
@@ -138,7 +144,7 @@
                     "type": "integer",
                     "minimum": 0
                 },
-                "daprPath": {
+                "runtimePath": {
                     "description": "The path to the Dapr runtime (i.e. daprd).",
                     "type": "string"
                 },
@@ -156,7 +162,10 @@
                 },
                 "env": {
                     "description": "Environment variables to be passed to the application.",
-                    "type": "string"
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": ["string", "number", "boolean"]
+                    }
                 },
                 "logLevel": {
                     "description": "Sets the log verbosity.",
