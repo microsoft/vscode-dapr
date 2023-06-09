@@ -8,5 +8,17 @@
     },
     // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
     "typescript.tsc.autoDetect": "off",
-    "typescript.preferences.importModuleSpecifier": "relative"
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "redisXplorer.config": {
+        "profiles": [
+            {
+                "name": "dapr",
+                "host": "localhost",
+                "accessKey": "",
+                "filter": "*",
+                "port": "6379"
+            }
+        ],
+        "scanLimit": 200
+    }
 }
