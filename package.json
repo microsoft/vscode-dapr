@@ -321,6 +321,10 @@
 			{
 				"type": "dapr",
 				"properties": {
+					"appChannelAddress": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.appChannelAddress.description%"
+					},
 					"appHealthCheckPath": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.appHealthCheckPath.description%"
@@ -428,6 +432,15 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.httpReadBufferSize.description%",
 						"default": -1
 					},
+					"internalGrpcPort": {
+						"type": "integer",
+						"description": "%vscode-dapr.tasks.dapr.properties.internalGrpcPort.description%",
+						"default": 50001
+					},
+					"listenAddresses": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.listenAddresses.description%"
+					},
 					"logLevel": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.logLevel.description%",
@@ -456,6 +469,17 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.profilePort.description%",
 						"default": -1
 					},
+					"resourcesPath": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.dapr.properties.resourcesPath.description%"
+					},
+					"resourcesPaths": {
+						"type": "array",
+						"description": "%vscode-dapr.tasks.dapr.properties.resourcesPaths.description%",
+						"additionalItems": {
+							"type": "string"
+						}
+					},
 					"runFile": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.runFile.description%"
@@ -473,6 +497,10 @@
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.allowedOrigins.description%",
 						"default": "*"
+					},
+					"appChannelAddress": {
+						"type": "string",
+						"description": "%vscode-dapr.tasks.daprd.properties.appChannelAddress.description%"
 					},
 					"appHealthCheckPath": {
 						"type": "string",
@@ -646,6 +674,13 @@
 					"resourcesPath": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.resourcesPath.description%"
+					},
+					"resourcesPaths": {
+						"type": "array",
+						"description": "%vscode-dapr.tasks.daprd.properties.resourcesPaths.description%",
+						"additionalItems": {
+							"type": "string"
+						}
 					},
 					"sentryAddress": {
 						"type": "string",

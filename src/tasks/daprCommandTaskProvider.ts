@@ -9,6 +9,7 @@ import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DaprInstallationManager } from '../services/daprInstallationManager';
 
 export interface DaprTaskDefinition extends TaskDefinition {
+    appChannelAddress?: string;
     appHealthCheckPath?: string;
     appHealthProbeInterval?: number;
     appHealthProbeTimeout?: number;
@@ -30,10 +31,14 @@ export interface DaprTaskDefinition extends TaskDefinition {
     httpMaxRequestSize?: number;
     httpPort?: number;
     httpReadBufferSize?: number;
+    internalGrpcPort?: number;
+    listenAddresses?: string;
     logLevel?: 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'panic';
     metricsPort?: number;
     placementHostAddress?: string;
     profilePort?: number;
+    resourcesPath?: string;
+    resourcesPaths?: string[];
     runFile?: string;
     type: 'dapr';
     unixDomainSocket?: string;
@@ -53,6 +58,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                         const command =
                             CommandLineBuilder
                                 .create(daprPathProvider(), 'run')
+                                .withNamedArg('--app-channel-address', daprDefinition.appChannelAddress)
                                 .withNamedArg('--app-health-check-path', daprDefinition.appHealthCheckPath)
                                 .withNamedArg('--app-health-probe-interval', daprDefinition.appHealthProbeInterval)
                                 .withNamedArg('--app-health-probe-timeout', daprDefinition.appHealthProbeTimeout)
@@ -68,6 +74,8 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--dapr-http-max-request-size', daprDefinition.httpMaxRequestSize)
                                 .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
                                 .withNamedArg('--dapr-http-read-buffer-size', daprDefinition.httpReadBufferSize)
+                                .withNamedArg('--dapr-internal-grpc-port', daprDefinition.internalGrpcPort)
+                                .withNamedArg('--dapr-listen-addresses', daprDefinition.listenAddresses)
                                 .withNamedArg('--enable-api-logging', daprDefinition.enableApiLogging, { assignValue: true })
                                 .withNamedArg('--enable-app-health-check', daprDefinition.enableHealthCheck, { assignValue: true })
                                 .withNamedArg('--enable-profiling', daprDefinition.enableProfiling, { assignValue: true })
@@ -75,6 +83,8 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--metrics-port', daprDefinition.metricsPort)
                                 .withNamedArg('--placement-host-address', daprDefinition.placementHostAddress)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
+                                .withNamedArg('--resources-path', daprDefinition.resourcesPath)
+                                .withArrayArgs('--resources-path', daprDefinition.resourcesPaths)
                                 .withNamedArg('--run-file', daprDefinition.runFile)
                                 .withNamedArg('--unix-domain-socket', daprDefinition.unixDomainSocket)
                                 .withArgs(daprDefinition.args)
