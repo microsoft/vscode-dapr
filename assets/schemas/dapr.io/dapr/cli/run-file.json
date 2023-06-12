@@ -15,6 +15,10 @@
                     {
                         "type": "object",
                         "properties": {
+                            "appChannelAddress": {
+                                "description": "The network address the application listens on (default \"127.0.0.1\").",
+                                "type": "string"
+                            },
                             "appDirPath": {
                                 "description": "The path to the application directory, relative to this file.",
                                 "type": "string"
@@ -116,6 +120,11 @@
                     "type": "integer",
                     "minimum": 0
                 },
+                "appLogDestination": {
+                    "description": "Where application output should be written.",
+                    "type": "string",
+                    "enum": ["console", "file", "fileAndConsole"]
+                },
                 "appMaxConcurrency": {
                     "description": "Controls the concurrency level of the application.",
                     "type": "integer",
@@ -144,9 +153,10 @@
                     "type": "integer",
                     "minimum": 0
                 },
-                "runtimePath": {
-                    "description": "The path to the Dapr runtime (i.e. daprd).",
-                    "type": "string"
+                "daprdLogDestination": {
+                    "description": "Where daprd output should be written.",
+                    "type": "string",
+                    "enum": ["console", "file", "fileAndConsole"]
                 },
                 "enableApiLogging": {
                     "description": "Log API calls at INFO verbosity.",
@@ -177,7 +187,19 @@
                     "type": "string"
                 },
                 "resourcesPath": {
-                    "description": "Path for resources directory.",
+                    "description": "(Deprecated in v1.11.) Path for resources directory.",
+                    "type": "string",
+                    "deprecated": true
+                },
+                "resourcesPaths": {
+                    "description": "Paths for resources directories.",
+                    "type": "array",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "runtimePath": {
+                    "description": "The path to the Dapr runtime (i.e. daprd).",
                     "type": "string"
                 }
             }
