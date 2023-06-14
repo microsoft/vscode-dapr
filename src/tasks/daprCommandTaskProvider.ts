@@ -50,7 +50,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
 
                         const daprDefinition = definition as DaprTaskDefinition;
 
-                        const command =
+                        const commandLineBuilder =
                             CommandLineBuilder
                                 .create(daprPathProvider(), 'run')
                                 .withNamedArg('--app-health-check-path', daprDefinition.appHealthCheckPath)
@@ -79,12 +79,18 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--unix-domain-socket', daprDefinition.unixDomainSocket)
                                 .withArgs(daprDefinition.args)
                                 .withArgs(daprDefinition.command)
-                                .build();
+
                         
+                        // infer dapr.yaml when omitted from configuration
+                        if (daprDefinition.appId === undefined && daprDefinition.runFile === undefined) {
+                            commandLineBuilder.withNamedArg('--run-file', "./dapr.yaml")
+                        }
+
+                        const command = commandLineBuilder.build();
                         return callback(command, { cwd: definition.cwd });
                     });
             },
             /* isBackgroundTask: */ true,
-            /* problemMatchers: */ ['$dapr']);
+            /* problemMatchers: */['$dapr']);
     }
 }
