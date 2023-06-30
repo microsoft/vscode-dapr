@@ -7,6 +7,7 @@ import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DaprInstallationManager } from '../services/daprInstallationManager';
+import { log } from 'node:console';
 
 export interface DaprTaskDefinition extends TaskDefinition {
     appHealthCheckPath?: string;
@@ -80,12 +81,22 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                                 .withArgs(daprDefinition.args)
                                 .withArgs(daprDefinition.command)
 
-                        
+
                         // infer dapr.yaml when omitted from configuration
-                        if (daprDefinition.appId === undefined && daprDefinition.runFile === undefined) {
-                            commandLineBuilder.withNamedArg('--run-file', "./dapr.yaml")
+                        for (const def in daprDefinition) {
+                            //daprDefinition.type will be set as "dapr" automatically 
+                            if (def === "type") {
+                                continue;
+                            }
+                            // eslint-disable-next-line no-prototype-builtins
+                            else if (daprDefinition.hasOwnProperty(def) && def !== undefined) {
+                                const command = commandLineBuilder.build();
+                                return callback(command, { cwd: definition.cwd });
+                            }
                         }
 
+                        // when all properties are undefined the command "dapr run --run-file ./dapr.yaml" will be excuted.
+                        commandLineBuilder.withNamedArg('--run-file', "./dapr.yaml")
                         const command = commandLineBuilder.build();
                         return callback(command, { cwd: definition.cwd });
                     });
