@@ -7,7 +7,6 @@ import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DaprInstallationManager } from '../services/daprInstallationManager';
-import { log } from 'node:console';
 
 export interface DaprTaskDefinition extends TaskDefinition {
     appHealthCheckPath?: string;
@@ -84,12 +83,10 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
 
                         // infer dapr.yaml when omitted from configuration
                         for (const def in daprDefinition) {
-                            //daprDefinition.type will be set as "dapr" automatically 
-                            if (def === "type") {
-                                continue;
-                            }
+                            // skip daprDefinition.type as it will be set by default
+                            // if any property being set means do not need to infer dapr.yaml
                             // eslint-disable-next-line no-prototype-builtins
-                            else if (daprDefinition.hasOwnProperty(def) && def !== undefined) {
+                            if (daprDefinition.hasOwnProperty(def) && def !== "type" && def !== undefined) {
                                 const command = commandLineBuilder.build();
                                 return callback(command, { cwd: definition.cwd });
                             }
