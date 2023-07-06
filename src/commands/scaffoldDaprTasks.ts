@@ -187,8 +187,8 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
     };
 
     if (fs.existsSync(runFilePath)) {
-        const runFileTask: vscode.MessageItem = { title: 'yes' };
-        const defaultTask: vscode.MessageItem = { title: 'no' };
+        const runFileTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.useExistingDaprRunFile', 'yes') };
+        const defaultTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.notUseExistingDaprRunFile', 'no') };
         const result = await ui.showWarningMessage('You already have a Dapr run file. Would you like to use it in the scaffolded task?',
             { modal: true },
             runFileTask, defaultTask);
@@ -198,7 +198,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                 'dapr', folder,
                 label => {
                     const daprUpTask: DaprTaskDefinition = {
-                        label: label,
+                        label,
                         type: 'dapr',
                         runFile: '${workspaceFolder}/dapr.yaml',
                     };
@@ -209,11 +209,11 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                 'Launch Dapr', folder,
                 name => {
                     const daprDebugConfiguration: DaprDebugConfiguration = {
-                        "name": name,
-                        "request": "launch",
-                        "type": "dapr",
-                        "runFile": "${workspaceFolder}/dapr.yaml",
-                        "preLaunchTask": preLaunchTask
+                        name,
+                        request: 'launch',
+                        type: 'dapr',
+                        runFile: '${workspaceFolder}/dapr.yaml',
+                        preLaunchTask
                     };
                     return daprDebugConfiguration;
                 }, onConfigConflict);
