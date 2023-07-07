@@ -166,6 +166,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                 return { 'type': 'rename', name: label };
             }
         };
+
     const onConfigConflict: ConflictHandler = async (name, isUnique) => {
         telemetryProperties.cancelStep = 'configurationConflict';
 
@@ -220,144 +221,145 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
             return;
         }
     }
+    else {
+        const configurationStep: WizardStep<ScaffoldWizardContext> =
+            async wizardContext => {
+                const folder = vscode.workspace.workspaceFolders?.[0];
 
-    const configurationStep: WizardStep<ScaffoldWizardContext> =
-        async wizardContext => {
-            const folder = vscode.workspace.workspaceFolders?.[0];
+                if (!folder) {
+                    context.errorHandling.suppressReportIssue = true;
 
-            if (!folder) {
-                context.errorHandling.suppressReportIssue = true;
+                    throw new Error(localize('commands.scaffoldDaprTasks.noFolderOrWorkspace', 'Open a folder or workspace.'));
+                }
 
-                throw new Error(localize('commands.scaffoldDaprTasks.noFolderOrWorkspace', 'Open a folder or workspace.'));
-            }
+                const workspaceConfigurations = getWorkspaceConfigurations(folder);
 
-            const workspaceConfigurations = getWorkspaceConfigurations(folder);
+                if (workspaceConfigurations.length === 0) {
+                    context.errorHandling.suppressReportIssue = true;
 
-            if (workspaceConfigurations.length === 0) {
-                context.errorHandling.suppressReportIssue = true;
+                    throw new Error(localize('commands.scaffoldDaprTasks.noConfigurationsMessage', 'Open a folder or workspace with a folder-scoped debug launch configuration.'));
+                }
 
-                throw new Error(localize('commands.scaffoldDaprTasks.noConfigurationsMessage', 'Open a folder or workspace with a folder-scoped debug launch configuration.'));
-            }
+                const configurationItems = workspaceConfigurations.map(configuration => ({ label: configuration.name, configuration }));
 
-            const configurationItems = workspaceConfigurations.map(configuration => ({ label: configuration.name, configuration }));
+                telemetryProperties.cancelStep = 'configuration';
 
-            telemetryProperties.cancelStep = 'configuration';
+                const debugConfigurationItem = await ui.showQuickPick(configurationItems, { placeHolder: localize('commands.scaffoldDaprTasks.configurationPlaceholder', 'Select the configuration used to debug the application') });
 
-            const debugConfigurationItem = await ui.showQuickPick(configurationItems, { placeHolder: localize('commands.scaffoldDaprTasks.configurationPlaceholder', 'Select the configuration used to debug the application') });
-
-            return {
-                ...wizardContext,
-                configuration: debugConfigurationItem.configuration,
-                folder: folder
+                return {
+                    ...wizardContext,
+                    configuration: debugConfigurationItem.configuration,
+                    folder: folder
+                };
             };
-        };
 
-    const appIdStep: WizardStep<ScaffoldWizardContext> =
-        async wizardContext => {
-            telemetryProperties.cancelStep = 'appId';
+        const appIdStep: WizardStep<ScaffoldWizardContext> =
+            async wizardContext => {
+                telemetryProperties.cancelStep = 'appId';
 
-            // TODO: Infer name from application manifest/project file, or repo folder name.
-            return {
-                ...wizardContext,
-                appId: await ui.showInputBox(
-                    {
-                        prompt: localize('commands.scaffoldDaprTasks.appIdPrompt', 'Enter a Dapr ID for the application'),
-                        value: wizardContext.appId ?? 'app',
-                        validateInput: value => {
-                            return value === ''
-                                ? localize('commands.scaffoldDaprTasks.invalidAppId', 'An application ID must be a non-empty string.')
-                                : undefined;
-                        }
-                    })
-            };
-        };
-
-    const appPortStep: WizardStep<ScaffoldWizardContext> =
-        async wizardContext => {
-            telemetryProperties.cancelStep = 'appPort';
-
-            const appPort = wizardContext.appPort ?? await getDefaultPort(wizardContext.configuration, wizardContext.folder);
-
-            const appPortString = await ui.showInputBox(
-                {
-                    prompt: localize('commands.scaffoldDaprTasks.portPrompt', 'Enter the port on which the application listens.'),
-                    validateInput: value => {
-                        if (/^\d+$/.test(value)) {
-                            const port = parseInt(value, 10);
-
-                            if (port >= 1 && port <= 65535) {
-                                return undefined;
+                // TODO: Infer name from application manifest/project file, or repo folder name.
+                return {
+                    ...wizardContext,
+                    appId: await ui.showInputBox(
+                        {
+                            prompt: localize('commands.scaffoldDaprTasks.appIdPrompt', 'Enter a Dapr ID for the application'),
+                            value: wizardContext.appId ?? 'app',
+                            validateInput: value => {
+                                return value === ''
+                                    ? localize('commands.scaffoldDaprTasks.invalidAppId', 'An application ID must be a non-empty string.')
+                                    : undefined;
                             }
-                        }
-
-                        return localize('commands.scaffoldDaprTasks.invalidPortMessage', 'A valid port number is a positive integer (1 to 65535).');
-                    },
-                    value: appPort.toString()
-                });
-
-            return {
-                ...wizardContext,
-                appPort: parseInt(appPortString, 10)
-            };
-        };
-
-    const result = await ui.showWizard({ title: localize('commands.scaffoldDaprTasks.wizardTitle', 'Scaffold Dapr Tasks') }, configurationStep, appIdStep, appPortStep);
-
-    const buildTask = result.configuration.preLaunchTask;
-    const tearDownTask = result.configuration.postDebugTask;
-
-    telemetryProperties.configurationType = result.configuration.type;
-
-
-    const preLaunchTask = await scaffolder.scaffoldTask(
-        'dapr-debug',
-        result.folder,
-        label => {
-            const daprUpTask: DaprTaskDefinition = {
-                appId: result.appId,
-                appPort: result.appPort,
-                label,
-                type: 'dapr'
+                        })
+                };
             };
 
-            if (buildTask && buildTask !== label) {
-                daprUpTask.dependsOn = buildTask;
-            }
+        const appPortStep: WizardStep<ScaffoldWizardContext> =
+            async wizardContext => {
+                telemetryProperties.cancelStep = 'appPort';
 
-            return daprUpTask;
-        },
-        onTaskConflict);
+                const appPort = wizardContext.appPort ?? await getDefaultPort(wizardContext.configuration, wizardContext.folder);
 
-    const postDebugTask = await scaffolder.scaffoldTask(
-        'daprd-down',
-        result.folder,
-        label => {
-            const daprdDownTask: DaprdDownTaskDefinition = {
-                appId: result.appId,
-                label,
-                type: 'daprd-down'
+                const appPortString = await ui.showInputBox(
+                    {
+                        prompt: localize('commands.scaffoldDaprTasks.portPrompt', 'Enter the port on which the application listens.'),
+                        validateInput: value => {
+                            if (/^\d+$/.test(value)) {
+                                const port = parseInt(value, 10);
+
+                                if (port >= 1 && port <= 65535) {
+                                    return undefined;
+                                }
+                            }
+
+                            return localize('commands.scaffoldDaprTasks.invalidPortMessage', 'A valid port number is a positive integer (1 to 65535).');
+                        },
+                        value: appPort.toString()
+                    });
+
+                return {
+                    ...wizardContext,
+                    appPort: parseInt(appPortString, 10)
+                };
             };
 
-            if (tearDownTask && tearDownTask !== label) {
-                daprdDownTask.dependsOn = tearDownTask;
-            }
+        const result = await ui.showWizard({ title: localize('commands.scaffoldDaprTasks.wizardTitle', 'Scaffold Dapr Tasks') }, configurationStep, appIdStep, appPortStep);
 
-            return daprdDownTask;
-        },
-        onTaskConflict);
+        const buildTask = result.configuration.preLaunchTask;
+        const tearDownTask = result.configuration.postDebugTask;
 
-    await scaffolder.scaffoldConfiguration(
-        localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),
-        result.folder,
-        name => {
-            return {
-                ...result.configuration,
-                name,
-                preLaunchTask,
-                postDebugTask
-            };
-        },
-        onConfigConflict);
+        telemetryProperties.configurationType = result.configuration.type;
+
+
+        const preLaunchTask = await scaffolder.scaffoldTask(
+            'dapr-debug',
+            result.folder,
+            label => {
+                const daprUpTask: DaprTaskDefinition = {
+                    appId: result.appId,
+                    appPort: result.appPort,
+                    label,
+                    type: 'dapr'
+                };
+
+                if (buildTask && buildTask !== label) {
+                    daprUpTask.dependsOn = buildTask;
+                }
+
+                return daprUpTask;
+            },
+            onTaskConflict);
+
+        const postDebugTask = await scaffolder.scaffoldTask(
+            'daprd-down',
+            result.folder,
+            label => {
+                const daprdDownTask: DaprdDownTaskDefinition = {
+                    appId: result.appId,
+                    label,
+                    type: 'daprd-down'
+                };
+
+                if (tearDownTask && tearDownTask !== label) {
+                    daprdDownTask.dependsOn = tearDownTask;
+                }
+
+                return daprdDownTask;
+            },
+            onTaskConflict);
+
+        await scaffolder.scaffoldConfiguration(
+            localize('commands.scaffoldDaprTasks.configurationName', '{0} with Dapr', result.configuration.name),
+            result.folder,
+            name => {
+                return {
+                    ...result.configuration,
+                    name,
+                    preLaunchTask,
+                    postDebugTask
+                };
+            },
+            onConfigConflict);
+    }
 }
 
 const createScaffoldDaprTasksCommand = (scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldDaprTasks(context, scaffolder, templateScaffolder, ui);
