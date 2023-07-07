@@ -7,6 +7,11 @@ import { TaskDefinition } from './taskDefinition';
 import { TelemetryProvider } from '../services/telemetryProvider';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DaprInstallationManager } from '../services/daprInstallationManager';
+import * as fs from 'fs';
+import path from 'path';
+import * as vscode from 'vscode';
+import * as nls from 'vscode-nls';
+import { getLocalizationPathForFile } from '../util/localization';
 
 export interface DaprTaskDefinition extends TaskDefinition {
     appHealthCheckPath?: string;
@@ -39,6 +44,8 @@ export interface DaprTaskDefinition extends TaskDefinition {
     unixDomainSocket?: string;
 }
 
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
+
 export default class DaprCommandTaskProvider extends CommandTaskProvider {
     constructor(daprInstallationManager: DaprInstallationManager, daprPathProvider: () => string, telemetryProvider: TelemetryProvider) {
         super(
@@ -46,6 +53,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                 return telemetryProvider.callWithTelemetry(
                     'vscode-dapr.tasks.dapr',
                     async (context: IActionContext) => {
+                        
                         await daprInstallationManager.ensureInitialized(context.errorHandling);
 
                         const daprDefinition = definition as DaprTaskDefinition;
@@ -93,9 +101,22 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                         }
 
                         // when all properties are undefined the command "dapr run --run-file ./dapr.yaml" will be excuted.
-                        commandLineBuilder.withNamedArg('--run-file', "./dapr.yaml")
-                        const command = commandLineBuilder.build();
-                        return callback(command, { cwd: definition.cwd });
+                        const folder = vscode.workspace.workspaceFolders?.[0];
+
+                        if (!folder) {
+                            context.errorHandling.suppressReportIssue = true;
+                            throw new Error(localize('tasks.daprCommandTaskProvider.noFolderOrWorkspace', 'Open a folder or workspace.'));
+                        }
+            
+                        const runFilePath = path.join(folder.uri.fsPath, 'dapr.yaml');
+                        if (fs.existsSync(runFilePath)) {
+                            commandLineBuilder.withNamedArg('--run-file', runFilePath);
+                            const command = commandLineBuilder.build();
+                            return callback(command, { cwd: definition.cwd });
+                        }
+                        else{
+                            throw new Error(localize('tasks.daprCommandTaskProvider.noRunFile', 'there is no dapr.yaml in this folder or workspace.'));
+                        }
                     });
             },
             /* isBackgroundTask: */ true,
