@@ -93,8 +93,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                         for (const def in daprDefinition) {
                             // skip daprDefinition.type as it will be set by default
                             // if any property being set means do not need to infer dapr.yaml
-                            // eslint-disable-next-line no-prototype-builtins
-                            if (daprDefinition.hasOwnProperty(def) && def !== "type" && def !== undefined) {
+                            if (Object.prototype.hasOwnProperty.call(daprDefinition,def) && def !== "type" && def !== undefined) {
                                 const command = commandLineBuilder.build();
                                 return callback(command, { cwd: definition.cwd });
                             }
