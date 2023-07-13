@@ -146,6 +146,11 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
     }
 
     const runFilePath = path.join(folder.uri.fsPath, 'dapr.yaml');
+
+    const runFilePathString = '$(workspaceFolder)/dapr.yaml';
+    const daprTaskType = 'dapr';
+    const daprConfigType = 'dapr';
+
     const onTaskConflict: ConflictHandler =
         async (label, isUnique) => {
             telemetryProperties.cancelStep = 'taskConflict';
@@ -187,7 +192,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
         }
     };
 
-    if (fs.existsSync(runFilePath)) {
+    if (await vscode.workspace.fs.stat(vscode.Uri.file(runFilePath)).then(() => true, () => false)) {
         const runFileTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.useExistingDaprRunFile', 'yes') };
         const defaultTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.notUseExistingDaprRunFile', 'no') };
         const result = await ui.showWarningMessage('You already have a Dapr run file. Would you like to use it in the scaffolded task?',
@@ -200,8 +205,8 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                 label => {
                     const daprUpTask: DaprTaskDefinition = {
                         label,
-                        type: 'dapr',
-                        runFile: '${workspaceFolder}/dapr.yaml',
+                        type: daprTaskType,
+                        runFile: runFilePathString,
                     };
                     return daprUpTask;
                 }, onTaskConflict);
@@ -212,8 +217,8 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                     const daprDebugConfiguration: DaprDebugConfiguration = {
                         name,
                         request: 'launch',
-                        type: 'dapr',
-                        runFile: '${workspaceFolder}/dapr.yaml',
+                        type: daprConfigType,
+                        runFile: runFilePathString,
                         preLaunchTask
                     };
                     return daprDebugConfiguration;
@@ -318,7 +323,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
                     appId: result.appId,
                     appPort: result.appPort,
                     label,
-                    type: 'dapr'
+                    type: daprTaskType
                 };
 
                 if (buildTask && buildTask !== label) {
