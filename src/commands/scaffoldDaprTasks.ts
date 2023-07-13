@@ -15,7 +15,6 @@ import { ConflictHandler, ConflictUniquenessPredicate } from '../scaffolding/con
 import { names, range } from '../util/generators';
 import { getLocalizationPathForFile } from '../util/localization';
 import { TextDecoder } from 'util';
-import * as fs from 'fs';
 import path from 'path';
 import { DaprDebugConfiguration } from '../debug/daprDebugConfigurationProvider';
 
