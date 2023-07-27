@@ -192,8 +192,8 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
     };
 
     if (await vscode.workspace.fs.stat(vscode.Uri.file(runFilePath)).then(() => true, () => false)) {
-        const runFileTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.useExistingDaprRunFile', 'yes') };
-        const defaultTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.notUseExistingDaprRunFile', 'no') };
+        const runFileTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.useExistingDaprRunFile', 'Use Run File') };
+        const defaultTask: vscode.MessageItem = { title: localize('commands.scaffoldDaprTasks.notUseExistingDaprRunFile', 'Run Dapr Directly') };
         const result = await ui.showWarningMessage('You already have a Dapr run file. Would you like to use it in the scaffolded task?',
             { modal: true },
             runFileTask, defaultTask);
