@@ -28,6 +28,7 @@
 
     "vscode-dapr.tasks.scaffoldDaprComponents.title": "Scaffold Dapr Components",
     "vscode-dapr.tasks.scaffoldDaprTasks.title": "Scaffold Dapr Tasks",
+    "vscode-dapr.tasks.scaffoldDaprTemplates.title": "Scaffold Dapr Templates",
     "vscode-dapr.tasks.openDaprDashboard.title": "Open Dapr Dashboard",
     
     "vscode-dapr.views.applications.name": "Applications",

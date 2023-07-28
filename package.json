@@ -142,6 +142,11 @@
 				"category": "Dapr"
 			},
 			{
+				"command": "vscode-dapr.tasks.scaffoldTemplates",
+				"title": "%vscode-dapr.tasks.scaffoldDaprTemplates.title%",
+				"category": "Dapr"
+			},
+			{
 				"command": "vscode-dapr.tasks.openDaprDashboard",
 				"title": "%vscode-dapr.tasks.openDaprDashboard.title%",
 				"category": "Dapr",
@@ -186,9 +191,14 @@
 								"description": "%vscode-dapr.debuggers.dapr.properties.runFile.description%"
 							}
 						},
-						"required": ["runFile"],
+						"required": [
+							"runFile"
+						],
 						"not": {
-							"required": ["excludeApps", "includeApps"]
+							"required": [
+								"excludeApps",
+								"includeApps"
+							]
 						}
 					}
 				}
@@ -770,6 +780,8 @@
 		"package-impl": "vsce package"
 	},
 	"devDependencies": {
+		"@types/adm-zip": "^0.5.0",
+		"@types/fs-extra": "^11.0.1",
 		"@types/handlebars": "^4.1.0",
 		"@types/js-yaml": "^4.0.5",
 		"@types/lodash.isequal": "^4.5.6",
@@ -800,7 +812,9 @@
 		"@microsoft/vscode-azext-utils": "^2.0.0",
 		"@opentelemetry/api": "^1.4.1",
 		"@opentelemetry/tracing": "^0.24.0",
+		"adm-zip": "^0.5.10",
 		"axios": "^0.27.2",
+		"fs-extra": "^11.1.1",
 		"handlebars": "^4.7.7",
 		"js-yaml": "^4.1.0",
 		"lodash.isequal": "^4.5.0",

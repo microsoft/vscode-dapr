@@ -46,6 +46,7 @@ import { DaprDebugConfigurationProvider } from './debug/daprDebugConfigurationPr
 import createViewAppLogsCommand from './commands/applications/viewAppLogs';
 import createViewDaprLogsCommand from './commands/applications/viewDaprLogs';
 import createBrowseToApplicationCommand from './commands/applications/browseToApplication';
+import createScaffoldDaprTemplatesCommand from './commands/scaffoldDaprTemplates';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -119,7 +120,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprComponents', createScaffoldDaprComponentsCommand(scaffolder, templateScaffolder));
 			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldDaprTasks', createScaffoldDaprTasksCommand(scaffolder, templateScaffolder, ui));
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-dapr.tasks.openDaprDashboard', createOpenDaprDashboardCommand(daprDashboardProvider));
-
+			telemetryProvider.registerCommandWithTelemetry('vscode-dapr.tasks.scaffoldTemplates', createScaffoldDaprTemplatesCommand(ui));
 			registerDisposable(vscode.tasks.registerTaskProvider('dapr', daprCommandTaskProvider));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd', new DaprdCommandTaskProvider(daprInstallationManager, () => settingsProvider.daprdPath, new NodeEnvironmentProvider(), telemetryProvider)));
 			registerDisposable(vscode.tasks.registerTaskProvider('daprd-down', new DaprdDownTaskProvider(daprApplicationProvider, telemetryProvider)));
