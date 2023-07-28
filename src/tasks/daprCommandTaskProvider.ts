@@ -12,7 +12,6 @@ import path from 'path';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { getLocalizationPathForFile } from '../util/localization';
-import { isNullOrUndefined } from 'util';
 
 export interface DaprTaskDefinition extends TaskDefinition {
     appChannelAddress?: string;
