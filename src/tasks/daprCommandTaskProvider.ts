@@ -15,6 +15,7 @@ import { getLocalizationPathForFile } from '../util/localization';
 import { isNullOrUndefined } from 'util';
 
 export interface DaprTaskDefinition extends TaskDefinition {
+    appChannelAddress?: string;
     appHealthCheckPath?: string;
     appHealthProbeInterval?: number;
     appHealthProbeTimeout?: number;
@@ -36,10 +37,14 @@ export interface DaprTaskDefinition extends TaskDefinition {
     httpMaxRequestSize?: number;
     httpPort?: number;
     httpReadBufferSize?: number;
+    internalGrpcPort?: number;
+    listenAddresses?: string;
     logLevel?: 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'panic';
     metricsPort?: number;
     placementHostAddress?: string;
     profilePort?: number;
+    resourcesPath?: string;
+    resourcesPaths?: string[];
     runFile?: string;
     type: 'dapr';
     unixDomainSocket?: string;
