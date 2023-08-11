@@ -85,7 +85,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
 
                         await checkFileExists(runFilePath).then((fileExists) => {
                             if (fileExists) {
-                                const command = createCommandLineBuilder(daprPathProvider).withNamedArg('--run-file', runFilePath).build();
+                                const command = createCommandLineBuilder(daprPathProvider, { type: 'dapr', runFile: runFilePath }).build();
                                 return callback(command, { cwd: definition.cwd });
                             } else {
                                 throw new Error(localize('tasks.daprCommandTaskProvider.noRunFile', 'there is no dapr.yaml in this folder or workspace.'));
@@ -108,43 +108,36 @@ async function checkFileExists(filePath: string): Promise<boolean> {
 }
 
 
-function createCommandLineBuilder(daprPathProvider: () => string, daprDefinition?: DaprTaskDefinition) {
-    if (daprDefinition) {
-        const commandLineBuilder =
-            CommandLineBuilder
-                .create(daprPathProvider(), 'run')
-                .withNamedArg('--app-health-check-path', daprDefinition.appHealthCheckPath)
-                .withNamedArg('--app-health-probe-interval', daprDefinition.appHealthProbeInterval)
-                .withNamedArg('--app-health-probe-timeout', daprDefinition.appHealthProbeTimeout)
-                .withNamedArg('--app-health-threshold', daprDefinition.appHealthThreshold)
-                .withNamedArg('--app-id', daprDefinition.appId)
-                .withNamedArg('--app-max-concurrency', daprDefinition.appMaxConcurrency)
-                .withNamedArg('--app-port', daprDefinition.appPort)
-                .withNamedArg('--app-protocol', daprDefinition.appProtocol)
-                .withNamedArg('--app-ssl', daprDefinition.appSsl, { assignValue: true })
-                .withNamedArg('--components-path', daprDefinition.componentsPath)
-                .withNamedArg('--config', daprDefinition.config)
-                .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
-                .withNamedArg('--dapr-http-max-request-size', daprDefinition.httpMaxRequestSize)
-                .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
-                .withNamedArg('--dapr-http-read-buffer-size', daprDefinition.httpReadBufferSize)
-                .withNamedArg('--enable-api-logging', daprDefinition.enableApiLogging, { assignValue: true })
-                .withNamedArg('--enable-app-health-check', daprDefinition.enableHealthCheck, { assignValue: true })
-                .withNamedArg('--enable-profiling', daprDefinition.enableProfiling, { assignValue: true })
-                .withNamedArg('--log-level', daprDefinition.logLevel)
-                .withNamedArg('--metrics-port', daprDefinition.metricsPort)
-                .withNamedArg('--placement-host-address', daprDefinition.placementHostAddress)
-                .withNamedArg('--profile-port', daprDefinition.profilePort)
-                .withNamedArg('--run-file', daprDefinition.runFile)
-                .withNamedArg('--unix-domain-socket', daprDefinition.unixDomainSocket)
-                .withArgs(daprDefinition.args)
-                .withArgs(daprDefinition.command)
+function createCommandLineBuilder(daprPathProvider: () => string, daprDefinition: DaprTaskDefinition) {
+    const commandLineBuilder =
+        CommandLineBuilder
+            .create(daprPathProvider(), 'run')
+            .withNamedArg('--app-health-check-path', daprDefinition.appHealthCheckPath)
+            .withNamedArg('--app-health-probe-interval', daprDefinition.appHealthProbeInterval)
+            .withNamedArg('--app-health-probe-timeout', daprDefinition.appHealthProbeTimeout)
+            .withNamedArg('--app-health-threshold', daprDefinition.appHealthThreshold)
+            .withNamedArg('--app-id', daprDefinition.appId)
+            .withNamedArg('--app-max-concurrency', daprDefinition.appMaxConcurrency)
+            .withNamedArg('--app-port', daprDefinition.appPort)
+            .withNamedArg('--app-protocol', daprDefinition.appProtocol)
+            .withNamedArg('--app-ssl', daprDefinition.appSsl, { assignValue: true })
+            .withNamedArg('--components-path', daprDefinition.componentsPath)
+            .withNamedArg('--config', daprDefinition.config)
+            .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
+            .withNamedArg('--dapr-http-max-request-size', daprDefinition.httpMaxRequestSize)
+            .withNamedArg('--dapr-http-port', daprDefinition.httpPort)
+            .withNamedArg('--dapr-http-read-buffer-size', daprDefinition.httpReadBufferSize)
+            .withNamedArg('--enable-api-logging', daprDefinition.enableApiLogging, { assignValue: true })
+            .withNamedArg('--enable-app-health-check', daprDefinition.enableHealthCheck, { assignValue: true })
+            .withNamedArg('--enable-profiling', daprDefinition.enableProfiling, { assignValue: true })
+            .withNamedArg('--log-level', daprDefinition.logLevel)
+            .withNamedArg('--metrics-port', daprDefinition.metricsPort)
+            .withNamedArg('--placement-host-address', daprDefinition.placementHostAddress)
+            .withNamedArg('--profile-port', daprDefinition.profilePort)
+            .withNamedArg('--run-file', daprDefinition.runFile)
+            .withNamedArg('--unix-domain-socket', daprDefinition.unixDomainSocket)
+            .withArgs(daprDefinition.args)
+            .withArgs(daprDefinition.command)
 
-        return commandLineBuilder;
-    }
-    else {
-        const commandLineBuilder = CommandLineBuilder.create(daprPathProvider(), 'run')
-        return commandLineBuilder;
-    }
-
+    return commandLineBuilder;
 }
