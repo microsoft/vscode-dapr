@@ -3,7 +3,7 @@
 	"displayName": "Dapr",
 	"description": "Makes it easy to run, debug, and interact with Dapr-enabled applications.",
 	"icon": "assets/images/extensionIcon.png",
-	"version": "0.8.0-alpha",
+	"version": "0.8.0",
 	"preview": true,
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",
@@ -14,7 +14,7 @@
 	],
 	"engines": {
 		"dapr-cli": ">=1.10",
-		"dapr-runtime": ">=1.9",
+		"dapr-runtime": ">=1.10",
 		"vscode": "^1.82.0"
 	},
 	"categories": [

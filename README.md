@@ -16,7 +16,7 @@ Supported platforms:
  - Linux
  - Windows
 
-> Some Dapr 1.10 features, such "run files", are not supported on "native" Windows but can still be run within WSL on Windows.
+> Dapr 1.12 or later is required to use Dapr "Run Files" on Windows (outside of WSL).
 
 ### Docker
 
@@ -28,17 +28,17 @@ Follow the [Dapr guide](https://dapr.io/#download) to install the Dapr CLI for y
 
 > This extension requires:
 > - Dapr CLI version 1.10.0 or later
-> - Dapr Runtime version 1.9.0 or later
+> - Dapr Runtime version 1.10.0 or later
 
 ### Visual Studio Code
 
 Follow the [VS Code guide](https://code.visualstudio.com/) for installing VS Code for your platform.
 
-> This extension requires Visual Studio Code version 1.74.0 or later.
+> This extension requires Visual Studio Code version 1.82.0 or later.
 
 ## Feature Overview
 
-### [New for 0.7.0] Dapr Run File Support
+### Dapr Run File Support
 
 Dapr 1.10 enables starting multiple Dapr applications through the use of a "run file", and the Dapr extension allows you to start the "run" directly from the File Explorer.
 
@@ -61,13 +61,13 @@ Sample `tasks.json`:
 }
 ```
 
-### [New for 0.7.0] Run File Editing Assistence
+### Run File Editing Assistence
 
 When working with Dapr run files, the extension provides you with basic schema prompts and validation:
 
 ![Dapr YAML Editing](assets/readme/daprYamlEditing.png)
 
-### [New for 0.7.0] Dapr Application Debugging
+### Dapr Application Debugging
 
 Dapr CLI 1.10 now tracks the application started via `dapr run`, which enables the Dapr extension to attach the debugger to running instances, whether started inside or outside of VS Code, directly from the Dapr applications view.
 
@@ -97,7 +97,7 @@ Sample `launch.json`:
 }
 ```
 
-### [New for 0.7.0] View Dapr Logs
+### View Dapr Logs
 
 When using Dapr run files, Dapr redirects the application and Dapr sidecar logs to application-specific locations (rather than writing them to the console). The Dapr extension enables you to open these logs directly from the Dapr applications view.
 
