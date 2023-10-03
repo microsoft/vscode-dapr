@@ -15,7 +15,7 @@
 	"engines": {
 		"dapr-cli": ">=1.10",
 		"dapr-runtime": ">=1.9",
-		"vscode": "^1.74.0"
+		"vscode": "^1.82.0"
 	},
 	"categories": [
 		"Debuggers",
