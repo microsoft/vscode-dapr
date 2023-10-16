@@ -312,8 +312,8 @@
 					}
 				],
 				"background": {
-					"beginsPattern": "^.*starting Dapr Runtime",
-					"endsPattern": "^.*(waiting on port|dapr initialized)"
+					"beginsPattern": { "regexp": "^.*[sS]tarting Dapr Runtime" },
+					"endsPattern": { "regexp": "^.*(waiting on port|dapr initialized)" }
 				}
 			}
 		],
