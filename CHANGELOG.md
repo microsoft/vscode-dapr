@@ -1,6 +1,6 @@
 # Change Log
 
-## v0.8.0 - 3 October 2023
+## v0.8.0 - 16 October 2023
 
 Integrating new features of Dapr 1.11 and 1.12.
 
@@ -10,6 +10,10 @@ Integrating new features of Dapr 1.11 and 1.12.
 * [Enhancement] Update Dapr run file template schema to match changes in v1.11 [#296](https://github.com/microsoft/vscode-dapr/issues/296)
 * [Enhancement] Scaffold Dapr tasks using existing run file [#272](https://github.com/microsoft/vscode-dapr/issues/272)
 * chore: enhance dapryml schema validation [#292](https://github.com/microsoft/vscode-dapr/pull/292)
+
+### Fixed
+
+* Debugging with Dapr hangs with 1.12 [#309](https://github.com/microsoft/vscode-dapr/issues/309)
 
 ## v0.7.0 - 16 February 2023
 
