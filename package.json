@@ -800,7 +800,7 @@
 		"@microsoft/vscode-azext-utils": "^2.1.1",
 		"@opentelemetry/api": "^1.6.0",
 		"@opentelemetry/tracing": "^0.24.0",
-		"axios": "^0.27.2",
+		"axios": "^1.6.0",
 		"handlebars": "^4.7.8",
 		"js-yaml": "^4.1.0",
 		"lodash.isequal": "^4.5.0",
