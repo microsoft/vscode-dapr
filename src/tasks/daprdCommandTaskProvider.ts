@@ -51,7 +51,7 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     profilePort?: number;
     publicPort?: number;
     resourcesPath?: string;
-resourcesPaths?: string[];
+    resourcesPaths?: string[];
     sentryAddress?: string;
     type: 'daprd';
     unixDomainSocket?: string;
@@ -110,7 +110,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--placement-host-address', daprDefinition.placementHostAddress ?? `${process.env.DAPR_PLACEMENT_HOST_ADDRESS ?? 'localhost'}:${environmentProvider.isWindows ? 6050 : 50005}` /* NOTE: The placement address is actually required for daprd. */)
                                 .withNamedArg('--profile-port', daprDefinition.profilePort)
                                 .withNamedArg('--resources-path', daprDefinition.resourcesPath)
-.withArrayArgs('--resources-path', daprDefinition.resourcesPaths)
+                                .withArrayArgs('--resources-path', daprDefinition.resourcesPaths)
                                 .withNamedArg('--sentry-address', daprDefinition.sentryAddress)
                                 .withNamedArg('--unix-domain-socket', daprDefinition.unixDomainSocket)
                                 .withArgs(daprDefinition.args)

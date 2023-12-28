@@ -43,7 +43,7 @@ export interface DaprTaskDefinition extends TaskDefinition {
     placementHostAddress?: string;
     profilePort?: number;
     resourcesPath?: string;
-resourcesPaths?: string[];
+    resourcesPaths?: string[];
     runFile?: string;
     type: 'dapr';
     unixDomainSocket?: string;
