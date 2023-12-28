@@ -43,7 +43,7 @@ export interface DaprTaskDefinition extends TaskDefinition {
     placementHostAddress?: string;
     profilePort?: number;
     resourcesPath?: string;
-    resourcesPaths?: string[];
+resourcesPaths?: string[];
     runFile?: string;
     type: 'dapr';
     unixDomainSocket?: string;
@@ -122,6 +122,7 @@ function createCommandLineBuilder(daprPathProvider: () => string, daprDefinition
             .withNamedArg('--app-protocol', daprDefinition.appProtocol)
             .withNamedArg('--app-ssl', daprDefinition.appSsl, { assignValue: true })
             .withNamedArg('--components-path', daprDefinition.componentsPath)
+            .withNamedArg('--resources-path', daprDefinition.resourcesPath)
             .withNamedArg('--config', daprDefinition.config)
             .withNamedArg('--dapr-grpc-port', daprDefinition.grpcPort)
             .withNamedArg('--dapr-http-max-request-size', daprDefinition.httpMaxRequestSize)
