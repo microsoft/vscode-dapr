@@ -1,4 +1,4 @@
-# Trigger the build whenever `main` or `rel/*` is updated
+# Trigger the build whenever `main` or `rel/*` is updated.
 trigger:
   - main
   - rel/*
@@ -10,7 +10,7 @@ pr: none
 schedules:
   - cron: "0 0 * * *"
     displayName: Nightly scheduled build
-    always: false # Don't rebuild if there haven't been changes
+    always: false # Don't rebuild if there haven't been changes.
     branches:
       include:
         - main
