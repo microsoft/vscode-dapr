@@ -22,7 +22,7 @@ resources:
       type: github
       name: microsoft/vscode-azuretools
       ref: main
-      endpoint: GitHub-AzureTools # The service connection to use when accessing this repository
+      endpoint: '(phoff) GitHub Service Connection' # The service connection to use when accessing this repository
 
 # Use those templates
 extends:
