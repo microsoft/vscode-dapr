@@ -71,6 +71,7 @@
     "vscode-dapr.tasks.dapr.properties.profilePort.description": "The port for the profile server to listen on.",
     "vscode-dapr.tasks.dapr.properties.resourcesPath.description": "(Deprecated in v1.11.) The path for resources directory (default \"<user>/.dapr/components\").",
     "vscode-dapr.tasks.dapr.properties.resourcesPaths.description": "The paths for resources directory (default \"<user>/.dapr/components\").",
+    "vscode-dapr.tasks.dapr.properties.options.description": "Task execution options.",
     "vscode-dapr.tasks.dapr.properties.runFile.description": "Path to the run template file for the list of apps to run.",
     "vscode-dapr.tasks.dapr.properties.unixDomainSocket.description": "Path to a unix domain socket dir. If specified, Dapr API servers will use Unix Domain Sockets.",
 
