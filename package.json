@@ -459,6 +459,17 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.metricsPort.description%",
 						"default": -1
 					},
+					"options": {
+						"type": "object",
+						"description": "%vscode-dapr.tasks.dapr.properties.options.description%",
+						"additionalProperties":true,
+						"properties": {
+							"env": {
+								"type": "object",
+								"description": "%vscode-dapr.tasks.dapr.properties.options.env.description%"
+							}
+						}
+					},
 					"placementHostAddress": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.placementHostAddress.description%",
@@ -483,10 +494,6 @@
 					"runFile": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.runFile.description%"
-					},
-					"options": {
-						"type": "object",
-						"description": "%vscode-dapr.tasks.dapr.properties.options.description%"
 					},
 					"unixDomainSocket": {
 						"type": "string",
@@ -661,6 +668,17 @@
 							"kubernetes"
 						],
 						"default": "standalone"
+					},
+					"options": {
+						"type": "object",
+						"description": "%vscode-dapr.tasks.daprd.properties.options.description%",
+						"additionalProperties":true,
+						"properties": {
+							"env": {
+								"type": "object",
+								"description": "%vscode-dapr.tasks.daprd.properties.options.env.description%"
+							}
+						}
 					},
 					"placementHostAddress": {
 						"type": "string",
