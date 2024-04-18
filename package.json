@@ -3,7 +3,7 @@
 	"displayName": "Dapr",
 	"description": "Makes it easy to run, debug, and interact with Dapr-enabled applications.",
 	"icon": "assets/images/extensionIcon.png",
-	"version": "0.8.0",
+	"version": "0.8.1",
 	"preview": true,
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",
@@ -459,6 +459,17 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.metricsPort.description%",
 						"default": -1
 					},
+					"options": {
+						"type": "object",
+						"description": "%vscode-dapr.tasks.dapr.properties.options.description%",
+						"additionalProperties":true,
+						"properties": {
+							"env": {
+								"type": "object",
+								"description": "%vscode-dapr.tasks.dapr.properties.options.env.description%"
+							}
+						}
+					},
 					"placementHostAddress": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.placementHostAddress.description%",
@@ -657,6 +668,17 @@
 							"kubernetes"
 						],
 						"default": "standalone"
+					},
+					"options": {
+						"type": "object",
+						"description": "%vscode-dapr.tasks.daprd.properties.options.description%",
+						"additionalProperties":true,
+						"properties": {
+							"env": {
+								"type": "object",
+								"description": "%vscode-dapr.tasks.daprd.properties.options.env.description%"
+							}
+						}
 					},
 					"placementHostAddress": {
 						"type": "string",

@@ -69,7 +69,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                             // if any property being set means do not need to infer dapr.yaml
                             if (Object.prototype.hasOwnProperty.call(daprDefinition, def) && def !== "type" && def !== undefined) {
                                 const command = createCommandLineBuilder(daprPathProvider, daprDefinition).build();
-                                return callback(command, { cwd: definition.cwd });
+                                return callback(command, { cwd: definition.cwd, env: Object.assign({}, definition.options?.env, process.env) });
                             }
                         }
 
@@ -86,7 +86,7 @@ export default class DaprCommandTaskProvider extends CommandTaskProvider {
                         await checkFileExists(runFilePath).then((fileExists) => {
                             if (fileExists) {
                                 const command = createCommandLineBuilder(daprPathProvider, { type: 'dapr', runFile: runFilePath }).build();
-                                return callback(command, { cwd: definition.cwd });
+                                return callback(command, { cwd: definition.cwd, env: Object.assign({}, definition.options?.env, process.env) });
                             } else {
                                 throw new Error(localize('tasks.daprCommandTaskProvider.noRunFile', 'there is no dapr.yaml in this folder or workspace.'));
                             }

@@ -115,7 +115,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withArgs(daprDefinition.args)
                                 .build();
 
-                        await callback(command, { cwd: definition.cwd });
+                        await callback(command, { cwd: definition.cwd, env: Object.assign({}, process.env, definition.options?.env) });
                     });
             },
             /* isBackgroundTask: */ true,
