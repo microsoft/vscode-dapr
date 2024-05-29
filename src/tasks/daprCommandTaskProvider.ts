@@ -134,6 +134,8 @@ function createCommandLineBuilder(daprPathProvider: () => string, daprDefinition
             .withNamedArg('--metrics-port', daprDefinition.metricsPort)
             .withNamedArg('--placement-host-address', daprDefinition.placementHostAddress)
             .withNamedArg('--profile-port', daprDefinition.profilePort)
+            .withNamedArg('--resources-path', daprDefinition.resourcesPath)
+            .withArrayArgs('--resources-path', daprDefinition.resourcesPaths)
             .withNamedArg('--run-file', daprDefinition.runFile)
             .withNamedArg('--unix-domain-socket', daprDefinition.unixDomainSocket)
             .withArgs(daprDefinition.args)
