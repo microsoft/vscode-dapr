@@ -31,8 +31,8 @@ export default class CustomExecutionTaskProvider implements vscode.TaskProvider 
             task.name,
             task.source,
             new vscode.CustomExecution(
-                () => Promise.resolve(
-                    new TaskPseudoterminal((writer, token) => this.callback(task.definition, writer, token)))),
+                resolvedDefinition => Promise.resolve(
+                    new TaskPseudoterminal((writer, token) => this.callback(resolvedDefinition, writer, token)))),
             problemMatchers);
 
         resolvedTask.isBackground = this.isBackgroundTask !== undefined ? this.isBackgroundTask : task.isBackground;

@@ -5,7 +5,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
-import { scaffoldStateStoreComponent, scaffoldPubSubComponent, scaffoldZipkinComponent } from "../scaffolding/daprComponentScaffolder";
+import { scaffoldStateStoreComponent, scaffoldPubSubComponent } from "../scaffolding/daprComponentScaffolder";
 import { TemplateScaffolder } from '../scaffolding/templateScaffolder';
 import { Scaffolder } from '../scaffolding/scaffolder';
 import { getLocalizationPathForFile } from '../util/localization';
@@ -31,7 +31,6 @@ async function scaffoldDaprComponents(scaffolder: Scaffolder, templateScaffolder
 
     await scaffoldStateStoreComponent(scaffolder, templateScaffolder, componentsPath, onConflict);
     await scaffoldPubSubComponent(scaffolder, templateScaffolder, componentsPath, onConflict);
-    await scaffoldZipkinComponent(scaffolder, templateScaffolder, componentsPath, onConflict);
 
     // TODO: Consider UX to prompt the user to update existing tasks' componentsPath property.
     //       (It's not clear the expected usage use of this feature warrants the work.)
