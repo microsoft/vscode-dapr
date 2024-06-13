@@ -23,12 +23,3 @@ export function scaffoldPubSubComponent(scaffolder: Scaffolder, templateScaffold
 export function scaffoldStateStoreComponent(scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, folderPath: string, onConflict: ConflictHandler, options?: { fileName?: string; redisHost?: string }): Promise<void> {
     return scaffoldRedisComponent(scaffolder, templateScaffolder, 'components/state-store.yaml', folderPath, options?.fileName ?? 'statestore.yaml', onConflict, options?.redisHost);
 }
-
-export async function scaffoldZipkinComponent(scaffolder: Scaffolder, templateScaffolder: TemplateScaffolder, folderPath: string, onConflict: ConflictHandler, zipkinHost?: string): Promise<void> {
-    // NOTE: If DAPR_NETWORK is set, Dapr is running within a multi-container context and Zipkin is a separate container,
-    //       so use 'dapr_zipkin' rather than 'localhost'. 
-    await scaffolder.scaffoldFile(
-        path.join(folderPath, 'zipkin.yaml'),
-        () => templateScaffolder.scaffoldTemplate('components/zipkin.yaml', { zipkinHost: zipkinHost ?? process.env.DAPR_ZIPKIN_HOST ?? (process.env.DAPR_NETWORK ? 'dapr_zipkin' : 'localhost') }),
-        onConflict);
-}

@@ -146,7 +146,7 @@ export async function scaffoldDaprTasks(context: IActionContext, scaffolder: Sca
 
     const runFilePath = path.join(folder.uri.fsPath, 'dapr.yaml');
 
-    const runFilePathString = '$(workspaceFolder)/dapr.yaml';
+    const runFilePathString = '${workspaceFolder}/dapr.yaml';
     const daprTaskType = 'dapr';
     const daprConfigType = 'dapr';
 

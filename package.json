@@ -3,7 +3,7 @@
 	"displayName": "Dapr",
 	"description": "Makes it easy to run, debug, and interact with Dapr-enabled applications.",
 	"icon": "assets/images/extensionIcon.png",
-	"version": "0.8.0",
+	"version": "0.8.1",
 	"preview": true,
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",
@@ -459,6 +459,17 @@
 						"description": "%vscode-dapr.tasks.dapr.properties.metricsPort.description%",
 						"default": -1
 					},
+					"options": {
+						"type": "object",
+						"description": "%vscode-dapr.tasks.dapr.properties.options.description%",
+						"additionalProperties":true,
+						"properties": {
+							"env": {
+								"type": "object",
+								"description": "%vscode-dapr.tasks.dapr.properties.options.env.description%"
+							}
+						}
+					},
 					"placementHostAddress": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.dapr.properties.placementHostAddress.description%",
@@ -665,6 +676,17 @@
 						],
 						"default": "standalone"
 					},
+					"options": {
+						"type": "object",
+						"description": "%vscode-dapr.tasks.daprd.properties.options.description%",
+						"additionalProperties":true,
+						"properties": {
+							"env": {
+								"type": "object",
+								"description": "%vscode-dapr.tasks.daprd.properties.options.env.description%"
+							}
+						}
+					},
 					"placementHostAddress": {
 						"type": "string",
 						"description": "%vscode-dapr.tasks.daprd.properties.placementHostAddress.description%"
@@ -778,34 +800,34 @@
 	},
 	"devDependencies": {
 		"@types/handlebars": "^4.1.0",
-		"@types/js-yaml": "^4.0.6",
-		"@types/lodash.isequal": "^4.5.6",
-		"@types/mocha": "^10.0.2",
+		"@types/js-yaml": "^4.0.9",
+		"@types/lodash.isequal": "^4.5.8",
+		"@types/mocha": "^10.0.6",
 		"@types/node": "^18.18.3",
-		"@types/semver": "^7.5.3",
+		"@types/semver": "^7.5.8",
 		"@types/terser-webpack-plugin": "^5.2.0",
 		"@types/vscode": "^1.82.0",
-		"@types/webpack": "^5.28.3",
-		"@typescript-eslint/eslint-plugin": "^6.7.4",
-		"@typescript-eslint/parser": "^6.7.4",
-		"@vscode/test-electron": "^2.3.4",
-		"eslint": "^8.50.0",
-		"glob": "^10.3.10",
-		"mocha": "^10.2.0",
+		"@types/webpack": "^5.28.5",
+		"@typescript-eslint/eslint-plugin": "^7.10.0",
+		"@typescript-eslint/parser": "^7.10.0",
+		"@vscode/test-electron": "^2.3.10",
+		"eslint": "^8.57.0",
+		"glob": "^10.4.1",
+		"mocha": "^10.4.0",
 		"opentelemetry": "^0.1.0",
-		"terser-webpack-plugin": "^5.3.3",
-		"ts-loader": "^9.4.4",
-		"ts-node": "^10.9.1",
+		"terser-webpack-plugin": "^5.3.10",
+		"ts-loader": "^9.5.1",
+		"ts-node": "^10.9.2",
 		"tslint": "^6.1.3",
-		"typescript": "^5.2.2",
+		"typescript": "^5.4.5",
 		"vsce": "^2.15.0",
 		"vscode-nls-dev": "^4.0.4",
-		"webpack": "^5.88.2",
+		"webpack": "^5.91.0",
 		"webpack-cli": "^5.1.4"
 	},
 	"dependencies": {
 		"@microsoft/vscode-azext-utils": "^2.1.1",
-		"@opentelemetry/api": "^1.6.0",
+		"@opentelemetry/api": "^1.8.0",
 		"@opentelemetry/tracing": "^0.24.0",
 		"axios": "^0.27.2",
 		"handlebars": "^4.7.8",
@@ -813,7 +835,7 @@
 		"lodash.isequal": "^4.5.0",
 		"ps-list": "^7.2.0",
 		"rxjs": "^7.8.1",
-		"semver": "^7.5.2",
+		"semver": "^7.6.2",
 		"tree-kill": "^1.2.2",
 		"vscode-nls": "^5.2.0"
 	},
