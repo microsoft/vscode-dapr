@@ -26,6 +26,7 @@ export interface DaprdTaskDefinition extends TaskDefinition {
     appProtocol?: 'grpc' | 'http';
     appSsl?: boolean;
     args?: string[];
+    command?: string[];
     componentsPath?: string;
     config?: string;
     controlPlaneAddress?: string;
@@ -113,6 +114,7 @@ export default class DaprdCommandTaskProvider extends CommandTaskProvider {
                                 .withNamedArg('--sentry-address', daprDefinition.sentryAddress)
                                 .withNamedArg('--unix-domain-socket', daprDefinition.unixDomainSocket)
                                 .withArgs(daprDefinition.args)
+                                .withArgs(daprDefinition.command)
                                 .build();
 
                         await callback(command, { cwd: definition.cwd, env: Object.assign({}, process.env, definition.options?.env) });
