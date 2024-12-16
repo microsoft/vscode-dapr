@@ -27,7 +27,7 @@ resources:
 variables:
   # Required by MicroBuild template
   - name: TeamName
-    value: "Container Tools Team"
+    value: "Dapr Team"
 
 # Use those templates
 extends:
